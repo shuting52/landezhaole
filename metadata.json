@@ -1,0 +1,6 @@
+{
+  "name": "懒得找了",
+  "description": "懒得找了 - 智能导航与实用软件聚合中心",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
