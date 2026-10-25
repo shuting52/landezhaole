@@ -444,7 +444,7 @@ function showUtilHot(){
 function showUtilQQ(){
  showUtilModal('最新Q群','<p>最新Q群号还没填上去。</p><p>把群号发我，我帮你填到这个按钮上，之后点它就能直接看到群号 / 跳转加群。</p>');
 }
-document.getElementById('utilOverlay').addEventListener('click',function(e){if(e.target.id==='utilOverlay')e.target.classList.remove('show');});
+var utilEl=document.getElementById('utilOverlay');if(utilEl)utilEl.addEventListener('click',function(e){if(e.target.id==='utilOverlay')e.target.classList.remove('show');});
 fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{document.getElementById('cats').innerHTML='<p style="text-align:center;color:var(--muted);padding:40px">数据加载失败，请刷新再试。</p>';});
 </script>
 <div class="toast-notify" id="toastNotify"><div class="tic" id="toastIc">新</div><div><div class="tt" id="toastTt"></div><div class="bd" id="toastBd"></div></div><button class="toast-close" id="toastClose" aria-label="关闭提醒">×</button></div>
