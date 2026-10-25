@@ -27,13 +27,13 @@ button{font-family:inherit}
 @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
 @keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(90px,60px) scale(1.15)}}
 @keyframes drift2{from{transform:translate(0,0) scale(1.1)}to{transform:translate(-70px,90px) scale(.95)}}
-.blob{position:fixed;border-radius:50%;filter:blur(90px);z-index:-1;opacity:.45;pointer-events:none}
-.b1{width:520px;height:520px;left:-140px;top:-120px;background:#a7f3d0;animation:drift1 22s ease-in-out infinite alternate}
-.b2{width:460px;height:460px;right:-120px;top:22%;background:#bfdbfe;animation:drift2 26s ease-in-out infinite alternate}
-.b3{width:420px;height:420px;left:30%;bottom:-160px;background:#fde68a;animation:drift1 30s ease-in-out infinite alternate-reverse}
+.blob{position:fixed;border-radius:50%;filter:blur(60px);z-index:-1;opacity:.45;pointer-events:none}
+.b1{width:520px;height:520px;left:-140px;top:-120px;background:#a7f3d0}
+.b2{width:460px;height:460px;right:-120px;top:22%;background:#bfdbfe}
+.b3{width:420px;height:420px;left:30%;bottom:-160px;background:#fde68a}
 [data-theme="dark"] .b1{background:#064e3b}[data-theme="dark"] .b2{background:#1e3a8a}[data-theme="dark"] .b3{background:#78350f}
 .logo{font-size:46px;font-weight:900;letter-spacing:4px;display:flex;align-items:center;justify-content:center;gap:14px}
-.site-icon{width:56px;height:56px;border-radius:16px;box-shadow:0 6px 18px rgba(22,163,74,.3);animation:floaty 5s ease-in-out infinite;transition:transform .3s}
+.site-icon{width:56px;height:56px;border-radius:16px;box-shadow:0 6px 18px rgba(22,163,74,.3);animation:none;transition:transform .3s}
 .site-icon:hover{transform:scale(1.1) rotate(-8deg);animation-play-state:paused}
 .logo-text{background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shineText 6s linear infinite}
 .logo span{color:var(--green)}
@@ -63,7 +63,7 @@ button{font-family:inherit}
 @media(max-width:640px){.quick-dock{gap:6px;padding:24px 12px 10px;border-radius:18px;overflow-x:auto}.qicon{width:34px;height:34px;font-size:16px;border-radius:10px}}
 section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
 .cat-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.cat-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 8px var(--blue);animation:pulseDot 2.4s ease-in-out infinite}
+.cat-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 8px var(--blue);animation:none}
 .cat-title{font-size:20px;font-weight:800;color:var(--red)}
 .cat-count{font-size:12px;color:var(--muted);background:rgba(127,127,127,.12);border-radius:12px;padding:1px 10px}
 .cat-desc{color:var(--muted);font-size:12px;margin:2px 0 12px}
@@ -84,7 +84,7 @@ section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;p
 @keyframes rainbowShift{to{background-position:200% center}}
 @keyframes dotPing{0%{box-shadow:0 0 0 0 rgba(59,130,246,.55)}70%{box-shadow:0 0 0 7px rgba(59,130,246,0)}100%{box-shadow:0 0 0 0 rgba(59,130,246,0)}}
 .corner{position:absolute;z-index:2;pointer-events:none}
-.corner-tag{top:-8px;right:8px;font-size:10px;font-weight:800;line-height:1;padding:3px 8px;border-radius:999px;color:#fff;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7);background-size:100% 100%;animation:cornerPulse 2s ease-in-out infinite}
+.corner-tag{top:-8px;right:8px;font-size:10px;font-weight:800;line-height:1;padding:3px 8px;border-radius:999px;color:#fff;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7);background-size:100% 100%;animation:none}
 .corner-tag.hot,.corner-tag.new,.corner-tag.rec{background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7);background-size:100% 100%}
 .avatar{position:relative;width:44px;height:44px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;overflow:hidden;font-size:16px}
 .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px;box-sizing:border-box;z-index:1}
