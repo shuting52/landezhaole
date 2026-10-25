@@ -240,10 +240,11 @@ function iconNext(img){
  else img.remove();
 }
 // 只跳过谷歌那道源的小地球兜底图（16px）；站点自己的图标哪怕只有16px也是真 logo，要留着，别换成兜底
-function iconCheck(img){if(img.dataset.step==='0'&&img.naturalWidth&&img.naturalWidth<32)iconNext(img);}
+function iconCheck(img){if(img.dataset.from==='override')return;if(img.dataset.step==='0'&&img.naturalWidth&&img.naturalWidth<32)iconNext(img);}
 function cardHTML(c){
  const host=hostOf(c.u);
- const av=`<div class="avatar" style="background:${avColor(c.t)}"><img src="https://www.google.com/s2/favicons?domain=${esc(host)}&sz=128" loading="lazy" alt="" data-host="${esc(host)}" data-step="0" onerror="iconNext(this)" onload="iconCheck(this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>`;
+ const firstIcon=c.i?esc(c.i):`https://www.google.com/s2/favicons?domain=${esc(host)}&sz=128`;
+ const av=`<div class="avatar" style="background:${avColor(c.t)}"><img src="${firstIcon}" loading="lazy" alt="" data-host="${esc(host)}" data-step="0" ${c.i?'data-from="override"':''} onerror="iconNext(this)" onload="iconCheck(this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>`;
  let corner='';
  if(c.b){const cls=/HOT/i.test(c.b)?'hot':/NEW/i.test(c.b)?'new':'rec';corner=`<span class="corner corner-tag ${cls}">${esc(c.b)}</span>`;}
  else corner=`<span class="corner corner-tag">精选</span>`;
