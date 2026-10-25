@@ -116,15 +116,15 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .update-dialog button{border:0;background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-  .flip-wrap{max-width:none;margin:0;padding:14px 0 0 8px;display:flex;justify-content:flex-start}
-.flip-clock{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .flip-wrap{max-width:none;margin:0;padding:14px 8px 0 0;display:flex;justify-content:flex-end}
+.flip-clock{display:flex;align-items:center;justify-content:center;gap:5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 10px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
 .flip-clock .group{display:flex;gap:6px}
-.flip-clock .colon{font-size:34px;color:#1f2937;line-height:56px;font-weight:700;user-select:none}
-.flip-clock .nums{--digit:'0';box-shadow:0 3px 10px rgba(0,0,0,.10);border:1px solid #d1d5db;height:56px;width:40px;perspective:1000px;position:relative;border-radius:5px;overflow:hidden}
+.flip-clock .colon{font-size:28px;color:#1f2937;line-height:48px;font-weight:700;user-select:none}
+.flip-clock .nums{--digit:'0';box-shadow:0 3px 10px rgba(0,0,0,.10);border:1px solid #d1d5db;height:48px;width:34px;perspective:1000px;position:relative;border-radius:5px;overflow:hidden}
 .flip-clock .nums:before{display:none}
-.flip-clock .nums:after{content:var(--digit);position:absolute;bottom:0;left:0;width:100%;height:50%;background:#f4f5f7;border-bottom:1px solid #d1d5db;border-radius:0 0 5px 5px;box-shadow:inset 0 15px 50px rgba(0,0,0,.05);color:#1f2937;font-size:40px;font-weight:700;line-height:0;text-align:center;overflow:hidden;z-index:0}
+.flip-clock .nums:after{content:var(--digit);position:absolute;bottom:0;left:0;width:100%;height:50%;background:#f4f5f7;border-bottom:1px solid #d1d5db;border-radius:0 0 5px 5px;box-shadow:inset 0 15px 50px rgba(0,0,0,.05);color:#1f2937;font-size:34px;font-weight:700;line-height:0;text-align:center;overflow:hidden;z-index:0}
 .flip-clock .num{position:absolute;top:0;left:0;width:100%;height:100%;transform-style:preserve-3d}
-.flip-clock .num:before,.flip-clock .num:after{position:absolute;left:0;width:100%;height:50%;backface-visibility:hidden;color:#1f2937;font-size:40px;font-weight:700;text-align:center;overflow:hidden}
+.flip-clock .num:before,.flip-clock .num:after{position:absolute;left:0;width:100%;height:50%;backface-visibility:hidden;color:#1f2937;font-size:34px;font-weight:700;text-align:center;overflow:hidden}
 .flip-clock .num:before{content:attr(data-num);top:0;background:#ffffff;border-radius:5px 5px 0 0;box-shadow:inset 0 15px 50px rgba(0,0,0,.05);line-height:1.38;z-index:1}
 .flip-clock .num:after{content:attr(data-num-next);top:0;background:#f4f5f7;border-radius:0 0 5px 5px;box-shadow:inset 0 15px 50px rgba(0,0,0,.05);line-height:0;transform:rotateX(180deg)}
 .flip-clock .num.current{z-index:0}
@@ -136,7 +136,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 [data-theme="dark"] .flip-clock .num:before,[data-theme="dark"] .flip-clock .num:after{color:#eeeeee;text-shadow:0 1px 2px #333}
 [data-theme="dark"] .flip-clock .num:before{background:#181818;box-shadow:inset 0 15px 50px #111111}
 [data-theme="dark"] .flip-clock .num:after{background:#2a2a2a;box-shadow:inset 0 15px 50px #202020}
-@media(max-width:640px){.flip-clock{padding:6px 8px;gap:4px}.flip-clock .group{gap:2px}.flip-clock .nums{height:44px;width:32px}.flip-clock .nums:after,.flip-clock .num:before,.flip-clock .num:after{font-size:32px}.flip-clock .colon{font-size:26px;line-height:44px}}
+@media(max-width:640px){.flip-clock{padding:5px 7px;gap:3px}.flip-clock .group{gap:2px}.flip-clock .nums{height:40px;width:29px}.flip-clock .nums:after,.flip-clock .num:before,.flip-clock .num:after{font-size:28px}.flip-clock .colon{font-size:24px;line-height:40px}}
 
 .top-utils{position:absolute;top:0;right:16px;display:flex;gap:18px;z-index:5}
 .top-utils a{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted);cursor:pointer}
