@@ -20,7 +20,7 @@ a{color:inherit;text-decoration:none}
 .topbar a.dl{color:var(--green);font-weight:700}
 button{font-family:inherit}
 .theme-btn{cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:20px;padding:3px 14px;font-size:12px}
-.header{position:relative;padding:36px 0 8px;text-align:center;animation:fadeUp .7s ease both}
+.header{position:relative;padding:10px 0 4px;text-align:center;animation:fadeUp .7s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(-4deg)}}
 @keyframes shineText{to{background-position:220% center}}
@@ -39,7 +39,7 @@ button{font-family:inherit}
 .logo span{color:var(--green)}
 .tagline{color:var(--muted);margin-top:6px}
 .stat{display:inline-block;margin-top:12px;background:var(--card);border:1px solid var(--line);color:var(--green-d);border-radius:20px;padding:4px 18px;font-size:12px;font-weight:700}
-.searchbox{max-width:680px;margin:18px auto 0}
+.searchbox{max-width:680px;margin:10px auto 0}
 .engines{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
 .engines button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 16px;font-size:12px;cursor:pointer}
 .engines button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
@@ -49,11 +49,11 @@ button{font-family:inherit}
 .searchrow:focus-within{box-shadow:0 0 0 3px rgba(22,163,74,.25)}
 .searchrow input{flex:1;border:0;outline:none;padding:14px 20px;font-size:16px;background:transparent;color:var(--text)}
 .searchrow button{border:0;background:var(--green);color:#fff;font-size:16px;font-weight:700;padding:0 36px;cursor:pointer}
-.hint{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
-.quick-dock-wrap{margin:22px 0 6px;display:flex;flex-direction:column;align-items:center;position:relative}
+.hint{text-align:center;color:var(--muted);font-size:12px;margin-top:6px}
+.quick-dock-wrap{margin:8px 0 0;display:flex;flex-direction:column;align-items:center;position:relative}
 .quick-tip{margin-bottom:10px;font-size:12px;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 12px;opacity:0;transform:translateY(6px);transition:opacity .18s,transform .18s;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.08)}
 .quick-tip.show{opacity:1;transform:translateY(0)}
-.quick-dock{position:relative;display:flex;align-items:flex-end;gap:10px;padding:30px 16px 14px;max-width:100%;overflow:visible;scrollbar-width:none;background:transparent;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+.quick-dock{position:relative;display:flex;align-items:flex-end;gap:10px;padding:22px 16px 8px;max-width:100%;overflow:visible;scrollbar-width:none;background:transparent;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 .quick-dock::-webkit-scrollbar{display:none}
 [data-theme="dark"] .quick-dock{background:transparent;border:0;box-shadow:none}
 .qapp{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;cursor:pointer;transform-origin:bottom center;will-change:transform;flex:none;transition:transform .12s ease-out}
@@ -61,7 +61,7 @@ button{font-family:inherit}
 .pt{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle,#fff,#7dd3fc);pointer-events:none;animation:rise .9s ease-out forwards;z-index:3}
 @keyframes rise{to{opacity:0;transform:translateY(-46px) scale(.3)}}
 @media(max-width:640px){.quick-dock{gap:6px;padding:24px 12px 10px;border-radius:18px;overflow-x:auto}.qicon{width:34px;height:34px;font-size:16px;border-radius:10px}}
-section.cat{margin:22px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
+section.cat{margin:10px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
 .cat-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cat-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 8px var(--blue);animation:pulseDot 2.4s ease-in-out infinite}
 .cat-title{font-size:20px;font-weight:800;color:var(--red)}
