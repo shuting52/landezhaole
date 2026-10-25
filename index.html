@@ -375,7 +375,7 @@ function appDlCard(a){
  const icon=a.icon||'';
  const av=`<div class="avatar" style="background:${avColor(a.label||'A')}">${icon?`<img src="${esc(icon)}" loading="lazy" alt="">`:''}</div>`;
  const desc=[a.package,a.ver_name?('v'+a.ver_name):'',fmtSize(a.size),a.downloads!=null?(a.downloads+' 次下载'):'' ].filter(Boolean).join(' · ');
- return `<div class="card-wrap appdl-wrap"><a class="card" href="https://appteka.store/apps/${esc(a.app_id)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(a.label)}</span></div><div class="desc">${esc(desc)}</div></div></a><button type="button" class="apk-btn" onclick="startAppDownload(this,'${esc(a.app_id)}','${esc(a.label)}',${a.size||0})">⬇ 下载 APK</button></div>`;
+ return `<div class="card-wrap appdl-wrap"><div class="card" style="cursor:pointer" title="点卡片直接下载" onclick="appDlCardDownload(this)">${av}<div class="info"><div class="name"><span class="ntext">${esc(a.label)}</span></div><div class="desc">${esc(desc)}</div></div></div><button type="button" class="apk-btn" onclick="startAppDownload(this,'${esc(a.app_id)}','${esc(a.label)}',${a.size||0})">⬇ 下载 APK</button></div>`;
 }
 let appDlQ='',appDlCache=[],appDlShown=0,appDlNextOffset=0,appDlTotal=0,appDlLoading=false;
 async function fetchAppPage(q,offset){
@@ -425,15 +425,23 @@ async function renderAppDl(q){
  st.textContent='点“下载 APK”在本页直接下载，不跳走；跑满后文件进系统下载目录，点开即可安装。';
  appDlShowBatch();
 }
+function appDlCardDownload(card){
+ const wrap=card.closest('.card-wrap');if(!wrap)return;
+ const btn=wrap.querySelector('.apk-btn');if(!btn||btn.dataset.busy==='1')return;
+ const m=btn.getAttribute('onclick')||'';
+ // 从按钮的 onclick 里取参数，避免再拼一遍
+ const mm=m.match(/startAppDownload\(this,'([^']*)','([^']*)',(\d+)\)/);
+ if(mm)startAppDownload(btn,mm[1],mm[2],parseInt(mm[3],10)||0);
+}
 function fmtMB(b){return (b/1048576).toFixed(1)+' MB';}
 async function startAppDownload(btn,appId,label,size){
  const wrap=btn.closest('.card-wrap');if(!wrap)return;
- if(btn.dataset.busy==='1'){btn.dataset.cancel='1';return;}
- btn.dataset.busy='1';btn.dataset.cancel='';btn.textContent='下载中…';
+ if(btn.dataset.busy==='1'){if(btn._dlCtrl)btn._dlCtrl.abort();btn.dataset.cancel='1';return;}
+ btn.dataset.busy='1';btn.dataset.cancel='';btn.textContent='下载中…';const dlCtrl=new AbortController();btn._dlCtrl=dlCtrl;
  let prog=wrap.querySelector('.apk-prog');
  if(!prog){prog=document.createElement('div');prog.className='apk-prog';prog.innerHTML='<div class="apk-bar"><i></i></div><div class="apk-text">准备下载…</div><button type="button" class="apk-cancel">取消</button>';btn.after(prog);}
  const bar=prog.querySelector('.apk-bar i'),txt=prog.querySelector('.apk-text'),cancel=prog.querySelector('.apk-cancel');
- cancel.onclick=()=>{btn.dataset.cancel='1';};
+ cancel.onclick=()=>{txt.textContent='正在取消…';dlCtrl.abort();btn.dataset.cancel='1';};
  const total=size||0;
  if(!total){txt.textContent='拿不到文件大小，下载失败。';btn.dataset.busy='';btn.textContent='⬇ 下载 APK';return;}
  // zip 下载器思路的网页版：8MB 以下单段，8MB 以上按 4MB 分段、4 路并行、段失败重试（200ms 起翻倍）
@@ -445,15 +453,15 @@ async function startAppDownload(btn,appId,label,size){
    for(let attempt=0;attempt<3;attempt++){
      if(btn.dataset.cancel==='1')return false;
      try{
-       const r=await fetch('https://landezhaole-app-proxy.307779523.workers.dev/segment?app_id='+encodeURIComponent(appId)+'&start='+start+'&end='+end);
+       const r=await fetch('https://landezhaole-app-proxy.307779523.workers.dev/segment?app_id='+encodeURIComponent(appId)+'&start='+start+'&end='+end,{signal:dlCtrl.signal});
        if(!r.ok)throw new Error('seg '+r.status);
        const buf=await r.arrayBuffer();parts[idx]=buf;received+=buf.byteLength;upd();return true;
-     }catch(e){await new Promise(res=>setTimeout(res,200*(1<<attempt)));}
+     }catch(e){if(dlCtrl.signal.aborted||btn.dataset.cancel==='1')return false;await new Promise(res=>setTimeout(res,200*(1<<attempt)));}
    }
    return false;
  }
  let ok=true;
- const lanes=Array.from({length:Math.min(4,segCount)},async()=>{
+ const lanes=Array.from({length:Math.min(8,segCount)},async()=>{
    while(nextSeg<segCount){
      if(btn.dataset.cancel==='1')break;
      const idx=nextSeg++;
@@ -461,14 +469,14 @@ async function startAppDownload(btn,appId,label,size){
    }
  });
  await Promise.all(lanes);
- if(btn.dataset.cancel==='1'){txt.textContent='已取消。';btn.dataset.busy='';btn.textContent='⬇ 下载 APK';return;}
- if(!ok||parts.some(p=>!p)){txt.textContent='下载失败，点“下载 APK”重试。';btn.dataset.busy='';btn.textContent='⬇ 下载 APK';return;}
+ if(btn.dataset.cancel==='1'||dlCtrl.signal.aborted){txt.textContent='已取消。';btn.dataset.busy='';btn._dlCtrl=null;btn.textContent='⬇ 下载 APK';return;}
+ if(!ok||parts.some(p=>!p)){txt.textContent='下载失败，点“下载 APK”重试。';btn.dataset.busy='';btn._dlCtrl=null;btn.textContent='⬇ 下载 APK';return;}
  const blob=new Blob(parts,{type:'application/vnd.android.package-archive'});
  const url=URL.createObjectURL(blob);const a=document.createElement('a');
  a.href=url;a.download='懒得找了.apk';document.body.appendChild(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),60000);
  bar.style.width='100%';txt.textContent='已下载到系统下载目录，点开“懒得找了.apk”即可安装（需允许安装未知应用）。';
- btn.dataset.busy='';btn.textContent='已下载，去安装';
+ btn.dataset.busy='';btn._dlCtrl=null;btn.textContent='已下载，去安装';
 }
 function doSearch(siteOnly){
  const q=document.getElementById('q').value.trim();
