@@ -402,7 +402,7 @@ function doSearch(siteOnly){
  const q=document.getElementById('q').value.trim();
  const res=document.getElementById('results');
  const cats=document.getElementById('cats');
- if(curEngine!=='site'&&curEngine!=='appteka'){ if(q) window.open(ENGINES.find(e=>e.id===curEngine).url+encodeURIComponent(q),'_blank'); return; }
+ if(curEngine!=='site'&&curEngine!=='appdl'){ if(q) window.open(ENGINES.find(e=>e.id===curEngine).url+encodeURIComponent(q),'_blank'); return; }
  if(!q){res.classList.remove('show');document.getElementById('appDlSec').style.display='none';if(cats)cats.style.display='';return;}
  if(curEngine==='appdl'){
    document.getElementById('resGrid').innerHTML='';document.getElementById('resEmpty').style.display='none';document.getElementById('resCount').textContent='';
@@ -436,12 +436,14 @@ function setEngine(id){
  curEngine=id;
  document.querySelectorAll('#engines button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
  document.getElementById('q').placeholder=id==='site'?'搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…':id==='appdl'?'搜应用名，直接下载 APK…':'搜全网：'+ENGINES.find(e=>e.id===id).name;
+ if(document.getElementById('q').value.trim())doSearch(false);
 }
 document.getElementById('engines').innerHTML=ENGINES.map(e=>`<button data-id="${e.id}">${e.name}</button>`).join('');
 document.querySelectorAll('#engines button').forEach(b=>b.onclick=()=>setEngine(b.dataset.id));
 setEngine('site');
 document.getElementById('go').onclick=()=>doSearch(false);
-document.getElementById('q').addEventListener('input',()=>doSearch(true));
+let appDlInputTimer=null;
+document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl'){clearTimeout(appDlInputTimer);appDlInputTimer=setTimeout(()=>doSearch(false),700);}else doSearch(true);});
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
 const tb=document.getElementById('themeBtn');
