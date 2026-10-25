@@ -33,6 +33,10 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SystemUpdate
+import androidx.compose.runtime.LaunchedEffect
+import com.landezhaole.app.ui.DoodleUpdateDialog
+import kotlinx.coroutines.delay
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -157,6 +161,9 @@ fun HomeScreen(dark: Boolean, onToggleDark: () -> Unit) {
     var query by remember { mutableStateOf("") }
     var engineIdx by remember { mutableStateOf(0) }
     var dockCat by remember { mutableStateOf<String?>(null) }
+    var showUpdate by remember { mutableStateOf(false) }
+    var toastMsg by remember { mutableStateOf("") }
+    var showToast by remember { mutableStateOf(false) }
     val clicks = remember { mutableStateMapOf<String, Int>() }
     val prefs = remember { ctx.getSharedPreferences("landezhaole-clicks", Context.MODE_PRIVATE) }
     // load today's clicks once
@@ -187,6 +194,7 @@ fun HomeScreen(dark: Boolean, onToggleDark: () -> Unit) {
         }
     }
     val listState = rememberLazyListState()
+    LaunchedEffect(showToast) { if (showToast) { delay(1800); showToast = false } }
     val scope = rememberCoroutineScope()
     val total = categories.sumOf { it.cards.size }
     val isSearching = query.isNotBlank() && engineIdx == 0
@@ -221,6 +229,9 @@ fun HomeScreen(dark: Boolean, onToggleDark: () -> Unit) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text("懒得找了", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                         Text("找网站，懒得找了 · $total 个精选站点", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    IconButton(onClick = { showUpdate = true }) {
+                        Icon(Icons.Filled.SystemUpdate, contentDescription = "检查更新")
                     }
                     IconButton(onClick = onToggleDark) {
                         Icon(if (dark) Icons.Filled.LightMode else Icons.Filled.DarkMode, contentDescription = "夜间模式")
@@ -322,6 +333,14 @@ fun HomeScreen(dark: Boolean, onToggleDark: () -> Unit) {
                 }
             }
             item { Spacer(modifier = Modifier.height(72.dp)) }
+        }
+        if (showUpdate) {
+            DoodleUpdateDialog(onClose = { showUpdate = false }, onToast = { toastMsg = it; showToast = true })
+        }
+        if (showToast) {
+            Box(modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp).clip(RoundedCornerShape(16.dp)).background(Color(0xFF2B2B2B)).padding(horizontal = 22.dp, vertical = 10.dp)) {
+                Text(toastMsg, color = Color(0xFFFFFDF8), fontSize = 14.sp)
+            }
         }
         FloatingActionButton(
             onClick = { scope.launch { listState.scrollToItem(0) } },
