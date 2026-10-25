@@ -116,33 +116,37 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .update-dialog button{border:0;background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-.flip-wrap{display:flex;justify-content:center;padding:18px 16px 0}
-.flip-clock{background:#111;border-radius:14px;padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
-.flip-clock .group{display:flex;gap:6px}
-.flip-clock .colon{font-size:54px;color:#eeeeee;line-height:90px;text-shadow:0 2px 4px #000;user-select:none}
-.flip-clock .nums{--digit:'0';box-shadow:0 3px 10px #111;border-top:1px solid #393939;height:90px;width:63px;perspective:1000px;position:relative;border-radius:5px;overflow:hidden}
-.flip-clock .nums:before{content:"";position:absolute;top:50%;left:0;width:100%;height:1px;border-bottom:2px solid black;transform:translateY(-1px);z-index:1000}
-.flip-clock .nums:after{content:var(--digit);position:absolute;bottom:0;left:0;width:100%;height:50%;background:#2a2a2a;border-bottom:1px solid #444444;border-top:1px solid black;border-radius:0 0 5px 5px;box-shadow:inset 0 15px 50px #202020;color:#eeeeee;font-size:65px;line-height:0;text-align:center;text-shadow:0 1px 2px #333;overflow:hidden;z-index:0}
+.flip-clock{display:flex;align-items:center;justify-content:center;gap:4px;flex:1}
+.flip-clock .group{display:flex;gap:2px}
+.flip-clock .colon{font-size:20px;color:#eeeeee;line-height:28px;text-shadow:0 1px 2px #000;user-select:none}
+.flip-clock .nums{--digit:'0';box-shadow:0 2px 6px rgba(0,0,0,.25);border-top:1px solid #393939;height:28px;width:20px;perspective:1000px;position:relative;border-radius:3px;overflow:hidden}
+.flip-clock .nums:before{content:"";position:absolute;top:50%;left:0;width:100%;height:1px;border-bottom:1px solid black;transform:translateY(-1px);z-index:1000}
+.flip-clock .nums:after{content:var(--digit);position:absolute;bottom:0;left:0;width:100%;height:50%;background:#2a2a2a;border-bottom:1px solid #444444;border-top:1px solid black;border-radius:0 0 3px 3px;box-shadow:inset 0 8px 20px #202020;color:#eeeeee;font-size:22px;line-height:0;text-align:center;text-shadow:0 1px 2px #333;overflow:hidden;z-index:0}
 .flip-clock .num{position:absolute;top:0;left:0;width:100%;height:100%;transform-style:preserve-3d}
-.flip-clock .num:before,.flip-clock .num:after{position:absolute;left:0;width:100%;height:50%;backface-visibility:hidden;color:#eeeeee;font-size:65px;text-align:center;text-shadow:0 1px 2px #333;overflow:hidden}
-.flip-clock .num:before{content:attr(data-num);top:0;background:#181818;border-radius:5px 5px 0 0;box-shadow:inset 0 15px 50px #111111;line-height:1.38;z-index:1}
-.flip-clock .num:after{content:attr(data-num-next);top:0;background:#2a2a2a;border-bottom:1px solid #444444;border-radius:0 0 5px 5px;box-shadow:inset 0 15px 50px #202020;line-height:0;transform:rotateX(180deg)}
+.flip-clock .num:before,.flip-clock .num:after{position:absolute;left:0;width:100%;height:50%;backface-visibility:hidden;color:#eeeeee;font-size:22px;text-align:center;text-shadow:0 1px 2px #333;overflow:hidden}
+.flip-clock .num:before{content:attr(data-num);top:0;background:#181818;border-radius:3px 3px 0 0;box-shadow:inset 0 8px 20px #111111;line-height:1.38;z-index:1}
+.flip-clock .num:after{content:attr(data-num-next);top:0;background:#2a2a2a;border-bottom:1px solid #444444;border-radius:0 0 3px 3px;box-shadow:inset 0 8px 20px #202020;line-height:0;transform:rotateX(180deg)}
 .flip-clock .num.current{z-index:0}
 .flip-clock .num.flip{animation:flipClock .6s ease-in forwards;z-index:50}
 @keyframes flipClock{0%{transform:rotateX(0);z-index:50}100%{transform:rotateX(-180deg);z-index:1}}
-@media(max-width:640px){.flip-clock{padding:10px 12px;gap:8px}.flip-clock .group{gap:4px}.flip-clock .nums{height:64px;width:45px}.flip-clock .nums:after,.flip-clock .num:before,.flip-clock .num:after{font-size:46px}.flip-clock .colon{font-size:38px;line-height:64px}}
+@media(max-width:640px){.flip-clock{display:none}}
 </style>
 </head>
 <body>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 <div class="topbar"><div class="wrap">
 <span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
+<div class="flip-clock" id="flipClock">
+<div class="group"><div class="nums" id="h1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="h2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
+<div class="colon">:</div>
+<div class="group"><div class="nums" id="m1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="m2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
+<div class="colon">:</div>
+<div class="group"><div class="nums" id="s1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="s2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
+</div>
 <span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <button class="theme-btn" id="themeBtn">🌙 夜间模式</button></span>
 </div></div>
 
 
-<div class="flip-wrap"><div class="flip-clock" id="flipClock">
-<div class="group"><div class="nums" id="h1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="h2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
 <div class="colon">:</div>
 <div class="group"><div class="nums" id="m1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="m2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
 <div class="colon">:</div>
