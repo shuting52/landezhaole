@@ -181,8 +181,6 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <a onclick="showUtilQQ()"><span class="uicon">🐧</span>最新Q群</a>
 </nav>
 <div class="logo"><img class="site-icon" src="icon.png" alt="懒得找了图标"><span class="logo-text">懒得找了.</span></div>
-<div class="tagline">找网站，懒得找了 —— 19 个分类、2320 个精选站点，一搜即达</div>
-<div class="stat" id="statLine">正在加载资源库…</div>
 <div class="searchbox">
 <div class="engines" id="engines"></div>
 <div class="searchrow"><input id="q" placeholder="搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…" autocomplete="off"><button id="go">搜索</button></div>
@@ -256,7 +254,6 @@ function fillGrid(section,cat,sub){
 function render(){
  const box=document.getElementById('cats');
  const total=DATA.cats.reduce((n,c)=>n+c.cards.length,0);
- document.getElementById('statLine').textContent=`已收录 ${DATA.cats.length} 大分类 · ${total} 个精选站点`;
  document.getElementById('quickDock').innerHTML=DATA.cats.slice(0,10).map(c=>`<a class="qapp" href="#cat-${c.id}" data-label="${esc(c.name)}" aria-label="${esc(c.name)}"><div class="qicon" style="background:${avColor(c.name)}">${esc(c.name.trim()[0])}</div></a>`).join('');
  bindQuickDock();
  box.innerHTML=DATA.cats.map(renderCat).join('');
