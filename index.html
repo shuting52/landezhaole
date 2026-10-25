@@ -71,7 +71,7 @@ section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;p
 .tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 15px;font-size:12px;cursor:pointer}
 .tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
-.card-wrap{position:relative}
+.card-wrap{position:relative}.apk-btn{display:block;text-align:center;background:var(--green);color:#fff;border-radius:10px;padding:8px;margin-top:6px;font-weight:700;font-size:13px}.apk-btn:hover{opacity:.9}
 .click-tip{position:absolute;top:-30px;left:50%;transform:translateX(-50%) translateY(4px);background:#1f2937;color:#fff;font-size:12px;padding:5px 12px;border-radius:999px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:20;box-shadow:0 6px 16px rgba(0,0,0,.25)}
 .click-tip em{color:#ef4444;font-style:normal;font-weight:800;margin:0 2px}
 .card-wrap:hover .click-tip{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -188,13 +188,13 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div class="searchbox">
 <div class="engines" id="engines"></div>
 <div class="searchrow"><input id="q" placeholder="搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…" autocomplete="off"><button id="go">搜索</button></div>
-<div class="hint">站内搜索按软件逻辑：标题 / 简介 / 标签匹配，NEW 置顶 · 搜索时只显示结果列表，点“清空搜索”回到分类</div>
+<div class="hint">站内搜索按软件逻辑：标题 / 简介 / 标签匹配，NEW 置顶 · 搜索结果下方会同时列出应用下载（点“下载 APK”直接下载，不跳走），点“清空搜索”回到分类</div>
 </div>
 <div class="quick-dock-wrap" id="quickWrap"><div class="quick-tip" id="quickTip"></div><nav class="quick-dock" id="quickDock"></nav></div>
 </div></header>
 
 <main class="wrap">
-<div id="results"><section class="cat"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">站内搜索结果</span><span class="cat-count" id="resCount"></span><button class="theme-btn" id="clearSearchBtn" style="margin-left:auto" onclick="clearSearch()">清空搜索</button></div><div class="grid" id="resGrid"></div><div class="empty" id="resEmpty" style="display:none">没找到相关资源，换个关键词试试</div></section></div>
+<div id="results"><section class="cat"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">站内搜索结果</span><span class="cat-count" id="resCount"></span><button class="theme-btn" id="clearSearchBtn" style="margin-left:auto" onclick="clearSearch()">清空搜索</button></div><div class="grid" id="resGrid"></div><div class="empty" id="resEmpty" style="display:none">没找到相关资源，换个关键词试试</div></section><section class="cat" id="appDlSec" style="display:none"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">应用下载</span><span class="cat-count" id="appDlCount"></span></div><div class="cat-desc" id="appDlStatus"></div><div class="grid" id="appDlGrid"></div></section></div>
 <div id="cats"></div>
 </main>
 
@@ -215,7 +215,7 @@ const ENGINES=[
  {id:'alipan',name:'阿里云盘',url:'https://v2pan.com/search?q='},
  {id:'quarkpan',name:'夸克网盘',url:'https://www.kkso.cc/search?kw='},
  {id:'google',name:'谷歌',url:'https://www.google.com/search?q='},
- {id:'appteka',name:'Appteka',url:'https://appteka.store/search?q='},
+ {id:'appdl',name:'应用下载',url:'https://appteka.store/search?q='},
 ];
 // AI API 分类：卡片的厂商 id 映射到官方 / 聚合 / 云服务三个子 Tab
 const AI_API_MAP={
@@ -369,14 +369,50 @@ function checkSiteUpdate(){
    if(seen!==data.version)setTimeout(function(){showUpdateModal(data,true);},5000);
  }).catch(function(){});
 }
-function doSearch(){
+let appDlSeq=0;
+function fmtSize(b){if(!b)return '';return (b/1048576).toFixed(1)+' MB';}
+function appDlCard(a){
+ const icon=a.icon||'';
+ const av=`<div class="avatar" style="background:${avColor(a.label||'A')}">${icon?`<img src="${esc(icon)}" loading="lazy" alt="">`:''}</div>`;
+ const desc=[a.package,a.ver_name?('v'+a.ver_name):'',fmtSize(a.size),a.downloads!=null?(a.downloads+' 次下载'):'' ].filter(Boolean).join(' · ');
+ return `<div class="card-wrap"><a class="card" href="https://appteka.store/apps/${esc(a.app_id)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(a.label)}</span></div><div class="desc">${esc(desc)}</div></div></a><a class="apk-btn" href="https://appteka.store/apps/${esc(a.app_id)}/download">⬇ 下载 APK</a></div>`;
+}
+async function renderAppDl(q){
+ const seq=++appDlSeq,sec=document.getElementById('appDlSec'),grid=document.getElementById('appDlGrid'),st=document.getElementById('appDlStatus'),cnt=document.getElementById('appDlCount');
+ sec.style.display='';grid.innerHTML='';cnt.textContent='';st.textContent='正在搜应用 “'+q+'”…';
+ const api='https://appteka.store/api/1/app/search?query='+encodeURIComponent(q)+'&locale=en';
+ const proxies=['https://api.allorigins.win/raw?url='+encodeURIComponent(api),'https://corsproxy.io/?url='+encodeURIComponent(api)];
+ let entries=null;
+ for(const u of proxies){
+   try{const r=await fetch(u);if(!r.ok)continue;const j=await r.json();if(j&&j.status===200&&j.result&&Array.isArray(j.result.entries)){entries=j.result.entries;break;}}catch(e){}
+   if(seq!==appDlSeq)return;
+ }
+ if(seq!==appDlSeq)return;
+ if(!entries){
+   st.textContent='应用搜索暂时不可用，换个关键词或稍后再试。';
+   return;
+ }
+ entries.sort((a,b)=>(b.downloads||0)-(a.downloads||0));
+ const top=entries.slice(0,12);
+ cnt.textContent='共 '+entries.length+' 个应用，展示下载量最高的 12 个';
+ st.textContent=top.length?'点“下载 APK”直接下载安装包，不用离开本站。':'没找到同名应用。';
+ grid.innerHTML=top.map(appDlCard).join('');
+}
+function doSearch(siteOnly){
  const q=document.getElementById('q').value.trim();
  const res=document.getElementById('results');
  const cats=document.getElementById('cats');
- if(curEngine!=='site'){ if(q) window.open(ENGINES.find(e=>e.id===curEngine).url+encodeURIComponent(q),'_blank'); return; }
- if(!q){res.classList.remove('show');if(cats)cats.style.display='';return;}
+ if(curEngine!=='site'&&curEngine!=='appteka'){ if(q) window.open(ENGINES.find(e=>e.id===curEngine).url+encodeURIComponent(q),'_blank'); return; }
+ if(!q){res.classList.remove('show');document.getElementById('appDlSec').style.display='none';if(cats)cats.style.display='';return;}
+ if(curEngine==='appdl'){
+   document.getElementById('resGrid').innerHTML='';document.getElementById('resEmpty').style.display='none';document.getElementById('resCount').textContent='';
+   document.querySelector('#results section.cat').style.display='none';
+   if(cats)cats.style.display='none';res.classList.add('show');
+   if(!siteOnly)renderAppDl(q);
+   return;
+ }
+ document.querySelector('#results section.cat').style.display='';
  const low=q.toLowerCase();let list=[];
- // 软件逻辑：标题 / 简介 / 标签匹配（另加网址与分类名作补充），NEW 置顶、其次 HOT
  DATA.cats.forEach(cat=>cat.cards.forEach(c=>{
    const hay=(c.t+' '+c.d+' '+(c.b||'')+' '+c.u+' '+cat.name).toLowerCase();
    if(hay.includes(low))list.push(c);
@@ -388,23 +424,25 @@ function doSearch(){
  document.getElementById('resEmpty').style.display=list.length?'none':'block';
  if(cats)cats.style.display='none';
  res.classList.add('show');
+ if(siteOnly)document.getElementById('appDlSec').style.display='none';
+ else renderAppDl(q);
 }
 function clearSearch(){
- const q=document.getElementById('q');if(q)q.value='';
+ const q=document.getElementById('q');if(q)q.value='';document.getElementById('appDlSec').style.display='none';
  const res=document.getElementById('results');res.classList.remove('show');
  const cats=document.getElementById('cats');if(cats)cats.style.display='';
 }
 function setEngine(id){
  curEngine=id;
  document.querySelectorAll('#engines button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
- document.getElementById('q').placeholder=id==='site'?'搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…':id==='appteka'?'搜应用名，在 Appteka 直接下载 APK…':'搜全网：'+ENGINES.find(e=>e.id===id).name;
+ document.getElementById('q').placeholder=id==='site'?'搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…':id==='appdl'?'搜应用名，直接下载 APK…':'搜全网：'+ENGINES.find(e=>e.id===id).name;
 }
 document.getElementById('engines').innerHTML=ENGINES.map(e=>`<button data-id="${e.id}">${e.name}</button>`).join('');
 document.querySelectorAll('#engines button').forEach(b=>b.onclick=()=>setEngine(b.dataset.id));
 setEngine('site');
-document.getElementById('go').onclick=doSearch;
-document.getElementById('q').addEventListener('input',doSearch);
-document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+document.getElementById('go').onclick=()=>doSearch(false);
+document.getElementById('q').addEventListener('input',()=>doSearch(true));
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
 const tb=document.getElementById('themeBtn');
 const saved=localStorage.getItem('landezhaole-theme');
