@@ -61,7 +61,7 @@ button{font-family:inherit}
 .pt{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle,#fff,#7dd3fc);pointer-events:none;animation:rise .9s ease-out forwards;z-index:3}
 @keyframes rise{to{opacity:0;transform:translateY(-46px) scale(.3)}}
 @media(max-width:640px){.quick-dock{gap:6px;padding:24px 12px 10px;border-radius:18px;overflow-x:auto}.qicon{width:34px;height:34px;font-size:16px;border-radius:10px}}
-section.cat{margin:10px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
+section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
 .cat-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cat-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 8px var(--blue);animation:pulseDot 2.4s ease-in-out infinite}
 .cat-title{font-size:20px;font-weight:800;color:var(--red)}
@@ -263,14 +263,29 @@ function render(){
  box.innerHTML=DATA.cats.map(renderCat).join('');
  showNewSiteToasts();
  checkSiteUpdate();
- box.querySelectorAll('section.cat').forEach((sec,i)=>{
+ const secs=box.querySelectorAll('section.cat');
+ secs.forEach((sec,i)=>{
    const cat=DATA.cats[i];
-   fillGrid(sec,cat,'all');
    sec.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
      sec.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-     fillGrid(sec,cat,b.dataset.sub);
+     sec.dataset.filled='1';fillGrid(sec,cat,b.dataset.sub);
    });
  });
+ // 懒加载：首屏只渲染第 1 个分类，其余分类滑到附近（400px 内）才渲染卡片与拉图标，避免一次建 2436 张卡 + 2436 个 favicon 请求卡死首屏
+ if(secs.length)fillGrid(secs[0],DATA.cats[0],'all');
+ if('IntersectionObserver' in window){
+   const io=new IntersectionObserver((es)=>{
+     es.forEach(e=>{
+       if(!e.isIntersecting)return;
+       const sec=e.target,idx=Array.prototype.indexOf.call(secs,sec);
+       if(sec.dataset.filled!=='1'){sec.dataset.filled='1';fillGrid(sec,DATA.cats[idx],'all');}
+       io.unobserve(sec);
+     });
+   },{rootMargin:'400px 0px'});
+   secs.forEach((sec,i)=>{if(i>0)io.observe(sec);});
+ } else {
+   secs.forEach((sec,i)=>{if(i>0)fillGrid(sec,DATA.cats[i],'all');});
+ }
 }
 function bindQuickDock(){
  const dock=document.getElementById('quickDock'),tip=document.getElementById('quickTip'),wrap=document.getElementById('quickWrap');
