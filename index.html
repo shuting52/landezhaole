@@ -72,6 +72,9 @@ section.cat{margin:22px 0;padding:22px 24px;background:var(--card);border:1px so
 .tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
 .card-wrap{position:relative}
+.click-tip{position:absolute;top:-30px;left:50%;transform:translateX(-50%) translateY(4px);background:#1f2937;color:#fff;font-size:12px;padding:5px 12px;border-radius:999px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:20;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.click-tip em{color:#ef4444;font-style:normal;font-weight:800;margin:0 2px}
+.card-wrap:hover .click-tip{opacity:1;transform:translateX(-50%) translateY(0)}
 .card{position:relative;overflow:hidden;display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px;min-width:0;height:100%;box-sizing:border-box;background:var(--bg);border:1px solid var(--line);transition:transform .22s,box-shadow .22s,border-color .22s}
 .card::after{content:"";position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);transition:left .5s ease;pointer-events:none}
 .card-wrap:hover .card{transform:translateY(-4px);border-color:var(--green);box-shadow:0 12px 26px rgba(22,163,74,.18)}
@@ -180,7 +183,7 @@ function cardHTML(c){
  let corner='';
  if(c.b){const cls=/HOT/i.test(c.b)?'hot':/NEW/i.test(c.b)?'new':'rec';corner=`<span class="corner corner-tag ${cls}">${esc(c.b)}</span>`;}
  else corner=`<span class="corner corner-tag">精选</span>`;
- return `<div class="card-wrap"><a class="card" href="${esc(c.u)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(c.t)}</span></div><div class="desc">${esc(c.d)}</div></div></a>${corner}</div>`;
+ return `<div class="card-wrap"><a class="card" href="${esc(c.u)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(c.t)}</span></div><div class="desc">${esc(c.d)}</div></div></a>${corner}<span class="click-tip">👁 今日点击 <em>0</em> 次</span></div>`;
 }
 function matchSub(cat,card,sub){
  if(sub==='all') return true;
@@ -338,6 +341,17 @@ tb.onclick=()=>{const h=document.documentElement;const dark=h.dataset.theme!=='d
 const topbtn=document.getElementById('topbtn');
 window.addEventListener('scroll',()=>topbtn.classList.toggle('show',window.scrollY>600));
 topbtn.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+function todayClickKey(){return 'landezhaole-clicks-'+new Date().toLocaleDateString('en-CA');}
+function getTodayClicks(url){try{return (JSON.parse(localStorage.getItem(todayClickKey())||'{}')[url]||0);}catch(e){return 0;}}
+function recordTodayClick(url){try{const k=todayClickKey();const d=JSON.parse(localStorage.getItem(k)||'{}');d[url]=(d[url]||0)+1;localStorage.setItem(k,JSON.stringify(d));}catch(e){}}
+document.addEventListener('mouseover',function(e){
+ const wrap=e.target.closest?e.target.closest('.card-wrap'):null;if(!wrap)return;
+ const tip=wrap.querySelector('.click-tip');const link=wrap.querySelector('.card');
+ if(tip&&link)tip.querySelector('em').textContent=getTodayClicks(link.href);
+});
+document.addEventListener('click',function(e){
+ const link=e.target.closest?e.target.closest('.card'):null;if(link)recordTodayClick(link.href);
+});
 fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{document.getElementById('cats').innerHTML='<p style="text-align:center;color:var(--muted);padding:40px">数据加载失败，请刷新再试。</p>';});
 </script>
 <div class="toast-notify" id="toastNotify"><div class="tic" id="toastIc">新</div><div><div class="tt" id="toastTt"></div><div class="bd" id="toastBd"></div></div><button class="toast-close" id="toastClose" aria-label="关闭提醒">×</button></div>
