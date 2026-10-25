@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>懒得找了 · 免费资源导航</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="description" content="懒得找了官网与网页版导航站：19 个分类、2320 个精选站点，一搜即达。另有 Android App 可下载。">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#16a34a;--green-d:#15803d;--red:#dc2626;--blue:#2563eb;--orange:#f59e0b}
+[data-theme="dark"]{--bg:#0b1220;--card:#1f2937;--text:#f3f4f6;--muted:#9ca3af;--line:#374151;--green:#34d399;--green-d:#10b981;--red:#f87171;--blue:#60a5fa}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.topbar{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;height:38px;gap:12px}
+.topbar b{color:var(--green)}
+.topbar a.dl{color:var(--green);font-weight:700}
+button{font-family:inherit}
+.theme-btn{cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:20px;padding:3px 14px;font-size:12px}
+.header{padding:36px 0 8px;text-align:center;animation:fadeUp .7s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(-4deg)}}
+@keyframes shineText{to{background-position:220% center}}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
+@keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(90px,60px) scale(1.15)}}
+@keyframes drift2{from{transform:translate(0,0) scale(1.1)}to{transform:translate(-70px,90px) scale(.95)}}
+.blob{position:fixed;border-radius:50%;filter:blur(90px);z-index:-1;opacity:.45;pointer-events:none}
+.b1{width:520px;height:520px;left:-140px;top:-120px;background:#a7f3d0;animation:drift1 22s ease-in-out infinite alternate}
+.b2{width:460px;height:460px;right:-120px;top:22%;background:#bfdbfe;animation:drift2 26s ease-in-out infinite alternate}
+.b3{width:420px;height:420px;left:30%;bottom:-160px;background:#fde68a;animation:drift1 30s ease-in-out infinite alternate-reverse}
+[data-theme="dark"] .b1{background:#064e3b}[data-theme="dark"] .b2{background:#1e3a8a}[data-theme="dark"] .b3{background:#78350f}
+.logo{font-size:46px;font-weight:900;letter-spacing:4px;display:flex;align-items:center;justify-content:center;gap:14px}
+.site-icon{width:56px;height:56px;border-radius:16px;box-shadow:0 6px 18px rgba(22,163,74,.3);animation:floaty 5s ease-in-out infinite;transition:transform .3s}
+.site-icon:hover{transform:scale(1.1) rotate(-8deg);animation-play-state:paused}
+.logo-text{background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shineText 6s linear infinite}
+.logo span{color:var(--green)}
+.tagline{color:var(--muted);margin-top:6px}
+.stat{display:inline-block;margin-top:12px;background:var(--card);border:1px solid var(--line);color:var(--green-d);border-radius:20px;padding:4px 18px;font-size:12px;font-weight:700}
+.searchbox{max-width:680px;margin:18px auto 0}
+.engines{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.engines button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 16px;font-size:12px;cursor:pointer}
+.engines button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
+.searchrow{display:flex;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.searchrow{transition:box-shadow .25s,transform .25s}
+.searchrow:hover{transform:translateY(-2px)}
+.searchrow:focus-within{box-shadow:0 0 0 3px rgba(22,163,74,.25)}
+.searchrow input{flex:1;border:0;outline:none;padding:14px 20px;font-size:16px;background:transparent;color:var(--text)}
+.searchrow button{border:0;background:var(--green);color:#fff;font-size:16px;font-weight:700;padding:0 36px;cursor:pointer}
+.hint{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
+.quick-dock-wrap{margin:22px 0 6px;display:flex;flex-direction:column;align-items:center;position:relative}
+.quick-tip{margin-bottom:10px;font-size:12px;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 12px;opacity:0;transform:translateY(6px);transition:opacity .18s,transform .18s;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.quick-tip.show{opacity:1;transform:translateY(0)}
+.quick-dock{position:relative;display:flex;align-items:flex-end;gap:10px;padding:30px 16px 14px;max-width:100%;overflow:visible;scrollbar-width:none;background:transparent;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+.quick-dock::-webkit-scrollbar{display:none}
+[data-theme="dark"] .quick-dock{background:transparent;border:0;box-shadow:none}
+.qapp{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;cursor:pointer;transform-origin:bottom center;will-change:transform;flex:none;transition:transform .12s ease-out}
+.qicon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.25)}
+.pt{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle,#fff,#7dd3fc);pointer-events:none;animation:rise .9s ease-out forwards;z-index:3}
+@keyframes rise{to{opacity:0;transform:translateY(-46px) scale(.3)}}
+@media(max-width:640px){.quick-dock{gap:6px;padding:24px 12px 10px;border-radius:18px;overflow-x:auto}.qicon{width:34px;height:34px;font-size:16px;border-radius:10px}}
+section.cat{margin:22px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
+.cat-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cat-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 8px var(--blue);animation:pulseDot 2.4s ease-in-out infinite}
+.cat-title{font-size:20px;font-weight:800;color:var(--red)}
+.cat-count{font-size:12px;color:var(--muted);background:rgba(127,127,127,.12);border-radius:12px;padding:1px 10px}
+.cat-desc{color:var(--muted);font-size:12px;margin:2px 0 12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 15px;font-size:12px;cursor:pointer}
+.tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
+.card-wrap{position:relative}
+.card{position:relative;overflow:hidden;display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px;min-width:0;height:100%;box-sizing:border-box;background:var(--bg);border:1px solid var(--line);transition:transform .22s,box-shadow .22s,border-color .22s}
+.card::after{content:"";position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);transition:left .5s ease;pointer-events:none}
+.card-wrap:hover .card{transform:translateY(-4px);border-color:var(--green);box-shadow:0 12px 26px rgba(22,163,74,.18)}
+.card-wrap:hover .card::after{left:130%}
+@keyframes cornerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes rainbowShift{to{background-position:200% center}}
+@keyframes dotPing{0%{box-shadow:0 0 0 0 rgba(59,130,246,.55)}70%{box-shadow:0 0 0 7px rgba(59,130,246,0)}100%{box-shadow:0 0 0 0 rgba(59,130,246,0)}}
+.corner{position:absolute;z-index:2;pointer-events:none}
+.corner-tag{top:-8px;right:8px;font-size:10px;font-weight:800;line-height:1;padding:3px 8px;border-radius:999px;color:#fff;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7);background-size:100% 100%;animation:cornerPulse 2s ease-in-out infinite}
+.corner-tag.hot,.corner-tag.new,.corner-tag.rec{background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7);background-size:100% 100%}
+.avatar{position:relative;width:44px;height:44px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;overflow:hidden;font-size:16px}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px;box-sizing:border-box;z-index:1}
+.avatar svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;z-index:0}
+.info{min-width:0;flex:1}
+.name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;min-width:0}
+.ntext{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.badge{font-size:10px;font-weight:800;border-radius:8px;padding:1px 6px;color:#fff;flex:none}
+.badge.hot{background:var(--orange)} .badge.new{background:var(--red)} .badge.rec{background:var(--green)}
+.desc{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#results{display:none} #results.show{display:block}
+.empty{text-align:center;color:var(--muted);padding:40px}
+#topbtn{position:fixed;right:22px;bottom:26px;width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;border:0;font-size:20px;cursor:pointer;box-shadow:0 8px 22px rgba(22,163,74,.35);display:none;z-index:99}
+#topbtn.show{display:block}
+footer{margin-top:36px;padding:28px 0 44px;text-align:center;color:var(--muted);font-size:12px}
+footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px}
+@media(max-width:640px){.logo{font-size:34px}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.card .desc{display:none}section.cat{padding:18px 14px}}
+.toast-notify{position:fixed;top:56px;right:16px;width:340px;max-width:calc(100vw - 32px);background:var(--card);color:var(--text);border:1px solid rgba(94,234,212,.45);border-left:4px solid #5eead4;border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 14px 34px rgba(0,0,0,.25);visibility:hidden;will-change:transform,opacity;z-index:100;cursor:pointer}
+.toast-notify .tic{flex:0 0 40px;width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#14b8a6,#0ea5e9);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#04211d}
+.toast-notify .tt{font-size:14px;font-weight:700}
+.toast-notify .bd{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.toast-close{position:absolute;top:4px;right:8px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:2px}
+.update-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.update-overlay.show{display:flex}
+.update-dialog{background:var(--card);color:var(--text);border-radius:18px;max-width:480px;width:100%;max-height:80vh;overflow:auto;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.update-dialog h2{font-size:20px;margin:0 0 4px}
+.update-dialog .ver{font-size:13px;color:var(--muted);margin-bottom:14px}
+.update-dialog ul{margin:0;padding-left:20px;font-size:14px;line-height:1.8}
+.update-dialog .actions{margin-top:18px;text-align:right}
+.update-dialog button{border:0;background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="topbar"><div class="wrap">
+<span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
+<span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <button class="theme-btn" id="themeBtn">🌙 夜间模式</button></span>
+</div></div>
+
+<header class="header"><div class="wrap">
+<div class="logo"><img class="site-icon" src="icon.png" alt="懒得找了图标"><span class="logo-text">懒得找了.</span></div>
+<div class="tagline">找网站，懒得找了 —— 19 个分类、2320 个精选站点，一搜即达</div>
+<div class="stat" id="statLine">正在加载资源库…</div>
+<div class="searchbox">
+<div class="engines" id="engines"></div>
+<div class="searchrow"><input id="q" placeholder="搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…" autocomplete="off"><button id="go">搜索</button></div>
+<div class="hint">站内搜索按软件逻辑：标题 / 简介 / 标签匹配，NEW 置顶 · 搜索时只显示结果列表，点“清空搜索”回到分类</div>
+</div>
+<div class="quick-dock-wrap" id="quickWrap"><div class="quick-tip" id="quickTip"></div><nav class="quick-dock" id="quickDock"></nav></div>
+</div></header>
+
+<main class="wrap">
+<div id="results"><section class="cat"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">站内搜索结果</span><span class="cat-count" id="resCount"></span><button class="theme-btn" id="clearSearchBtn" style="margin-left:auto" onclick="clearSearch()">清空搜索</button></div><div class="grid" id="resGrid"></div><div class="empty" id="resEmpty" style="display:none">没找到相关资源，换个关键词试试</div></section></div>
+<div id="cats"></div>
+</main>
+
+<footer><div class="wrap">
+<div class="fbrand">懒得找了</div>
+<div>本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈</div>
+<div style="margin-top:6px">数据：云端 1767 条 + 本地内置 553 条，合并去重共 2320 条 · © 2026 懒得找了 · <a href="javascript:void(0)" onclick="if(window.siteVersionData)showUpdateModal(window.siteVersionData,false)" style="color:var(--green)">查看更新日志</a></div>
+</div></footer>
+<button id="topbtn" title="回到顶部">↑</button>
+
+<script>
+const ENGINES=[
+ {id:'site',name:'站内',url:null},
+ {id:'bing',name:'必应',url:'https://cn.bing.com/search?q='},
+ {id:'baidu',name:'百度',url:'https://www.baidu.com/s?wd='},
+ {id:'bilibili',name:'B站',url:'https://search.bilibili.com/all?keyword='},
+ {id:'baidupan',name:'百度网盘',url:'https://wangpan.xin/search?keyword='},
+ {id:'alipan',name:'阿里云盘',url:'https://v2pan.com/search?q='},
+ {id:'quarkpan',name:'夸克网盘',url:'https://www.kkso.cc/search?kw='},
+ {id:'google',name:'谷歌',url:'https://www.google.com/search?q='},
+];
+// AI API 分类：卡片的厂商 id 映射到官方 / 聚合 / 云服务三个子 Tab
+const AI_API_MAP={
+ official:['openai','google','anthropic','aliyun','baidu','tencent','volc','zhipu','moonshot','deepseek','minimax','step','xfyun','huawei','baichuan','yi','kunlun','jimeng','github','perplexity'],
+ aggregate:['openrouter','groq','together','replicate','huggingface','api2d','gptapi','closeai','pandora','oneapi','newapi'],
+ cloud:['cloudflare','azure','aws','gcp'],
+};
+let DATA=null,curEngine='site';
+const AV_COLORS=['#16a34a','#0ea5e9','#8b5cf6','#f59e0b','#ef4444','#ec4899','#14b8e6','#f97316'];
+function avColor(t){let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;return AV_COLORS[h%AV_COLORS.length];}
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return '';}}
+function iconNext(img){
+ const host=img.dataset.host;const step=parseInt(img.dataset.step||'0',10);
+ const next=['https://icons.duckduckgo.com/ip3/'+host+'.ico','https://'+host+'/favicon.ico'];
+ if(step<next.length){img.dataset.step=step+1;img.src=next[step];}
+ else img.remove();
+}
+function iconCheck(img){if(img.naturalWidth&&img.naturalWidth<32)iconNext(img);}
+function cardHTML(c){
+ const host=hostOf(c.u);
+ const av=`<div class="avatar" style="background:${avColor(c.t)}"><img src="https://www.google.com/s2/favicons?domain=${esc(host)}&sz=128" loading="lazy" alt="" data-host="${esc(host)}" data-step="0" onerror="iconNext(this)" onload="iconCheck(this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>`;
+ let corner='';
+ if(c.b){const cls=/HOT/i.test(c.b)?'hot':/NEW/i.test(c.b)?'new':'rec';corner=`<span class="corner corner-tag ${cls}">${esc(c.b)}</span>`;}
+ else corner=`<span class="corner corner-tag">精选</span>`;
+ return `<div class="card-wrap"><a class="card" href="${esc(c.u)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(c.t)}</span></div><div class="desc">${esc(c.d)}</div></div></a>${corner}</div>`;
+}
+function matchSub(cat,card,sub){
+ if(sub==='all') return true;
+ if(cat.id==='ai_api') return (AI_API_MAP[sub]||[]).includes(card.s);
+ return card.s===sub;
+}
+function renderCat(cat){
+ const tabs=cat.subs.map(s=>`<button data-sub="${s.id}"${s.id==='all'?' class="on"':''}>${esc(s.name)}</button>`).join('');
+ return `<section class="cat" id="cat-${cat.id}"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">${esc(cat.name)}</span><span class="cat-count">${cat.cards.length} 个站点</span></div>${cat.desc?`<div class="cat-desc">${esc(cat.desc)}</div>`:''}<div class="tabs">${tabs}</div><div class="grid"></div></section>`;
+}
+function fillGrid(section,cat,sub){
+ const list=cat.cards.filter(c=>matchSub(cat,c,sub));
+ section.querySelector('.grid').innerHTML=list.map(cardHTML).join('');
+}
+function render(){
+ const box=document.getElementById('cats');
+ const total=DATA.cats.reduce((n,c)=>n+c.cards.length,0);
+ document.getElementById('statLine').textContent=`已收录 ${DATA.cats.length} 大分类 · ${total} 个精选站点`;
+ document.getElementById('quickDock').innerHTML=DATA.cats.slice(0,10).map(c=>`<a class="qapp" href="#cat-${c.id}" data-label="${esc(c.name)}" aria-label="${esc(c.name)}"><div class="qicon" style="background:${avColor(c.name)}">${esc(c.name.trim()[0])}</div></a>`).join('');
+ bindQuickDock();
+ box.innerHTML=DATA.cats.map(renderCat).join('');
+ showNewSiteToasts();
+ checkSiteUpdate();
+ box.querySelectorAll('section.cat').forEach((sec,i)=>{
+   const cat=DATA.cats[i];
+   fillGrid(sec,cat,'all');
+   sec.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+     sec.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+     fillGrid(sec,cat,b.dataset.sub);
+   });
+ });
+}
+function bindQuickDock(){
+ const dock=document.getElementById('quickDock'),tip=document.getElementById('quickTip'),wrap=document.getElementById('quickWrap');
+ const apps=Array.prototype.slice.call(dock.querySelectorAll('.qapp'));
+ let SIGMA=62;const MAX=1.5;
+ function gauss(d){return Math.exp(-(d*d)/(2*SIGMA*SIGMA));}
+ let rafPending=false,lastMx=0;
+ function renderDockFrame(){
+   rafPending=false;
+   const dockLeft=dock.getBoundingClientRect().left;
+   apps.forEach(function(a){
+     const cx=dockLeft+a.offsetLeft+a.offsetWidth/2,d=Math.abs(lastMx-cx);
+     const s=1+(MAX-1)*gauss(d),lift=(s-1)*34;
+     a.style.transform='scale('+s.toFixed(3)+') translateY('+(-lift).toFixed(1)+'px)';
+   });
+ }
+ function renderDock(mx){lastMx=mx;if(!rafPending){rafPending=true;requestAnimationFrame(renderDockFrame);}}
+ function resetDock(){apps.forEach(function(a){a.style.transform='scale(1) translateY(0)';});tip.classList.remove('show');}
+ let lastPt=0;
+ function trailPt(x,y){
+   const now=performance.now();if(now-lastPt<60)return;lastPt=now;
+   const pts=wrap.querySelectorAll('.pt');if(pts.length>=24)pts[0].remove();
+   const r=wrap.getBoundingClientRect();const s=document.createElement('span');s.className='pt';s.style.left=(x-r.left-4)+'px';s.style.top=(y-r.top-4)+'px';wrap.appendChild(s);setTimeout(function(){s.remove();},950);
+ }
+ dock.addEventListener('mousemove',function(e){renderDock(e.clientX);trailPt(e.clientX,e.clientY);});
+ dock.addEventListener('mouseleave',resetDock);
+ dock.addEventListener('touchmove',function(e){if(e.touches.length){renderDock(e.touches[0].clientX);}}, {passive:true});
+ dock.addEventListener('touchend',resetDock);
+ apps.forEach(function(a){a.addEventListener('mouseenter',function(){tip.textContent=a.getAttribute('data-label');tip.classList.add('show');});a.addEventListener('click',function(){clearSearch();});});
+ function adapt(){if(apps.length>1){const r0=apps[0].getBoundingClientRect(),r1=apps[1].getBoundingClientRect();SIGMA=Math.max(46,(r1.left-r0.left)*0.85);}}
+ window.addEventListener('resize',adapt);adapt();
+}
+function showNewSiteToasts(){
+ const toast=document.getElementById('toastNotify');if(!toast)return;
+ let seen=[];try{seen=JSON.parse(localStorage.getItem('landezhaole-seen-new')||'[]');}catch(e){seen=[];}
+ const news=[];
+ DATA.cats.forEach(cat=>cat.cards.forEach(c=>{if(/NEW/i.test(c.b||'')&&!seen.includes(c.u))news.push(c);}));
+ if(!news.length)return;
+ let stopped=false;
+ document.getElementById('toastClose').onclick=function(e){e.stopPropagation();stopped=true;toast.style.visibility='hidden';};
+ function tw(dur,update,done){
+   const n=Math.max(1,Math.round(dur/16));let i=0;
+   (function tick(){i++;const p=Math.min(1,i/n);update(p);if(p<1){setTimeout(tick,16);}else if(done){done();}})();
+ }
+ function easeOutQuad(x){return 1-(1-x)*(1-x);}
+ toast.onclick=function(){if(news[0])window.open(news[0].u,'_blank');};
+ function show(cb){
+   toast.style.visibility='visible';toast.style.opacity='1';
+   document.getElementById('toastIc').textContent='新';
+   document.getElementById('toastTt').textContent='站点上新';
+   document.getElementById('toastBd').textContent='「'+news.map(n=>n.t).join('、')+'」已加入站点导航，去看看';
+   tw(560,function(p){const e=easeOutQuad(p);toast.style.transform='translateX('+(400*(1-e)).toFixed(1)+'px) skewX('+(-12*(1-e)).toFixed(2)+'deg)';},cb);
+ }
+ function hide(cb){
+   tw(400,function(p){const e=p*p;toast.style.transform='translateX('+(-e*420).toFixed(1)+'px) skewX('+(e*10).toFixed(2)+'deg)';toast.style.opacity=(1-p).toFixed(2);},function(){toast.style.visibility='hidden';cb();});
+ }
+ show(function(){
+   setTimeout(function(){
+     if(stopped)return;
+     news.forEach(n=>seen.push(n.u));try{localStorage.setItem('landezhaole-seen-new',JSON.stringify(seen));}catch(e){}
+     hide(function(){});
+   },3500);
+ });
+}
+window.siteVersionData=null;
+function showUpdateModal(data,markSeen){
+ window.siteVersionData=data;
+ document.getElementById('updateVer').textContent='版本 '+data.version+' · '+data.date;
+ document.getElementById('updateList').innerHTML=(data.changelog||[]).map(c=>`<li>${esc(c)}</li>`).join('');
+ const overlay=document.getElementById('updateOverlay');
+ overlay.classList.add('show');
+ const close=function(){overlay.classList.remove('show');if(markSeen){try{localStorage.setItem('landezhaole-seen-site-version',data.version);}catch(e){}}};
+ document.getElementById('updateCloseBtn').onclick=close;
+ overlay.onclick=function(e){if(e.target===overlay)close();};
+}
+function checkSiteUpdate(){
+ fetch('version.json').then(r=>r.json()).then(data=>{
+   let seen=null;try{seen=localStorage.getItem('landezhaole-seen-site-version');}catch(e){}
+   window.siteVersionData=data;
+   if(seen!==data.version)setTimeout(function(){showUpdateModal(data,true);},5000);
+ }).catch(function(){});
+}
+function doSearch(){
+ const q=document.getElementById('q').value.trim();
+ const res=document.getElementById('results');
+ const cats=document.getElementById('cats');
+ if(curEngine!=='site'){ if(q) window.open(ENGINES.find(e=>e.id===curEngine).url+encodeURIComponent(q),'_blank'); return; }
+ if(!q){res.classList.remove('show');if(cats)cats.style.display='';return;}
+ const low=q.toLowerCase();let list=[];
+ // 软件逻辑：标题 / 简介 / 标签匹配（另加网址与分类名作补充），NEW 置顶、其次 HOT
+ DATA.cats.forEach(cat=>cat.cards.forEach(c=>{
+   const hay=(c.t+' '+c.d+' '+(c.b||'')+' '+c.u+' '+cat.name).toLowerCase();
+   if(hay.includes(low))list.push(c);
+ }));
+ const rank=c=>/NEW/i.test(c.b||'')||/新/i.test(c.b||'')?2:/HOT/i.test(c.b||'')?1:0;
+ list.sort((a,b)=>rank(b)-rank(a));
+ document.getElementById('resCount').textContent='搜索结果（'+list.length+'）';
+ document.getElementById('resGrid').innerHTML=list.map(cardHTML).join('');
+ document.getElementById('resEmpty').style.display=list.length?'none':'block';
+ if(cats)cats.style.display='none';
+ res.classList.add('show');
+}
+function clearSearch(){
+ const q=document.getElementById('q');if(q)q.value='';
+ const res=document.getElementById('results');res.classList.remove('show');
+ const cats=document.getElementById('cats');if(cats)cats.style.display='';
+}
+function setEngine(id){
+ curEngine=id;
+ document.querySelectorAll('#engines button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+ document.getElementById('q').placeholder=id==='site'?'搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…':'搜全网：'+ENGINES.find(e=>e.id===id).name;
+}
+document.getElementById('engines').innerHTML=ENGINES.map(e=>`<button data-id="${e.id}">${e.name}</button>`).join('');
+document.querySelectorAll('#engines button').forEach(b=>b.onclick=()=>setEngine(b.dataset.id));
+setEngine('site');
+document.getElementById('go').onclick=doSearch;
+document.getElementById('q').addEventListener('input',doSearch);
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
+const tb=document.getElementById('themeBtn');
+const saved=localStorage.getItem('landezhaole-theme');
+if(saved){document.documentElement.dataset.theme=saved;tb.textContent=saved==='dark'?'☀️ 日间模式':'🌙 夜间模式';}
+tb.onclick=()=>{const h=document.documentElement;const dark=h.dataset.theme!=='dark';h.dataset.theme=dark?'dark':'light';localStorage.setItem('landezhaole-theme',h.dataset.theme);tb.textContent=dark?'☀️ 日间模式':'🌙 夜间模式';};
+const topbtn=document.getElementById('topbtn');
+window.addEventListener('scroll',()=>topbtn.classList.toggle('show',window.scrollY>600));
+topbtn.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{document.getElementById('cats').innerHTML='<p style="text-align:center;color:var(--muted);padding:40px">数据加载失败，请刷新再试。</p>';});
+</script>
+<div class="toast-notify" id="toastNotify"><div class="tic" id="toastIc">新</div><div><div class="tt" id="toastTt"></div><div class="bd" id="toastBd"></div></div><button class="toast-close" id="toastClose" aria-label="关闭提醒">×</button></div>
+<div class="update-overlay" id="updateOverlay"><div class="update-dialog"><h2>网站更新</h2><div class="ver" id="updateVer"></div><ul id="updateList"></ul><div class="actions"><button id="updateCloseBtn">知道了</button></div></div></div>
+</body>
+</html>
