@@ -215,6 +215,7 @@ const ENGINES=[
  {id:'alipan',name:'阿里云盘',url:'https://v2pan.com/search?q='},
  {id:'quarkpan',name:'夸克网盘',url:'https://www.kkso.cc/search?kw='},
  {id:'google',name:'谷歌',url:'https://www.google.com/search?q='},
+ {id:'appteka',name:'Appteka',url:'https://appteka.store/search?q='},
 ];
 // AI API 分类：卡片的厂商 id 映射到官方 / 聚合 / 云服务三个子 Tab
 const AI_API_MAP={
@@ -396,7 +397,7 @@ function clearSearch(){
 function setEngine(id){
  curEngine=id;
  document.querySelectorAll('#engines button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
- document.getElementById('q').placeholder=id==='site'?'搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…':'搜全网：'+ENGINES.find(e=>e.id===id).name;
+ document.getElementById('q').placeholder=id==='site'?'搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…':id==='appteka'?'搜应用名，在 Appteka 直接下载 APK…':'搜全网：'+ENGINES.find(e=>e.id===id).name;
 }
 document.getElementById('engines').innerHTML=ENGINES.map(e=>`<button data-id="${e.id}">${e.name}</button>`).join('');
 document.querySelectorAll('#engines button').forEach(b=>b.onclick=()=>setEngine(b.dataset.id));
