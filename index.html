@@ -380,11 +380,14 @@ function appDlCard(a){
 async function renderAppDl(q){
  const seq=++appDlSeq,sec=document.getElementById('appDlSec'),grid=document.getElementById('appDlGrid'),st=document.getElementById('appDlStatus'),cnt=document.getElementById('appDlCount');
  sec.style.display='';grid.innerHTML='';cnt.textContent='';st.textContent='正在搜应用 “'+q+'”…';
+ const worker='https://landezhaole-app-proxy.307779523.workers.dev/?q='+encodeURIComponent(q);
  const api='https://appteka.store/api/1/app/search?query='+encodeURIComponent(q)+'&locale=en';
- const proxies=['https://api.allorigins.win/raw?url='+encodeURIComponent(api),'https://corsproxy.io/?url='+encodeURIComponent(api)];
- let entries=null;
+ const proxies=[worker,'https://api.allorigins.win/raw?url='+encodeURIComponent(api)];
+ let entries=null,total=0;
  for(const u of proxies){
-   try{const r=await fetch(u);if(!r.ok)continue;const j=await r.json();if(j&&j.status===200&&j.result&&Array.isArray(j.result.entries)){entries=j.result.entries;break;}}catch(e){}
+   try{const r=await fetch(u);if(!r.ok)continue;const j=await r.json();
+     if(j&&Array.isArray(j.entries)){entries=j.entries;total=j.total||entries.length;break;}
+     if(j&&j.status===200&&j.result&&Array.isArray(j.result.entries)){entries=j.result.entries;total=j.result.total||entries.length;break;}}catch(e){}
    if(seq!==appDlSeq)return;
  }
  if(seq!==appDlSeq)return;
@@ -394,7 +397,7 @@ async function renderAppDl(q){
  }
  entries.sort((a,b)=>(b.downloads||0)-(a.downloads||0));
  const top=entries.slice(0,12);
- cnt.textContent='共 '+entries.length+' 个应用，展示下载量最高的 12 个';
+ cnt.textContent='共 '+total+' 个应用，展示下载量最高的 12 个';
  st.textContent=top.length?'点“下载 APK”直接下载安装包，不用离开本站。':'没找到同名应用。';
  grid.innerHTML=top.map(appDlCard).join('');
 }
