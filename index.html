@@ -235,11 +235,12 @@ function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt
 function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return '';}}
 function iconNext(img){
  const host=img.dataset.host;const step=parseInt(img.dataset.step||'0',10);
- const next=['https://icons.duckduckgo.com/ip3/'+host+'.ico','https://'+host+'/favicon.ico'];
+ const next=['https://'+host+'/apple-touch-icon.png','https://'+host+'/favicon.ico'];
  if(step<next.length){img.dataset.step=step+1;img.src=next[step];}
  else img.remove();
 }
-function iconCheck(img){if(img.naturalWidth&&img.naturalWidth<32)iconNext(img);}
+// 只跳过谷歌那道源的小地球兜底图（16px）；站点自己的图标哪怕只有16px也是真 logo，要留着，别换成兜底
+function iconCheck(img){if(img.dataset.step==='0'&&img.naturalWidth&&img.naturalWidth<32)iconNext(img);}
 function cardHTML(c){
  const host=hostOf(c.u);
  const av=`<div class="avatar" style="background:${avColor(c.t)}"><img src="https://www.google.com/s2/favicons?domain=${esc(host)}&sz=128" loading="lazy" alt="" data-host="${esc(host)}" data-step="0" onerror="iconNext(this)" onload="iconCheck(this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>`;
