@@ -71,7 +71,7 @@ section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;p
 .tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 15px;font-size:12px;cursor:pointer}
 .tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
-.card-wrap{position:relative}.apk-btn{display:block;text-align:center;background:var(--green);color:#fff;border-radius:10px;padding:8px;margin-top:6px;font-weight:700;font-size:13px}.apk-btn:hover{opacity:.9}
+.card-wrap{position:relative;display:flex;flex-direction:column}.card-wrap .card{flex:none}.apk-btn{display:block;width:100%;text-align:center;background:var(--green);color:#fff;border:0;border-radius:10px;padding:8px;margin-top:6px;font-weight:700;font-size:13px;cursor:pointer}.apk-btn:hover{opacity:.9}.apk-prog{margin-top:6px}.apk-bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.apk-bar i{display:block;height:100%;width:0;background:var(--green)}.apk-text{font-size:12px;color:var(--muted);margin-top:4px}.apk-cancel{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:8px;padding:2px 10px;font-size:12px;cursor:pointer;margin-top:4px}
 .click-tip{position:absolute;top:-30px;left:50%;transform:translateX(-50%) translateY(4px);background:#1f2937;color:#fff;font-size:12px;padding:5px 12px;border-radius:999px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:20;box-shadow:0 6px 16px rgba(0,0,0,.25)}
 .click-tip em{color:#ef4444;font-style:normal;font-weight:800;margin:0 2px}
 .card-wrap:hover .click-tip{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -194,7 +194,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 </div></header>
 
 <main class="wrap">
-<div id="results"><section class="cat"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">站内搜索结果</span><span class="cat-count" id="resCount"></span><button class="theme-btn" id="clearSearchBtn" style="margin-left:auto" onclick="clearSearch()">清空搜索</button></div><div class="grid" id="resGrid"></div><div class="empty" id="resEmpty" style="display:none">没找到相关资源，换个关键词试试</div></section><section class="cat" id="appDlSec" style="display:none"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">应用下载</span><span class="cat-count" id="appDlCount"></span></div><div class="cat-desc" id="appDlStatus"></div><div class="grid" id="appDlGrid"></div></section></div>
+<div id="results"><section class="cat"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">站内搜索结果</span><span class="cat-count" id="resCount"></span><button class="theme-btn" id="clearSearchBtn" style="margin-left:auto" onclick="clearSearch()">清空搜索</button></div><div class="grid" id="resGrid"></div><div class="empty" id="resEmpty" style="display:none">没找到相关资源，换个关键词试试</div></section><section class="cat" id="appDlSec" style="display:none"><div class="cat-head"><span class="cat-dot"></span><span class="cat-title">应用下载</span><span class="cat-count" id="appDlCount"></span></div><div class="cat-desc" id="appDlStatus"></div><div class="grid" id="appDlGrid"></div><div style="text-align:center;margin-top:12px"><button class="theme-btn" id="appDlMore" style="display:none">找更多</button></div><div class="cat-desc" id="appDlNote"></div></section></div>
 <div id="cats"></div>
 </main>
 
@@ -375,31 +375,100 @@ function appDlCard(a){
  const icon=a.icon||'';
  const av=`<div class="avatar" style="background:${avColor(a.label||'A')}">${icon?`<img src="${esc(icon)}" loading="lazy" alt="">`:''}</div>`;
  const desc=[a.package,a.ver_name?('v'+a.ver_name):'',fmtSize(a.size),a.downloads!=null?(a.downloads+' 次下载'):'' ].filter(Boolean).join(' · ');
- return `<div class="card-wrap"><a class="card" href="https://appteka.store/apps/${esc(a.app_id)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(a.label)}</span></div><div class="desc">${esc(desc)}</div></div></a><a class="apk-btn" href="https://appteka.store/apps/${esc(a.app_id)}/download">⬇ 下载 APK</a></div>`;
+ return `<div class="card-wrap"><a class="card" href="https://appteka.store/apps/${esc(a.app_id)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(a.label)}</span></div><div class="desc">${esc(desc)}</div></div></a><button type="button" class="apk-btn" onclick="startAppDownload(this,'${esc(a.app_id)}','${esc(a.label)}',${a.size||0})">⬇ 下载 APK</button></div>`;
+}
+let appDlQ='',appDlCache=[],appDlShown=0,appDlNextOffset=0,appDlTotal=0,appDlLoading=false;
+async function fetchAppPage(q,offset){
+ const worker='https://landezhaole-app-proxy.307779523.workers.dev/?q='+encodeURIComponent(q)+'&offset='+offset;
+ const api='https://appteka.store/api/1/app/search?query='+encodeURIComponent(q)+'&locale=en&offset='+offset;
+ for(const u of [worker,'https://api.allorigins.win/raw?url='+encodeURIComponent(api)]){
+   try{const r=await fetch(u);if(!r.ok)continue;const j=await r.json();
+     if(j&&Array.isArray(j.entries))return {total:j.total||j.entries.length,entries:j.entries};
+     if(j&&j.status===200&&j.result&&Array.isArray(j.result.entries))return {total:j.result.total||j.result.entries.length,entries:j.result.entries};
+   }catch(e){}
+ }
+ return null;
+}
+function appDlRefreshMore(){
+ const more=document.getElementById('appDlMore');
+ const left=appDlTotal-appDlShown;
+ more.style.display=left>0?'':'none';
+ more.textContent=appDlLoading?'正在找…':'找更多（已显示 '+appDlShown+' / '+appDlTotal+'）';
+}
+function appDlShowBatch(){
+ const grid=document.getElementById('appDlGrid');
+ const batch=appDlCache.slice(appDlShown,appDlShown+12);
+ grid.insertAdjacentHTML('beforeend',batch.map(appDlCard).join(''));
+ appDlShown+=batch.length;
+ document.getElementById('appDlCount').textContent='共 '+appDlTotal+' 个应用，已显示 '+appDlShown+' 个';
+ appDlRefreshMore();
+}
+async function appDlLoadMore(){
+ if(appDlLoading)return;appDlLoading=true;appDlRefreshMore();
+ try{
+   if(appDlShown<appDlCache.length){appDlShowBatch();}
+   else if(appDlNextOffset<appDlTotal){
+     const page=await fetchAppPage(appDlQ,appDlNextOffset);
+     if(page){appDlCache=appDlCache.concat(page.entries);appDlNextOffset+=96;appDlShowBatch();}
+     else document.getElementById('appDlStatus').textContent='找更多失败，稍后再试。';
+   }
+ }finally{appDlLoading=false;appDlRefreshMore();}
 }
 async function renderAppDl(q){
- const seq=++appDlSeq,sec=document.getElementById('appDlSec'),grid=document.getElementById('appDlGrid'),st=document.getElementById('appDlStatus'),cnt=document.getElementById('appDlCount');
- sec.style.display='';grid.innerHTML='';cnt.textContent='';st.textContent='正在搜应用 “'+q+'”…';
- const worker='https://landezhaole-app-proxy.307779523.workers.dev/?q='+encodeURIComponent(q);
- const api='https://appteka.store/api/1/app/search?query='+encodeURIComponent(q)+'&locale=en';
- const proxies=[worker,'https://api.allorigins.win/raw?url='+encodeURIComponent(api)];
- let entries=null,total=0;
- for(const u of proxies){
-   try{const r=await fetch(u);if(!r.ok)continue;const j=await r.json();
-     if(j&&Array.isArray(j.entries)){entries=j.entries;total=j.total||entries.length;break;}
-     if(j&&j.status===200&&j.result&&Array.isArray(j.result.entries)){entries=j.result.entries;total=j.result.total||entries.length;break;}}catch(e){}
-   if(seq!==appDlSeq)return;
- }
+ const seq=++appDlSeq,sec=document.getElementById('appDlSec'),grid=document.getElementById('appDlGrid'),st=document.getElementById('appDlStatus');
+ sec.style.display='';grid.innerHTML='';st.textContent='正在搜应用 “'+q+'”…';document.getElementById('appDlNote').textContent='';
+ appDlQ=q;appDlCache=[];appDlShown=0;appDlNextOffset=0;appDlTotal=0;
+ const page=await fetchAppPage(q,0);
  if(seq!==appDlSeq)return;
- if(!entries){
-   st.textContent='应用搜索暂时不可用，换个关键词或稍后再试。';
-   return;
+ if(!page){st.textContent='应用搜索暂时不可用，换个关键词或稍后再试。';appDlRefreshMore();return;}
+ appDlCache=page.entries;appDlTotal=page.total;appDlNextOffset=96;
+ st.textContent='点“下载 APK”在本页直接下载，不跳走；跑满后文件进系统下载目录，点开即可安装。';
+ appDlShowBatch();
+}
+function fmtMB(b){return (b/1048576).toFixed(1)+' MB';}
+async function startAppDownload(btn,appId,label,size){
+ const wrap=btn.closest('.card-wrap');if(!wrap)return;
+ if(btn.dataset.busy==='1'){btn.dataset.cancel='1';return;}
+ btn.dataset.busy='1';btn.dataset.cancel='';btn.textContent='下载中…';
+ let prog=wrap.querySelector('.apk-prog');
+ if(!prog){prog=document.createElement('div');prog.className='apk-prog';prog.innerHTML='<div class="apk-bar"><i></i></div><div class="apk-text">准备下载…</div><button type="button" class="apk-cancel">取消</button>';btn.after(prog);}
+ const bar=prog.querySelector('.apk-bar i'),txt=prog.querySelector('.apk-text'),cancel=prog.querySelector('.apk-cancel');
+ cancel.onclick=()=>{btn.dataset.cancel='1';};
+ const total=size||0;
+ if(!total){txt.textContent='拿不到文件大小，下载失败。';btn.dataset.busy='';btn.textContent='⬇ 下载 APK';return;}
+ // zip 下载器思路的网页版：8MB 以下单段，8MB 以上按 4MB 分段、4 路并行、段失败重试（200ms 起翻倍）
+ const SEG=4*1024*1024, segCount=total<8*1024*1024?1:Math.ceil(total/SEG);
+ const parts=new Array(segCount);let nextSeg=0,received=0;const t0=Date.now();
+ const upd=()=>{const pct=Math.floor(received/total*100);bar.style.width=pct+'%';txt.textContent=pct+'% · '+fmtMB(received)+' / '+fmtMB(total)+' · '+(received/Math.max(1,(Date.now()-t0)/1000)/1048576).toFixed(1)+' MB/s';btn.textContent='下载中 '+pct+'%';};
+ async function fetchSeg(idx){
+   const start=idx*SEG,end=Math.min(total, start+SEG)-1;
+   for(let attempt=0;attempt<3;attempt++){
+     if(btn.dataset.cancel==='1')return false;
+     try{
+       const r=await fetch('https://landezhaole-app-proxy.307779523.workers.dev/segment?app_id='+encodeURIComponent(appId)+'&start='+start+'&end='+end);
+       if(!r.ok)throw new Error('seg '+r.status);
+       const buf=await r.arrayBuffer();parts[idx]=buf;received+=buf.byteLength;upd();return true;
+     }catch(e){await new Promise(res=>setTimeout(res,200*(1<<attempt)));}
+   }
+   return false;
  }
- entries.sort((a,b)=>(b.downloads||0)-(a.downloads||0));
- const top=entries.slice(0,12);
- cnt.textContent='共 '+total+' 个应用，展示下载量最高的 12 个';
- st.textContent=top.length?'点“下载 APK”直接下载安装包，不用离开本站。':'没找到同名应用。';
- grid.innerHTML=top.map(appDlCard).join('');
+ let ok=true;
+ const lanes=Array.from({length:Math.min(4,segCount)},async()=>{
+   while(nextSeg<segCount){
+     if(btn.dataset.cancel==='1')break;
+     const idx=nextSeg++;
+     if(!(await fetchSeg(idx))){ok=false;break;}
+   }
+ });
+ await Promise.all(lanes);
+ if(btn.dataset.cancel==='1'){txt.textContent='已取消。';btn.dataset.busy='';btn.textContent='⬇ 下载 APK';return;}
+ if(!ok||parts.some(p=>!p)){txt.textContent='下载失败，点“下载 APK”重试。';btn.dataset.busy='';btn.textContent='⬇ 下载 APK';return;}
+ const blob=new Blob(parts,{type:'application/vnd.android.package-archive'});
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');
+ a.href=url;a.download='懒得找了.apk';document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
+ bar.style.width='100%';txt.textContent='已下载到系统下载目录，点开“懒得找了.apk”即可安装（需允许安装未知应用）。';
+ btn.dataset.busy='';btn.textContent='已下载，去安装';
 }
 function doSearch(siteOnly){
  const q=document.getElementById('q').value.trim();
@@ -445,6 +514,7 @@ document.getElementById('engines').innerHTML=ENGINES.map(e=>`<button data-id="${
 document.querySelectorAll('#engines button').forEach(b=>b.onclick=()=>setEngine(b.dataset.id));
 setEngine('site');
 document.getElementById('go').onclick=()=>doSearch(false);
+document.getElementById('appDlMore').onclick=appDlLoadMore;
 let appDlInputTimer=null;
 document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl'){clearTimeout(appDlInputTimer);appDlInputTimer=setTimeout(()=>doSearch(false),700);}else doSearch(true);});
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
