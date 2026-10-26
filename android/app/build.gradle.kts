@@ -2,6 +2,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
+// 签名密钥文件路径（CI 上由 Secrets 还原，本地没有时为 null，不挂签名）
+val keystoreFile = keystoreFile
+
 android {
     namespace = "com.landezhaole.app"
     compileSdk = 34
@@ -17,7 +20,7 @@ android {
         create("release") {
             // 统一签名：密钥只存在 GitHub Actions 密文里，从不进仓库、不进代码。
             // 本地没配 KEYSTORE_PATH 时不挂签名配置，CI 上一定有。
-            storeFile = System.getenv("KEYSTORE_PATH")?.let { java.io.File(it) }
+            storeFile = keystoreFile
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("KEY_ALIAS")
             keyPassword = System.getenv("KEY_PASSWORD")
