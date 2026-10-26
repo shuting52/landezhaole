@@ -93,7 +93,8 @@ val VIDEO_URLS: List<String> = listOf(
     "https://video.twimg.com/amplify_video/2114645689422774272/vid/avc1/714x718/d0pWfM3dLa_SjNzQ.mp4?tag=29",
     "https://video.twimg.com/amplify_video/2114557244889235456/vid/avc1/720x1280/YZ8SJq1_-nouPp46.mp4?tag=29",
     "https://video.twimg.com/amplify_video/2114556951015383040/vid/avc1/720x1280/gieHyC-AKUrUU_Du.mp4?tag=29",
-    "https://video.twimg.com/amplify_video/2114558765202821120/vid/avc1/720x1264/OYeN6NhsiVtpZShw.mp4?tag=29"
+    "https://video.twimg.com/amplify_video/2114558765202821120/vid/avc1/720x1264/OYeN6NhsiVtpZShw.mp4?tag=29",
+    "https://video.twimg.com/amplify_video/2114555877198016512/vid/avc1/720x1280/HovltJoJN3VwiqFo.mp4?tag=29"
 )
 
 // 省钱小助手已为底部 Tab；美女视频仍为独立页
