@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>分类 · 懒得找了</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#16a34a;--red:#dc2626;--blue:#2563eb}
+[data-theme="dark"]{--bg:#0b1220;--card:#1f2937;--text:#f3f4f6;--muted:#9ca3af;--line:#374151;--green:#34d399;--red:#f87171;--blue:#60a5fa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.chead{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:14px 0}
+.chead .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.back{color:var(--green);text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
+.cat-title{font-size:20px;font-weight:800;color:var(--red)}
+.cat-count{font-size:12px;color:var(--muted);background:rgba(127,127,127,.12);border-radius:12px;padding:1px 10px}
+.cat-desc{color:var(--muted);font-size:12px;margin:14px 0 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 15px;font-size:12px;cursor:pointer}
+.tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px;padding-top:10px;padding-bottom:40px}
+.card-wrap{position:relative;display:flex;flex-direction:column}
+.card{position:relative;overflow:hidden;display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px;min-width:0;height:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--line);text-decoration:none;color:var(--text);transition:transform .22s,box-shadow .22s,border-color .22s}
+.card-wrap:hover .card{transform:translateY(-4px);border-color:var(--green);box-shadow:0 12px 26px rgba(22,163,74,.18)}
+.corner{position:absolute;z-index:2;pointer-events:none}
+.corner-tag{top:-8px;right:8px;font-size:10px;font-weight:800;line-height:1;padding:3px 8px;border-radius:999px;color:#fff;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7)}
+.avatar{position:relative;width:44px;height:44px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;overflow:hidden;font-size:16px}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px;box-sizing:border-box;z-index:1}
+.avatar svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;z-index:0}
+.info{min-width:0;flex:1}
+.name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;min-width:0}
+.ntext{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.desc{color:var(--muted);font-size:12px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{text-align:center;color:var(--muted);padding:60px 20px}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.foot a{color:var(--green);text-decoration:none}
+@media(max-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.card .desc{display:none}}
+</style>
+</head>
+<body>
+<header class="chead"><div class="wrap"><a class="back" href="index.html">← 回导航</a><span class="cat-title" id="ctitle">加载中…</span><span class="cat-count" id="ccount"></span></div></header>
+<main class="wrap"><p class="cat-desc" id="cdesc"></p><div class="tabs" id="tabs"></div><div class="grid" id="grid"></div><p class="empty" id="empty" style="display:none"></p><p class="foot"><a href="index.html">← 回导航</a> · © 2026 懒得找了</p></main>
+<script>
+const saved=localStorage.getItem('landezhaole-theme');if(saved)document.documentElement.dataset.theme=saved;
+const AV_COLORS=['#16a34a','#0ea5e9','#8b5cf6','#f59e0b','#ef4444','#ec4899','#14b8e6','#f97316'];
+function avColor(t){let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;return AV_COLORS[h%AV_COLORS.length];}
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return '';}}
+function iconNext(img){
+ const host=img.dataset.host;const step=parseInt(img.dataset.step||'0',10);
+ const next=['https://'+host+'/apple-touch-icon.png','https://'+host+'/favicon.ico'];
+ if(step<next.length){img.dataset.step=step+1;img.src=next[step];}
+ else img.remove();
+}
+function iconCheck(img){if(img.dataset.from==='override')return;if(img.dataset.step==='0'&&img.naturalWidth&&img.naturalWidth<32)iconNext(img);}
+const AI_API_MAP={
+ official:['openai','google','anthropic','aliyun','baidu','tencent','volc','zhipu','moonshot','deepseek','minimax','step','xfyun','huawei','baichuan','yi','kunlun','jimeng','github','perplexity'],
+ aggregate:['openrouter','groq','together','replicate','huggingface','api2d','gptapi','closeai','pandora','oneapi','newapi'],
+ cloud:['cloudflare','azure','aws','gcp'],
+};
+function matchSub(cat,card,sub){
+ if(sub==='all') return true;
+ if(cat.id==='ai_api') return (AI_API_MAP[sub]||[]).includes(card.s);
+ return card.s===sub;
+}
+function cardHTML(c){
+ const host=hostOf(c.u);
+ const firstIcon=c.i?esc(c.i):`https://www.google.com/s2/favicons?domain=${esc(host)}&sz=128`;
+ const av=`<div class="avatar" style="background:${avColor(c.t)}"><img src="${firstIcon}" loading="lazy" alt="" data-host="${esc(host)}" data-step="0" ${c.i?'data-from="override"':''} onerror="iconNext(this)" onload="iconCheck(this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>`;
+ let corner='';
+ if(c.b){const cls=/HOT/i.test(c.b)?'hot':/NEW/i.test(c.b)?'new':'rec';corner=`<span class="corner corner-tag ${cls}">${esc(c.b)}</span>`;}
+ else corner=`<span class="corner corner-tag">精选</span>`;
+ return `<div class="card-wrap"><a class="card" href="${esc(c.u)}" target="_blank" rel="noopener">${av}<div class="info"><div class="name"><span class="ntext">${esc(c.t)}</span></div><div class="desc">${esc(c.d)}</div></div></a>${corner}</div>`;
+}
+const qs=new URLSearchParams(location.search);
+const catId=qs.get('cat')||'',sub0=qs.get('sub')||'all';
+fetch('data.json').then(r=>r.json()).then(j=>{
+ const cat=j.cats.find(c=>c.id===catId);
+ const emptyEl=document.getElementById('empty');
+ if(!cat){
+   document.getElementById('ctitle').textContent='分类不存在';
+   emptyEl.style.display='block';emptyEl.textContent='没有找到这个分类，点左上角回导航看看。';
+   return;
+ }
+ document.title=cat.name+' · 懒得找了';
+ document.getElementById('ctitle').textContent=cat.name;
+ document.getElementById('ccount').textContent=cat.cards.length+' 个站点';
+ if(cat.desc)document.getElementById('cdesc').textContent=cat.desc;
+ let sub=cat.subs.some(s=>s.id===sub0)?sub0:'all';
+ const tabsEl=document.getElementById('tabs'),gridEl=document.getElementById('grid');
+ function draw(){
+   tabsEl.innerHTML=cat.subs.map(s=>`<button data-sub="${s.id}"${s.id===sub?' class="on"':''}>${esc(s.name)}</button>`).join('');
+   tabsEl.querySelectorAll('button').forEach(b=>b.onclick=()=>{sub=b.dataset.sub;draw();});
+   const list=cat.cards.filter(c=>matchSub(cat,c,sub));
+   gridEl.innerHTML=list.map(cardHTML).join('');
+   emptyEl.style.display=list.length?'none':'block';
+   if(!list.length)emptyEl.textContent='这个子类下暂时没有站点。';
+ }
+ draw();
+}).catch(()=>{
+ document.getElementById('ctitle').textContent='数据加载失败';
+ const emptyEl=document.getElementById('empty');
+ emptyEl.style.display='block';emptyEl.textContent='数据加载失败，请刷新再试。';
+});
+</script>
+</body>
+</html>
