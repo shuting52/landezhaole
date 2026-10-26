@@ -94,25 +94,15 @@ val VIDEO_URLS: List<String> = emptyList()
 // 独立页（不占 Tab）：省钱小助手 / 美女视频
 enum class ShopSubPage { None, Save, Video }
 
+// 独立页（不占 Tab）：分类详情 / 热门更多 / 猜你喜欢更多
+sealed class ShopOverlay {
+    data class Category(val id: String) : ShopOverlay()
+    object Hot : ShopOverlay()
+    object Guess : ShopOverlay()
+}
+
 // 应用下载记录：本次重做之后完成的才记，之前没有的不编造
 data class DownloadRecord(val label: String, val time: Long)
-
-fun loadFavUrls(ctx: Context): Set<String> {
-    return try {
-        ctx.getSharedPreferences("landezhaole-favs", Context.MODE_PRIVATE)
-            .getString("urls", "")?.split("\n")?.filter { it.isNotBlank() }?.toSet() ?: emptySet()
-    } catch (e: Exception) {
-        emptySet()
-    }
-}
-
-fun saveFavUrls(ctx: Context, urls: Set<String>) {
-    try {
-        ctx.getSharedPreferences("landezhaole-favs", Context.MODE_PRIVATE)
-            .edit().putString("urls", urls.joinToString("\n")).apply()
-    } catch (e: Exception) {
-    }
-}
 
 fun loadDownloadRecords(ctx: Context): List<DownloadRecord> {
     return try {
@@ -222,7 +212,7 @@ fun AppShell(
     val scope = rememberCoroutineScope()
     var tab by remember { mutableStateOf(0) }
     var subPage by remember { mutableStateOf(ShopSubPage.None) }
-    var catJump by remember { mutableStateOf<String?>(null) }
+    var overlay by remember { mutableStateOf<ShopOverlay?>(null) }
     var homeEngineJump by remember { mutableStateOf<String?>(null) }
     var categories by remember { mutableStateOf(loadCategories(ctx)) }
     // 今日点击（landezhaole-clicks + todayKey，与旧版一致）
@@ -252,14 +242,6 @@ fun AppShell(
             clicksPrefs.edit().putString(todayKey(), obj.toString()).apply()
         } catch (e: Exception) {
         }
-    }
-    // 收藏（新键 landezhaole-favs，存 URL 集合）
-    var favs by remember { mutableStateOf(loadFavUrls(ctx)) }
-    val toggleFav: (String) -> Boolean = { url ->
-        val next = if (url in favs) favs - url else favs + url
-        favs = next
-        saveFavUrls(ctx, next)
-        url in next
     }
     // 应用下载记录（本次重做之后完成才记）
     var downloads by remember { mutableStateOf(loadDownloadRecords(ctx)) }
@@ -341,6 +323,7 @@ fun AppShell(
     val goTab: (Int) -> Unit = { t ->
         tab = t
         subPage = ShopSubPage.None
+        overlay = null
     }
 
     Box(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
@@ -354,17 +337,54 @@ fun AppShell(
                         subPage == ShopSubPage.Video -> SubPageWrapper(pal, "美女视频", { subPage = ShopSubPage.None }) {
                             VideoScreen(pal = pal, onBackHome = { subPage = ShopSubPage.None })
                         }
+                        overlay != null -> {
+                            val ov = overlay!!
+                            val ovTitle = when (ov) {
+                                is ShopOverlay.Category -> categories.firstOrNull { it.id == ov.id }?.name?.substringBefore(" · ") ?: "分类"
+                                ShopOverlay.Hot -> "热门站点"
+                                ShopOverlay.Guess -> "猜你喜欢"
+                            }
+                            SubPageWrapper(pal, ovTitle, { overlay = null }) {
+                                when (ov) {
+                                    is ShopOverlay.Category -> {
+                                        val cat = categories.firstOrNull { it.id == ov.id }
+                                        if (cat == null) {
+                                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                                Text("分类不存在", fontSize = 14.sp, color = pal.secondary)
+                                            }
+                                        } else {
+                                            ShopCategoryDetail(pal = pal, cat = cat, onOpenCard = onOpenCard)
+                                        }
+                                    }
+                                    ShopOverlay.Hot -> {
+                                        val hotAll = remember(categories) {
+                                            categories.flatMap { c -> c.cards.map { c.name to it } }
+                                                .filter { it.second.b.equals("HOT", ignoreCase = true) || it.second.b.equals("NEW", ignoreCase = true) }
+                                        }
+                                        ShopMoreList(pal = pal, sites = hotAll, onOpenCard = onOpenCard)
+                                    }
+                                    ShopOverlay.Guess -> {
+                                        val guessAll = remember(categories) {
+                                            categories.flatMap { c -> c.cards.map { c.name to it } }
+                                                .sortedByDescending { rankHot(it.second) }
+                                        }
+                                        ShopMoreList(pal = pal, sites = guessAll, onOpenCard = onOpenCard)
+                                    }
+                                }
+                            }
+                        }
                         tab == 0 -> ShopHome(
-                            pal = pal, categories = categories, favs = favs,
-                            onToggleFav = toggleFav, onOpenCard = onOpenCard,
+                            pal = pal, dark = dark, categories = categories,
+                            onOpenCard = onOpenCard,
                             onOpenCategory = { id ->
                                 if (id == null) {
                                     tab = 1
                                 } else {
-                                    catJump = id
-                                    tab = 1
+                                    overlay = ShopOverlay.Category(id)
                                 }
                             },
+                            onOpenHotMore = { overlay = ShopOverlay.Hot },
+                            onOpenGuessMore = { overlay = ShopOverlay.Guess },
                             onOpenSave = { subPage = ShopSubPage.Save },
                             engineJump = homeEngineJump,
                             onEngineJumpConsumed = { homeEngineJump = null },
@@ -372,17 +392,11 @@ fun AppShell(
                             showToast = showToastMsg
                         )
                         tab == 1 -> ShopCategory(
-                            pal = pal, categories = categories, favs = favs,
-                            onToggleFav = toggleFav, onOpenCard = onOpenCard,
-                            catJump = catJump, onCatJumpConsumed = { catJump = null },
-                            showToast = showToastMsg
+                            pal = pal, categories = categories,
+                            onOpenCategory = { id -> overlay = ShopOverlay.Category(id) }
                         )
-                        tab == 2 -> ShopFavorites(
-                            pal = pal, categories = categories, favs = favs,
-                            onToggleFav = toggleFav, onOpenCard = onOpenCard,
-                            showToast = showToastMsg
-                        )
-                        tab == 3 -> ShopMessages(
+
+                        tab == 2 -> ShopMessages(
                             pal = pal, categories = categories, downloads = downloads,
                             versionName = versionName, onCheckUpdate = checkUpdate,
                             showToast = showToastMsg
@@ -391,7 +405,7 @@ fun AppShell(
                             pal = pal, dark = dark, onToggleDark = onToggleDark,
                             themeMode = themeMode, onThemeModeChange = onThemeModeChange,
                             uiScale = uiScale, onUiScaleChange = onUiScaleChange,
-                            todayClicks = todayClicks, favCount = favs.size,
+                            todayClicks = todayClicks,
                             totalSites = total, catCount = categories.size,
                             onOpenSave = { subPage = ShopSubPage.Save },
                             onOpenVideo = { subPage = ShopSubPage.Video },
@@ -408,9 +422,8 @@ fun AppShell(
             ) {
                 ShopNavItem("🏠", "首页", tab == 0, null) { goTab(0) }
                 ShopNavItem("🗂️", "分类", tab == 1, null) { goTab(1) }
-                ShopNavItem("🛒", "我的收藏", tab == 2, if (favs.isNotEmpty()) favs.size else null) { goTab(2) }
-                ShopNavItem("💬", "消息", tab == 3, null) { goTab(3) }
-                ShopNavItem("👤", "我的", tab == 4, null) { goTab(4) }
+                ShopNavItem("💬", "消息", tab == 2, null) { goTab(2) }
+                ShopNavItem("👤", "我的", tab == 3, null) { goTab(3) }
             }
         }
         if (pendingUpdate != null) {

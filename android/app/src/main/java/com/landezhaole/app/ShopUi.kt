@@ -1,6 +1,7 @@
 package com.landezhaole.app
 
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -8,6 +9,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +35,30 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Api
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.Brush
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Computer
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Handshake
+import androidx.compose.material.icons.filled.Hub
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.LiveTv
+import androidx.compose.material.icons.filled.LocalOffer
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Info
@@ -53,6 +81,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -80,21 +110,31 @@ import kotlinx.coroutines.launch
 val SHOP_RED = Color(0xFFF53D2D)
 val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xFFFF7733)))
 
-val CAT_EMOJI = mapOf(
-    "cloud_browser" to "☁️", "ai_api" to "🔌", "ai_models" to "🤖", "ai_canvas" to "🎨",
-    "ai_prompts" to "💬", "tools_magic" to "✨", "short_drama" to "🎬", "movie" to "🎥",
-    "discounts" to "🛒", "resources" to "🧰", "music" to "🎵", "novel" to "📚",
-    "game" to "🎮", "tools" to "🔧", "pc_setup" to "💻", "explore" to "🌍",
-    "partners" to "🤝", "ai_bot_ecosystem" to "🌐", "coding_tools" to "⌨️",
-    "haoyangmao" to "🎁", "ai_video_tools" to "🎞️"
+val CAT_ICONS = mapOf(
+    "cloud_browser" to Icons.Filled.Language, "ai_api" to Icons.Filled.Api,
+    "ai_models" to Icons.Filled.SmartToy, "ai_canvas" to Icons.Filled.Brush,
+    "ai_prompts" to Icons.Filled.Chat, "tools_magic" to Icons.Filled.AutoFixHigh,
+    "short_drama" to Icons.Filled.Movie, "movie" to Icons.Filled.LiveTv,
+    "discounts" to Icons.Filled.LocalOffer, "resources" to Icons.Filled.Folder,
+    "music" to Icons.Filled.MusicNote, "novel" to Icons.Filled.Book,
+    "game" to Icons.Filled.SportsEsports, "tools" to Icons.Filled.Build,
+    "pc_setup" to Icons.Filled.Computer, "explore" to Icons.Filled.Explore,
+    "partners" to Icons.Filled.Handshake, "ai_bot_ecosystem" to Icons.Filled.Hub,
+    "coding_tools" to Icons.Filled.Code, "haoyangmao" to Icons.Filled.CardGiftcard,
+    "ai_video_tools" to Icons.Filled.VideoLibrary
 )
+val CAT_ICON_TINTS = listOf(
+    Color(0xFF0288D1), Color(0xFF00897B), Color(0xFF7B1FA2), Color(0xFFEC407A),
+    Color(0xFF43A047), Color(0xFFFB8C00), Color(0xFFE53935), Color(0xFF3949AB),
+    Color(0xFFF9A825), Color(0xFF6D4C41)
+)
+fun catIcon(catId: String): ImageVector = CAT_ICONS[catId] ?: Icons.Filled.Folder
 val CAT_COLORS = listOf(
     Color(0xFFFFE9E6), Color(0xFFFFF0E8), Color(0xFFE8F4FF), Color(0xFFEAFAF1),
     Color(0xFFF3EAFE), Color(0xFFFEF3E2), Color(0xFFEEF2FF), Color(0xFFEAF9F6),
     Color(0xFFFFF5F5), Color(0xFFF0F7FF)
 )
 
-fun catEmoji(catId: String): String = CAT_EMOJI[catId] ?: "📦"
 
 fun rankHot(card: SiteCard): Int = when {
     card.b.equals("NEW", ignoreCase = true) || card.b.contains("新") -> 2
@@ -114,15 +154,13 @@ fun catNameByUrl(categories: List<Category>): Map<String, String> {
     return m
 }
 
-// ---- 猜你喜欢 / 分类页共用卡片：图标区 + 名 + 角标 + 分类名 + 去体验 + 星标 ----
+// ---- 猜你喜欢 / 分类页共用卡片：图标区 + 名 + 角标 + 分类名 + 去体验 ----
 @Composable
 fun ShopCard(
     card: SiteCard,
     catName: String,
     pal: AppPalette,
-    isFav: Boolean,
-    onOpen: () -> Unit,
-    onToggleFav: () -> Unit
+    onOpen: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -180,74 +218,73 @@ fun ShopCard(
                 }
             }
         }
-        Box(
-            modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(28.dp)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.92f))
-                .clickable { onToggleFav() },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                if (isFav) "★" else "☆", fontSize = 16.sp,
-                color = if (isFav) SHOP_RED else Color(0xFF999999)
-            )
-        }
     }
 }
 
 @Composable
-fun ShopSectionTitle(title: String, small: String?, pal: AppPalette) {
+fun ShopSectionTitle(title: String, small: String?, pal: AppPalette, onSmallClick: (() -> Unit)? = null) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(title, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.foreground, modifier = Modifier.weight(1f))
         if (small != null) {
-            Text(small, fontSize = 12.sp, color = pal.secondary)
+            Text(
+                small, fontSize = 12.sp, color = pal.secondary,
+                modifier = if (onSmallClick != null) Modifier.clickable { onSmallClick() } else Modifier
+            )
         }
     }
 }
 
-private data class BannerSlide(val title: String, val sub: String, val btn: String, val c1: Color, val c2: Color)
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShopBanner(total: Int, catCount: Int, couponCount: Int, onAction: (Int) -> Unit) {
-    var idx by remember { mutableStateOf(0) }
-    LaunchedEffect(Unit) {
+fun ShopBanner(categories: List<Category>, onOpenCategory: (String) -> Unit) {
+    val slides = categories.take(10)
+    if (slides.isEmpty()) return
+    val pagerState = rememberPagerState(pageCount = { slides.size })
+    LaunchedEffect(pagerState) {
         while (true) {
             delay(3000)
-            idx = (idx + 1) % 3
+            val next = (pagerState.currentPage + 1) % slides.size
+            try {
+                pagerState.animateScrollToPage(next)
+            } catch (e: Exception) {
+            }
         }
     }
-    val slides = listOf(
-        BannerSlide("去水印神器", "站内搜“去水印”，一搜即达", "开始搜索", Color(0xFFFF512F), Color(0xFFDD2476)),
-        BannerSlide("$total 站点全收录", "$catCount 大分类 · 一搜即达", "去逛逛", Color(0xFFF7971E), Color(0xFFFFD200)),
-        BannerSlide("省钱小助手", "$couponCount 张领券", "去领券", Color(0xFF11998E), Color(0xFF38EF7D))
+    val grads = listOf(
+        Color(0xFFFF512F) to Color(0xFFDD2476),
+        Color(0xFFF7971E) to Color(0xFFFFD200),
+        Color(0xFF11998E) to Color(0xFF38EF7D),
+        Color(0xFF7C3AED) to Color(0xFF06B6D4),
+        Color(0xFFEC4899) to Color(0xFFF97316)
     )
     Box(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
             .height(150.dp).clip(RoundedCornerShape(12.dp))
     ) {
-        slides.forEachIndexed { i, s ->
-            val alpha by animateFloatAsState(if (i == idx) 1f else 0f, animationSpec = tween(500))
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+            val cat = slides[page]
+            val (c1, c2) = grads[page % grads.size]
             Box(
                 modifier = Modifier.fillMaxSize()
-                    .graphicsLayer { this.alpha = alpha }
-                    .background(Brush.horizontalGradient(listOf(s.c1, s.c2)))
-                    .clickable(enabled = i == idx) { onAction(i) }
+                    .background(Brush.horizontalGradient(listOf(c1, c2)))
+                    .clickable { onOpenCategory(cat.id) }
                     .padding(horizontal = 22.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Column {
-                    Text(s.title, fontSize = 22.sp, fontWeight = FontWeight.Black, color = Color.White)
+                    Text(cat.name.substringBefore(" · "), fontSize = 22.sp, fontWeight = FontWeight.Black, color = Color.White)
                     Spacer(modifier = Modifier.height(6.dp))
-                    Text(s.sub, fontSize = 12.sp, color = Color.White.copy(alpha = 0.92f))
+                    Text("共 ${cat.cards.size} 个站点 · 点此查看全部", fontSize = 12.sp, color = Color.White.copy(alpha = 0.92f))
                     Spacer(modifier = Modifier.height(10.dp))
                     Box(
                         modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(Color.White)
                             .padding(horizontal = 14.dp, vertical = 5.dp)
                     ) {
-                        Text(s.btn, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = SHOP_RED)
+                        Text("查看全部", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = SHOP_RED)
                     }
                 }
             }
@@ -259,9 +296,9 @@ fun ShopBanner(total: Int, catCount: Int, couponCount: Int, onAction: (Int) -> U
             slides.indices.forEach { i ->
                 Box(
                     modifier = Modifier
-                        .size(width = if (i == idx) 16.dp else 6.dp, height = 6.dp)
+                        .size(width = if (i == pagerState.currentPage) 16.dp else 6.dp, height = 6.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(if (i == idx) Color.White else Color.White.copy(alpha = 0.5f))
+                        .background(if (i == pagerState.currentPage) Color.White else Color.White.copy(alpha = 0.5f))
                 )
             }
         }
@@ -271,11 +308,12 @@ fun ShopBanner(total: Int, catCount: Int, couponCount: Int, onAction: (Int) -> U
 @Composable
 fun ShopHome(
     pal: AppPalette,
+    dark: Boolean,
     categories: List<Category>,
-    favs: Set<String>,
-    onToggleFav: (String) -> Boolean,
     onOpenCard: (SiteCard) -> Unit,
     onOpenCategory: (String?) -> Unit,
+    onOpenHotMore: () -> Unit,
+    onOpenGuessMore: () -> Unit,
     onOpenSave: () -> Unit,
     engineJump: String?,
     onEngineJumpConsumed: () -> Unit,
@@ -285,6 +323,7 @@ fun ShopHome(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     var query by remember { mutableStateOf("") }
+    var gridExpanded by remember { mutableStateOf(false) }
     var engineIdx by remember { mutableStateOf(0) }
     var appResults by remember { mutableStateOf<List<AppEntry>?>(null) }
     var appTotal by remember { mutableStateOf(0) }
@@ -300,7 +339,6 @@ fun ShopHome(
             onEngineJumpConsumed()
         }
     }
-    val total = categories.sumOf { it.cards.size }
     val isSearching = query.isNotBlank() && engineIdx == 0
     val searchResults: List<SiteCard> = if (isSearching) {
         val low = query.trim().lowercase()
@@ -388,11 +426,12 @@ fun ShopHome(
     val showAppResults = ENGINES[engineIdx].id == "appdl" && appResults != null
 
     Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
-        // ---- 渐变顶栏：logo + 搜索框 + 引擎药丸 + 热词 ----
+        // ---- 顶栏：logo + 搜索框 + 引擎药丸（背景跟随深色/浅色主题，带阴影立体感） ----
         Box(
             modifier = Modifier.fillMaxWidth()
+                .shadow(10.dp, RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
                 .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-                .background(SHOP_GRADIENT)
+                .background(if (dark) Brush.horizontalGradient(listOf(Color(0xFF7F1D1D), Color(0xFF450A0A))) else SHOP_GRADIENT)
                 .padding(horizontal = 12.dp, vertical = 10.dp)
         ) {
             Column {
@@ -458,15 +497,6 @@ fun ShopHome(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    listOf("去水印", "AI绘画", "小游戏", "免费短剧", "壁纸", "工具").forEach { w ->
-                        Text(
-                            w, fontSize = 12.sp, color = Color.White.copy(alpha = 0.95f),
-                            modifier = Modifier.clickable { query = w; engineIdx = 0 }
-                        )
-                    }
-                }
             }
         }
         if (isSearching) {
@@ -505,12 +535,8 @@ fun ShopHome(
                                 for (card in row) {
                                     Box(modifier = Modifier.weight(1f)) {
                                         ShopCard(
-                                            card, catByUrl[card.u] ?: "", pal, card.u in favs,
-                                            { onOpenCard(card) },
-                                            {
-                                                val nowFav = onToggleFav(card.u)
-                                                showToast(if (nowFav) "已收藏 ⭐" else "已取消收藏")
-                                            }
+                                            card, catByUrl[card.u] ?: "", pal,
+                                            { onOpenCard(card) }
                                         )
                                     }
                                 }
@@ -543,18 +569,13 @@ fun ShopHome(
         } else {
             LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 item {
-                    ShopBanner(total, categories.size, COUPON_CARDS.size) { i ->
-                        when (i) {
-                            0 -> { query = "去水印"; engineIdx = 0 }
-                            1 -> onOpenCategory(null)
-                            else -> onOpenSave()
-                        }
-                    }
+                    ShopBanner(categories) { id -> onOpenCategory(id) }
                 }
                 item {
                     Column {
                         ShopSectionTitle("站点分类", "${categories.size} 个分类", pal)
-                        for (row in categories.chunked(5)) {
+                        val gridCats = if (gridExpanded) categories else categories.take(10)
+                        for (row in gridCats.chunked(5)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -572,7 +593,11 @@ fun ShopHome(
                                                 .background(CAT_COLORS[globalIdx % CAT_COLORS.size]),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text(catEmoji(cat.id), fontSize = 24.sp)
+                                            Icon(
+                                                catIcon(cat.id), contentDescription = null,
+                                                tint = CAT_ICON_TINTS[globalIdx % CAT_ICON_TINTS.size],
+                                                modifier = Modifier.size(26.dp)
+                                            )
                                         }
                                         Spacer(modifier = Modifier.height(6.dp))
                                         Text(
@@ -585,11 +610,21 @@ fun ShopHome(
                                 repeat(5 - row.size) { Spacer(modifier = Modifier.weight(1f)) }
                             }
                         }
+                        Box(
+                            modifier = Modifier.fillMaxWidth().clickable { gridExpanded = !gridExpanded }
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                if (gridExpanded) "收起 ∧" else "展开全部 ${categories.size} 个分类 ∨",
+                                fontSize = 12.sp, color = pal.secondary
+                            )
+                        }
                     }
                 }
                 item {
                     Column {
-                        ShopSectionTitle("热门站点", "HOT / NEW", pal)
+                        ShopSectionTitle("热门站点", "更多", pal, onSmallClick = onOpenHotMore)
                         Row(
                             modifier = Modifier.horizontalScroll(rememberScrollState())
                                 .padding(horizontal = 12.dp),
@@ -634,7 +669,7 @@ fun ShopHome(
                 }
                 item {
                     Column {
-                        ShopSectionTitle("猜你喜欢", "为你推荐", pal)
+                        ShopSectionTitle("猜你喜欢", "更多", pal, onSmallClick = onOpenGuessMore)
                         for (row in guess.chunked(2)) {
                             Column {
                                 Row(
@@ -644,12 +679,8 @@ fun ShopHome(
                                     for ((cat, card) in row) {
                                         Box(modifier = Modifier.weight(1f)) {
                                             ShopCard(
-                                                card, cat.name, pal, card.u in favs,
-                                                { onOpenCard(card) },
-                                                {
-                                                    val nowFav = onToggleFav(card.u)
-                                                    showToast(if (nowFav) "已收藏 ⭐" else "已取消收藏")
-                                                }
+                                                card, cat.name, pal,
+                                                { onOpenCard(card) }
                                             )
                                         }
                                     }
@@ -673,39 +704,19 @@ fun ShopHome(
 }
 
 // ---- 分类页：左 21 分类 + 右子类 chips + 2 列站点卡（前 6 个） ----
-@OptIn(ExperimentalLayoutApi::class)
+// ---- 分类页：21 分类索引（点分类进独立详情页） ----
 @Composable
 fun ShopCategory(
     pal: AppPalette,
     categories: List<Category>,
-    favs: Set<String>,
-    onToggleFav: (String) -> Boolean,
-    onOpenCard: (SiteCard) -> Unit,
-    catJump: String?,
-    onCatJumpConsumed: () -> Unit,
-    showToast: (String) -> Unit
+    onOpenCategory: (String) -> Unit
 ) {
-    var selIdx by remember { mutableStateOf(0) }
-    var selSub by remember { mutableStateOf("all") }
-    LaunchedEffect(catJump) {
-        if (catJump != null) {
-            val i = categories.indexOfFirst { it.id == catJump }
-            if (i >= 0) {
-                selIdx = i
-                selSub = "all"
-            }
-            onCatJumpConsumed()
-        }
-    }
     if (categories.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("数据加载中…", fontSize = 14.sp, color = pal.secondary)
         }
         return
     }
-    val cat = categories[selIdx.coerceIn(0, categories.size - 1)]
-    val subs = if (cat.subs.isEmpty()) listOf(SubTab("all", "全部")) else cat.subs
-    val shown = filterCardsForSub(cat, selSub)
     Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
         Box(
             modifier = Modifier.fillMaxWidth().background(SHOP_GRADIENT)
@@ -713,230 +724,140 @@ fun ShopCategory(
         ) {
             Text("站点分类", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
-        Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
-            Column(
-                modifier = Modifier.width(96.dp).fillMaxHeight().background(pal.barBackground)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                categories.forEachIndexed { i, c ->
-                    val sel = i == selIdx
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                            .background(if (sel) Color(0xFFFFF8F7) else Color.Transparent)
-                            .clickable { selIdx = i; selSub = "all" }
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier.width(3.dp).height(48.dp)
-                                    .background(if (sel) SHOP_RED else Color.Transparent)
-                            )
-                            Box(
-                                modifier = Modifier.weight(1f).padding(vertical = 14.dp, horizontal = 4.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    c.name.substringBefore(" · "), fontSize = 13.sp,
-                                    color = if (sel) SHOP_RED else pal.secondary,
-                                    fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal,
-                                    textAlign = TextAlign.Center, maxLines = 2, lineHeight = 16.sp
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier.weight(1f).fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
-                    .padding(10.dp)
-            ) {
-                Text(cat.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Spacer(modifier = Modifier.height(8.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            modifier = Modifier.weight(1f).fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
+            categories.forEachIndexed { i, cat ->
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { onOpenCategory(cat.id) }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    subs.forEach { s ->
-                        val sel = selSub == s.id
-                        Box(
-                            modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                                .background(if (sel) SHOP_RED else pal.barBackground)
-                                .border(1.dp, if (sel) SHOP_RED else pal.line, RoundedCornerShape(16.dp))
-                                .clickable { selSub = s.id }
-                                .padding(horizontal = 12.dp, vertical = 6.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                s.name, fontSize = 12.sp,
-                                color = if (sel) Color.White else pal.foreground
-                            )
-                        }
+                    Box(
+                        modifier = Modifier.size(44.dp).clip(CircleShape)
+                            .background(CAT_COLORS[i % CAT_COLORS.size]),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            catIcon(cat.id), contentDescription = null,
+                            tint = CAT_ICON_TINTS[i % CAT_ICON_TINTS.size],
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Text("全部站点", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
-                Spacer(modifier = Modifier.height(8.dp))
-                if (shown.isEmpty()) {
-                    Text("该分类下暂无站点", fontSize = 13.sp, color = pal.secondary)
-                } else {
-                    for (row in shown.chunked(2)) {
-                        Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                for (card in row) {
-                                    Box(modifier = Modifier.weight(1f)) {
-                                        ShopCard(
-                                            card, cat.name, pal, card.u in favs,
-                                            { onOpenCard(card) },
-                                            {
-                                                val nowFav = onToggleFav(card.u)
-                                                showToast(if (nowFav) "已收藏 ⭐" else "已取消收藏")
-                                            }
-                                        )
-                                    }
-                                }
-                                repeat(2 - row.size) { Spacer(modifier = Modifier.weight(1f)) }
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(cat.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text("共 ${cat.cards.size} 个站点", fontSize = 12.sp, color = pal.secondary)
                     }
+                    Text(">", fontSize = 18.sp, color = pal.secondary)
                 }
+                Divider(color = pal.line)
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-// ---- 我的收藏：星标站点，复选 + 打开 + 删除选中 ----
+// ---- 分类详情页：子类 chips + 全部站点 2 列卡 ----
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ShopFavorites(
+fun ShopCategoryDetail(
     pal: AppPalette,
-    categories: List<Category>,
-    favs: Set<String>,
-    onToggleFav: (String) -> Boolean,
-    onOpenCard: (SiteCard) -> Unit,
-    showToast: (String) -> Unit
+    cat: Category,
+    onOpenCard: (SiteCard) -> Unit
 ) {
-    val favCards = remember(categories, favs) {
-        favs.mapNotNull { url ->
-            categories.firstNotNullOfOrNull { c ->
-                c.cards.firstOrNull { it.u == url }?.let { c.name to it }
-            }
-        }
-    }
-    var selected by remember { mutableStateOf<Set<String>>(emptySet()) }
-    val liveSelected = selected.intersect(favs)
-    val allChecked = favCards.isNotEmpty() && liveSelected.size == favCards.size
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
-        Box(
-            modifier = Modifier.fillMaxWidth().background(pal.barBackground)
-                .border(0.dp, Color.Transparent)
-                .padding(vertical = 14.dp),
-            contentAlignment = Alignment.Center
+    var selSub by remember { mutableStateOf("all") }
+    val subs = if (cat.subs.isEmpty()) listOf(SubTab("all", "全部")) else cat.subs
+    val shown = filterCardsForSub(cat, selSub)
+    Column(
+        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+            .verticalScroll(rememberScrollState())
+            .padding(10.dp)
+    ) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("我的收藏", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
-        }
-        if (favCards.isEmpty()) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text("还没有收藏，去首页点星标", fontSize = 14.sp, color = pal.secondary)
+            subs.forEach { s ->
+                val sel = selSub == s.id
+                Box(
+                    modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                        .background(if (sel) SHOP_RED else pal.barBackground)
+                        .border(1.dp, if (sel) SHOP_RED else pal.line, RoundedCornerShape(16.dp))
+                        .clickable { selSub = s.id }
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        s.name, fontSize = 12.sp,
+                        color = if (sel) Color.White else pal.foreground
+                    )
+                }
             }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text("全部站点（${shown.size} 个）", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
+        Spacer(modifier = Modifier.height(8.dp))
+        if (shown.isEmpty()) {
+            Text("该分类下暂无站点", fontSize = 13.sp, color = pal.secondary)
         } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(favCards, key = { it.second.u }) { (catName, card) ->
-                    val checked = card.u in liveSelected
+            for (row in shown.chunked(2)) {
+                Column {
                     Row(
-                        modifier = Modifier.fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(pal.barBackground)
-                            .border(1.dp, pal.line, RoundedCornerShape(12.dp))
-                            .clickable { onOpenCard(card) }
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Box(
-                            modifier = Modifier.size(22.dp).clip(CircleShape)
-                                .background(if (checked) SHOP_RED else Color.Transparent)
-                                .border(2.dp, if (checked) SHOP_RED else Color(0xFFCCCCCC), CircleShape)
-                                .clickable {
-                                    selected = if (checked) liveSelected - card.u else liveSelected + card.u
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (checked) {
-                                Text("✓", fontSize = 14.sp, color = Color.White)
+                        for (card in row) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                ShopCard(card, cat.name, pal) { onOpenCard(card) }
                             }
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        SiteIcon(card, 48.dp)
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                card.t, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = pal.foreground,
-                                maxLines = 2, overflow = TextOverflow.Ellipsis, lineHeight = 18.sp
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(catName, fontSize = 11.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Box(
-                            modifier = Modifier.size(28.dp).clickable {
-                                onToggleFav(card.u)
-                                showToast("已取消收藏")
-                            },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("★", fontSize = 18.sp, color = SHOP_RED)
-                        }
+                        repeat(2 - row.size) { Spacer(modifier = Modifier.weight(1f)) }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth().background(pal.barBackground)
-                .border(1.dp, pal.line)
-                .padding(horizontal = 12.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier.size(22.dp).clip(CircleShape)
-                    .background(if (allChecked) SHOP_RED else Color.Transparent)
-                    .border(2.dp, if (allChecked) SHOP_RED else Color(0xFFCCCCCC), CircleShape)
-                    .clickable {
-                        selected = if (allChecked) emptySet() else favCards.map { it.second.u }.toSet()
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                if (allChecked) {
-                    Text("✓", fontSize = 14.sp, color = Color.White)
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+// ---- 更多页：站点 2 列卡全量 ----
+@Composable
+fun ShopMoreList(
+    pal: AppPalette,
+    sites: List<Pair<String, SiteCard>>,
+    onOpenCard: (SiteCard) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+            .verticalScroll(rememberScrollState())
+            .padding(10.dp)
+    ) {
+        if (sites.isEmpty()) {
+            Text("暂无站点", fontSize = 13.sp, color = pal.secondary)
+        } else {
+            for (row in sites.chunked(2)) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        for ((catName, card) in row) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                ShopCard(card, catName, pal) { onOpenCard(card) }
+                            }
+                        }
+                        repeat(2 - row.size) { Spacer(modifier = Modifier.weight(1f)) }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
-            Spacer(modifier = Modifier.width(6.dp))
-            Text("全选", fontSize = 13.sp, color = pal.foreground)
-            Spacer(modifier = Modifier.weight(1f))
-            Text("共收藏 ${favCards.size} 个站点", fontSize = 13.sp, color = pal.foreground)
-            Spacer(modifier = Modifier.width(10.dp))
-            Box(
-                modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(SHOP_RED)
-                    .clickable {
-                        if (liveSelected.isEmpty()) {
-                            showToast("请先勾选要删除的收藏")
-                        } else {
-                            liveSelected.forEach { onToggleFav(it) }
-                            selected = emptySet()
-                            showToast("已删除 ${liveSelected.size} 个收藏")
-                        }
-                    }
-                    .padding(horizontal = 26.dp, vertical = 10.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("删除选中", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-            }
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -973,7 +894,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.0" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.2" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1097,7 +1018,6 @@ fun ShopMine(
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit,
     todayClicks: Int,
-    favCount: Int,
     totalSites: Int,
     catCount: Int,
     onOpenSave: () -> Unit,
@@ -1162,7 +1082,6 @@ fun ShopMine(
             Row(modifier = Modifier.fillMaxWidth()) {
                 val stats = listOf(
                     Triple("$todayClicks", "今日点击", "今日点击 $todayClicks 次"),
-                    Triple("$favCount", "我的收藏", "我的收藏 $favCount 个站点"),
                     Triple("$totalSites", "收录站点", "已收录 $totalSites 个站点"),
                     Triple("$catCount", "分类总数", "已收录 $catCount 大分类")
                 )
@@ -1180,33 +1099,6 @@ fun ShopMine(
             }
         }
         Box(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(pal.barBackground)
-                .border(1.dp, pal.line, RoundedCornerShape(12.dp))
-                .padding(vertical = 6.dp)
-        ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                val funcs = listOf(
-                    Triple("💰", "省钱小助手", onOpenSave),
-                    Triple("📲", "应用下载", onHomeAppDownload),
-                    Triple("🔄", "检查更新", onCheckUpdate),
-                    Triple(if (dark) "☀️" else "🌙", if (dark) "深色·开" else "深色·关", onToggleDark)
-                )
-                funcs.forEach { (emoji, label, action) ->
-                    Column(
-                        modifier = Modifier.weight(1f).clickable { action() }
-                            .padding(vertical = 10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(emoji, fontSize = 24.sp)
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(label, fontSize = 11.sp, color = pal.secondary)
-                    }
-                }
-            }
-        }
-        Box(
             modifier = Modifier.fillMaxWidth().padding(12.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(pal.barBackground)
@@ -1214,7 +1106,7 @@ fun ShopMine(
         ) {
             Column {
                 MineRow(
-                    icon = Icons.Filled.Person, iconTint = Color(0xFF7C6CF0), label = "关注我们",
+                    icon = Icons.Filled.Person, iconTint = Color(0xFF7C6CF0), label = "官方网站",
                     pal = pal, onClick = { openUrl(ctx, "https://landezhaole.pages.dev/") }
                 )
                 Divider(color = pal.line)
@@ -1235,7 +1127,19 @@ fun ShopMine(
                 Divider(color = pal.line)
                 MineRow(
                     icon = Icons.Filled.Group, iconTint = Color(0xFF5B67F0), label = "添加粉丝群",
-                    pal = pal, onClick = { openUrl(ctx, "https://qm.qq.com/q/vsaFRiPuO4") }
+                    pal = pal,
+                    onClick = {
+                        try {
+                            ctx.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("mqqapi://card/show_pslcard?src_type=internal&version=1&uin=836869262&card_type=group&source=qrcode")
+                                )
+                            )
+                        } catch (e: Exception) {
+                            openUrl(ctx, "https://qm.qq.com/q/vsaFRiPuO4")
+                        }
+                    }
                 )
                 Divider(color = pal.line)
                 MineRow(
@@ -1267,13 +1171,27 @@ fun ShopMine(
                 )
                 Divider(color = pal.line)
                 MineRow(
+                    icon = Icons.Filled.Refresh, iconTint = Color(0xFF0EA5E9), label = "检查更新",
+                    pal = pal, onClick = onCheckUpdate
+                )
+                Divider(color = pal.line)
+                MineRow(
+                    icon = Icons.Filled.DarkMode, iconTint = Color(0xFF7C6CF0), label = "深色模式",
+                    pal = pal, trailing = if (dark) "开" else "关", onClick = onToggleDark
+                )
+                Divider(color = pal.line)
+                MineRow(
+                    icon = Icons.Filled.AttachMoney, iconTint = Color(0xFFF5A623), label = "省钱小助手",
+                    pal = pal, onClick = onOpenSave
+                )
+                MineRow(
                     icon = Icons.Filled.Palette, iconTint = Color(0xFFEC4899), label = "主题",
                     pal = pal, onClick = { showTheme = true }
                 )
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.0" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.2" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
