@@ -1,7 +1,5 @@
 package com.landezhaole.app
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.animation.core.Animatable
@@ -56,7 +54,6 @@ import androidx.compose.ui.unit.sp
 import java.util.Calendar
 import kotlin.math.exp
 import kotlin.math.sin
-import kotlin.random.Random
 import kotlinx.coroutines.delay
 
 // ---- 网站色板（light / dark，与网站 :root / [data-theme="dark"] 一致） ----
@@ -171,163 +168,6 @@ fun FlipClock(pal: AppPalette) {
         Text(":", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = colonColor)
         FlipDigit(s[0], pal)
         FlipDigit(s[1], pal)
-    }
-}
-
-// ---- 网站页头粒子 Logo：canvas 采样“懒得找了.”约 700 粒（手机性能取舍，网站 2000 粒），
-// 飞入 1.5s 先快后慢，呼吸浮动，手指 80px 内推开、弹簧回弹，点一下重新飞入，品牌渐变色 ----
-private data class Particle(
-    val tx: Float, val ty: Float,
-    var x: Float, var y: Float,
-    var sx: Float, var sy: Float,
-    val delay: Float,
-    var vx: Float = 0f, var vy: Float = 0f,
-    val ph: Float, val ph2: Float,
-    val color: Color
-)
-
-private fun gradColor(x: Float): Color {
-    val t = x / 600f
-    fun mix(a: Int, b: Int, k: Float): Int = (a + (b - a) * k).toInt()
-    return if (t < 0.5f) {
-        val k = t * 2
-        Color(mix(22, 14, k), mix(163, 165, k), mix(74, 233, k))
-    } else {
-        val k = (t - 0.5f) * 2
-        Color(mix(14, 139, k), mix(165, 92, k), mix(233, 246, k))
-    }
-}
-
-private fun sampleTextTargets(): List<Pair<Float, Float>> {
-    return try {
-        val bmp = Bitmap.createBitmap(600, 130, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bmp)
-        val paint = Paint().apply {
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            textSize = 84f
-            textAlign = Paint.Align.CENTER
-            color = android.graphics.Color.WHITE
-        }
-        canvas.drawText("懒得找了.", 300f, 68f, paint)
-        val pixels = IntArray(600 * 130)
-        bmp.getPixels(pixels, 0, 600, 0, 0, 600, 130)
-        val pts = mutableListOf<Pair<Float, Float>>()
-        for (y in 0 until 130 step 3) {
-            for (x in 0 until 600 step 3) {
-                val alpha = (pixels[y * 600 + x] ushr 24) and 0xff
-                if (alpha > 128) pts.add(x.toFloat() to y.toFloat())
-            }
-        }
-        pts.shuffled().take(700)
-    } catch (e: Exception) {
-        emptyList()
-    }
-}
-
-private fun randomEdgeStart(random: Random): Pair<Float, Float> {
-    return when ((random.nextFloat() * 4).toInt()) {
-        0 -> -20f to random.nextFloat() * 130f
-        1 -> 620f to random.nextFloat() * 130f
-        2 -> random.nextFloat() * 600f to -20f
-        else -> random.nextFloat() * 600f to 150f
-    }
-}
-
-@Composable
-fun ParticleLogo(modifier: Modifier = Modifier) {
-    val targets = remember { sampleTextTargets() }
-    var replay by remember { mutableStateOf(0) }
-    var particles by remember(targets, replay) {
-        mutableStateOf(targets.map { (tx, ty) ->
-            val random = Random.Default
-            val (sx, sy) = randomEdgeStart(random)
-            Particle(
-                tx = tx, ty = ty, x = sx, y = sy, sx = sx, sy = sy,
-                delay = random.nextFloat() * 0.35f,
-                ph = random.nextFloat() * 6.283f, ph2 = random.nextFloat() * 6.283f,
-                color = gradColor(tx)
-            )
-        })
-    }
-    var repel by remember { mutableStateOf<Offset?>(null) }
-    var startNanos by remember(targets, replay) { mutableStateOf<Long?>(null) }
-    LaunchedEffect(targets, replay) {
-        withFrameNanos { startNanos = it }
-        while (true) {
-            withFrameNanos { now ->
-                val start = startNanos ?: now
-                val el = (now - start) / 1_000_000_000f
-                val nowMs = now / 1_000_000f
-                val rep = repel
-                particles = particles.map { pt ->
-                    val lt = el - pt.delay
-                    if (lt < 0) {
-                        pt.x = pt.sx; pt.y = pt.sy
-                    } else if (lt < 1.5f) {
-                        val pr = lt / 1.5f
-                        val ease = if (pr >= 1f) 1f else 1f - Math.pow(2.0, (-10 * pr).toDouble()).toFloat()
-                        pt.x = pt.sx + (pt.tx - pt.sx) * ease
-                        pt.y = pt.sy + (pt.ty - pt.sy) * ease
-                    } else {
-                        val bx = pt.tx + sin(nowMs * 0.0012f + pt.ph) * 1.3f
-                        val by = pt.ty + sin(nowMs * 0.001f + pt.ph2) * 1.3f
-                        pt.vx += (bx - pt.x) * 0.075f
-                        pt.vy += (by - pt.y) * 0.075f
-                        if (rep != null) {
-                            val dx = pt.x - rep.x
-                            val dy = pt.y - rep.y
-                            val d = kotlin.math.sqrt(dx * dx + dy * dy)
-                            val rad = 160f
-                            if (d < rad && d > 0.01f) {
-                                val f = (1 - d / rad) * 6f
-                                pt.vx += dx / d * f
-                                pt.vy += dy / d * f
-                            }
-                        }
-                        pt.vx *= 0.86f
-                        pt.vy *= 0.86f
-                        pt.x += pt.vx
-                        pt.y += pt.vy
-                    }
-                    pt
-                }
-            }
-        }
-    }
-    Canvas(
-        modifier = modifier.pointerInput(replay) {
-            awaitEachGesture {
-                val down = awaitFirstDown()
-                var moved = 0f
-                var lastPos = down.position
-                while (true) {
-                    val event = awaitPointerEvent(PointerEventPass.Main)
-                    val change = event.changes.firstOrNull() ?: break
-                    if (change.pressed) {
-                        moved += (change.position - lastPos).getDistance()
-                        lastPos = change.position
-                        // 手指位置换算到 600x130 的粒子坐标
-                        val scaleX = 600f / size.width
-                        val scaleY = 130f / size.height
-                        repel = Offset(change.position.x * scaleX, change.position.y * scaleY)
-                    } else {
-                        repel = null
-                        if (moved < 20f) replay++
-                        break
-                    }
-                }
-            }
-        }
-    ) {
-        val scaleX = size.width / 600f
-        val scaleY = size.height / 130f
-        for (pt in particles) {
-            drawCircle(
-                color = pt.color,
-                radius = 2.6f * scaleX,
-                center = Offset(pt.x * scaleX, pt.y * scaleY)
-            )
-        }
     }
 }
 

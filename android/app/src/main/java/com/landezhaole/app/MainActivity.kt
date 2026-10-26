@@ -611,7 +611,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                         // 网站左上翻页时钟
                         FlipClock(pal = pal)
                         Spacer(modifier = Modifier.height(10.dp))
-                        // 网站页头：居中图标 + 粒子 Logo
+                        // 网站页头：居中图标 + 渐变文字 Logo（与网站同步，不用粒子）
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
@@ -624,7 +624,17 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                                 contentScale = ContentScale.Crop
                             )
                             Spacer(modifier = Modifier.width(14.dp))
-                            ParticleLogo(modifier = Modifier.width(200.dp).height(44.dp))
+                            Text(
+                                text = "懒得找了.",
+                                style = TextStyle(
+                                    brush = Brush.horizontalGradient(
+                                        listOf(Color(0xFF16A34A), Color(0xFF0EA5E9), Color(0xFF8B5CF6))
+                                    ),
+                                    fontSize = 40.sp,
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = 2.sp
+                                )
+                            )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         // 网站数据胶囊
