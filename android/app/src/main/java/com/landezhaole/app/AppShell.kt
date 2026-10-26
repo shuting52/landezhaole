@@ -88,10 +88,15 @@ import com.landezhaole.app.ui.fetchRemoteVersion
 import org.json.JSONArray
 import org.json.JSONObject
 
-// 美女视频源：待接入。把 mp4 直链填进来即可播放（连续开关控制循环，切换视频切下一个）。
-val VIDEO_URLS: List<String> = emptyList()
+// 美女视频源：AIVideoHub_ 公开视频直链（X 原站播放，无平台水印；连续开关控制循环，切换视频切下一个）。
+val VIDEO_URLS: List<String> = listOf(
+    "https://video.twimg.com/amplify_video/2114645689422774272/vid/avc1/714x718/d0pWfM3dLa_SjNzQ.mp4?tag=29",
+    "https://video.twimg.com/amplify_video/2114557244889235456/vid/avc1/720x1280/YZ8SJq1_-nouPp46.mp4?tag=29",
+    "https://video.twimg.com/amplify_video/2114556951015383040/vid/avc1/720x1280/gieHyC-AKUrUU_Du.mp4?tag=29",
+    "https://video.twimg.com/amplify_video/2114558765202821120/vid/avc1/720x1264/OYeN6NhsiVtpZShw.mp4?tag=29"
+)
 
-// 独立页（不占 Tab）：省钱小助手 / 美女视频
+// 省钱小助手已为底部 Tab；美女视频仍为独立页
 enum class ShopSubPage { None, Save, Video }
 
 // 独立页（不占 Tab）：分类详情 / 热门更多 / 猜你喜欢更多
@@ -396,11 +401,7 @@ fun AppShell(
                             onOpenCategory = { id -> overlay = ShopOverlay.Category(id) }
                         )
 
-                        tab == 2 -> ShopMessages(
-                            pal = pal, categories = categories, downloads = downloads,
-                            versionName = versionName, onCheckUpdate = checkUpdate,
-                            showToast = showToastMsg
-                        )
+                        tab == 2 -> SaveScreen(pal = pal)
                         else -> ShopMine(
                             pal = pal, dark = dark, onToggleDark = onToggleDark,
                             themeMode = themeMode, onThemeModeChange = onThemeModeChange,
@@ -422,7 +423,7 @@ fun AppShell(
             ) {
                 ShopNavItem("🏠", "首页", tab == 0, null) { goTab(0) }
                 ShopNavItem("🗂️", "分类", tab == 1, null) { goTab(1) }
-                ShopNavItem("💬", "消息", tab == 2, null) { goTab(2) }
+                ShopNavItem("💰", "省钱小助手", tab == 2, null) { goTab(2) }
                 ShopNavItem("👤", "我的", tab == 3, null) { goTab(3) }
             }
         }
