@@ -118,7 +118,7 @@ val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xF
 
 // 画廊主题生效时顶栏与品牌红跟主题主色走；默认主题保持电商红
 fun isGallerySchemePal(pal: AppPalette): Boolean =
-    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette
+    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette || pal == CrystalPalette
 fun shopBrand(pal: AppPalette): Color = if (isGallerySchemePal(pal)) pal.accent else SHOP_RED
 // 主题组件样式：颜色之外，卡片/Tab/芯片/按钮的形状与阴影也跟主题走
 data class ThemeStyle(
@@ -236,6 +236,21 @@ fun styleOf(pal: AppPalette): ThemeStyle = when (pal) {
         buttonBorderColor = Color.Transparent, buttonElevation = 6.dp,
         buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
     )
+    CrystalPalette -> ThemeStyle(
+        cardShape = RoundedCornerShape(22.dp), cardBorderWidth = 1.dp,
+        cardBorderColor = Color(0xCCFFFFFF), cardElevation = 8.dp,
+        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = Color(0x66FFFFFF),
+        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0xCCFFFFFF),
+        tabBarElevation = 8.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+        tabSelBg = pal.accent, tabSelText = Color.White, tabShape = RoundedCornerShape(50),
+        chipShape = RoundedCornerShape(50), chipBorderWidth = 1.dp,
+        chipBorderColor = Color(0xCCFFFFFF), chipSelBg = pal.accent, chipSelText = Color.White,
+        chipSelBorderColor = pal.accent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+        buttonShape = RoundedCornerShape(50), buttonBorderWidth = 1.dp,
+        buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 4.dp,
+        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
+    )
     else -> ThemeStyle(
         cardShape = RoundedCornerShape(12.dp), cardBorderWidth = 1.dp,
         cardBorderColor = pal.line, cardElevation = 0.dp,
@@ -271,7 +286,9 @@ fun Modifier.hardShadow(shape: Shape, offset: Dp, color: Color): Modifier = this
 )
 
 fun shopBrandGradient(pal: AppPalette): Brush =
-    if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else SHOP_GRADIENT
+    if (pal == CrystalPalette) Brush.horizontalGradient(
+        listOf(Color(0xFF60A5FA), Color(0xFF1668DC), Color(0xFF7C3AED))
+    ) else if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else SHOP_GRADIENT
 
 val CAT_ICONS = mapOf(
     "cloud_browser" to Icons.Filled.Language, "ai_api" to Icons.Filled.Api,
@@ -594,7 +611,7 @@ fun ShopHome(
     }
     val showAppResults = ENGINES[engineIdx].id == "appdl" && appResults != null
 
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         // ---- 顶栏：logo + 搜索框 + 引擎药丸（背景跟随深色/浅色主题，带阴影立体感） ----
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -880,26 +897,42 @@ fun ShopCategory(
     categories: List<Category>,
     onOpenCategory: (String) -> Unit
 ) {
-    if (categories.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("数据加载中…", fontSize = 14.sp, color = pal.secondary)
-        }
-        return
-    }
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    // 玻璃列表：按用户给的 GlassCard 代码改——渐变底 + 半透明卡 + 边缘高光 + 柔影，内容仍是真实分类
+    val glassBg = Brush.linearGradient(
+        colors = listOf(Color(0xFFFF7E5F), Color(0xFF4A90E2))
+    )
+    val glassShape = RoundedCornerShape(20.dp)
+    Column(modifier = Modifier.fillMaxSize().background(glassBg)) {
         Box(
-            modifier = Modifier.fillMaxWidth().background(shopBrandGradient(pal))
+            modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 10.dp)
         ) {
             Text("站点分类", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
+        if (categories.isEmpty()) {
+            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text("数据加载中…", fontSize = 14.sp, color = Color.White.copy(alpha = 0.7f))
+            }
+            return
+        }
         Column(
             modifier = Modifier.weight(1f).fillMaxWidth()
                 .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
         ) {
+            Spacer(modifier = Modifier.height(4.dp))
             categories.forEachIndexed { i, cat ->
                 Row(
                     modifier = Modifier.fillMaxWidth()
+                        .shadow(elevation = 16.dp, shape = glassShape)
+                        .background(Color.White.copy(alpha = 0.1f), glassShape)
+                        .border(
+                            width = 1.dp,
+                            brush = Brush.linearGradient(
+                                colors = listOf(Color.White.copy(alpha = 0.8f), Color.White.copy(alpha = 0.1f))
+                            ),
+                            shape = glassShape
+                        )
                         .clickable { onOpenCategory(cat.id) }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -917,13 +950,13 @@ fun ShopCategory(
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(cat.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(cat.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Spacer(modifier = Modifier.height(2.dp))
-                        Text("共 ${cat.cards.size} 个站点", fontSize = 12.sp, color = pal.secondary)
+                        Text("共 ${cat.cards.size} 个站点", fontSize = 12.sp, color = Color.White.copy(alpha = 0.6f))
                     }
-                    Text(">", fontSize = 18.sp, color = pal.secondary)
+                    Text(">", fontSize = 18.sp, color = Color.White.copy(alpha = 0.6f))
                 }
-                Divider(color = pal.line)
+                Spacer(modifier = Modifier.height(12.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -942,7 +975,7 @@ fun ShopCategoryDetail(
     val subs = if (cat.subs.isEmpty()) listOf(SubTab("all", "全部")) else cat.subs
     val shown = filterCardsForSub(cat, selSub)
     Column(
-        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+        modifier = Modifier.fillMaxSize().pageBg(pal)
             .verticalScroll(rememberScrollState())
             .padding(10.dp)
     ) {
@@ -1005,7 +1038,7 @@ fun ShopMoreList(
     onOpenCard: (SiteCard) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+        modifier = Modifier.fillMaxSize().pageBg(pal)
             .verticalScroll(rememberScrollState())
             .padding(10.dp)
     ) {
@@ -1066,7 +1099,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.8" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.9" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1086,7 +1119,7 @@ fun ShopMessages(
         2 -> systemMsgs
         else -> downloadMsgs + systemMsgs
     }
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Box(
             modifier = Modifier.fillMaxWidth().background(pal.barBackground)
                 .padding(vertical = 14.dp),
@@ -1216,7 +1249,7 @@ fun ShopMine(
         return
     }
     Column(
-        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+        modifier = Modifier.fillMaxSize().pageBg(pal)
             .verticalScroll(rememberScrollState())
     ) {
         Box(
@@ -1362,7 +1395,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.8" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.9" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
