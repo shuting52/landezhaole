@@ -2814,6 +2814,14 @@
      "b": "支持在线训练LoRA的全球免费AI生图工作台",
      "s": "creative",
      "f": "TA"
+    },
+    {
+     "t": "桌面办公助理",
+     "u": "https://loomy.cgref.cn/s/5ln1rv5krw",
+     "d": "讯飞桌面级 AI 智能助理，安装即用",
+     "b": "NEW",
+     "s": "agent",
+     "f": "桌"
     }
    ]
   },
@@ -3802,6 +3810,14 @@
      "b": "5000款可导出刀版3D样机",
      "s": "canvas",
      "f": "PC"
+    },
+    {
+     "t": "AI创意工作台",
+     "u": "https://vynyo.com",
+     "d": "浏览器端 AI 创意工作台，图像与视频",
+     "b": "NEW",
+     "s": "platform",
+     "f": "A"
     }
    ]
   },
@@ -5735,6 +5751,102 @@
      "b": "免打开透视可疑链接",
      "s": "net",
      "f": "US"
+    },
+    {
+     "t": "桔子数据",
+     "u": "https://95vps.com",
+     "d": "高防 VPS 与云服务器租用",
+     "b": "NEW",
+     "s": "net",
+     "f": "桔"
+    },
+    {
+     "t": "阿里加速器",
+     "u": "https://tizi.51cghl.xyz",
+     "d": "高速加速器，看片必备神器",
+     "b": "NEW",
+     "s": "net",
+     "f": "阿"
+    },
+    {
+     "t": "搜狗热搜榜",
+     "u": "https://ie.sogou.com/top",
+     "d": "搜狗热搜，覆盖多领域时事热点",
+     "b": "NEW",
+     "s": "daily",
+     "f": "搜"
+    },
+    {
+     "t": "快手短视频热榜",
+     "u": "https://kuaishou.com/brilliant",
+     "d": "快手短视频热榜",
+     "b": "NEW",
+     "s": "daily",
+     "f": "快"
+    },
+    {
+     "t": "即时热点",
+     "u": "https://nowhots.com",
+     "d": "聚合百度微博头条知乎等平台热点",
+     "b": "NEW",
+     "s": "daily",
+     "f": "即"
+    },
+    {
+     "t": "微博热搜榜",
+     "u": "https://s.weibo.com/top/summary",
+     "d": "微博热搜榜每分钟更新",
+     "b": "NEW",
+     "s": "daily",
+     "f": "微"
+    },
+    {
+     "t": "A站话题热议",
+     "u": "https://acfun.cn/v/list63/index.htm",
+     "d": "AcFun 话题热议榜",
+     "b": "NEW",
+     "s": "daily",
+     "f": "A"
+    },
+    {
+     "t": "抖音热点榜",
+     "u": "https://douyin.com/hot",
+     "d": "抖音热榜实时热门话题视频",
+     "b": "NEW",
+     "s": "daily",
+     "f": "抖"
+    },
+    {
+     "t": "速看全网热点",
+     "u": "https://suredian.com",
+     "d": "速热点资讯聚合，读各源热点",
+     "b": "NEW",
+     "s": "daily",
+     "f": "速"
+    },
+    {
+     "t": "热搜神器 Pro",
+     "u": "https://entobit.cn/hot-search/desktop",
+     "d": "聚合多平台热搜榜，每小时更新",
+     "b": "NEW",
+     "s": "daily",
+     "f": "热"
+    },
+    {
+     "t": "贴吧热议榜",
+     "u": "https://c.tieba.baidu.com/hottopic/browse/topicList?res_type=1",
+     "d": "百度贴吧热议榜实时更新",
+     "b": "NEW",
+     "s": "daily",
+     "f": "贴"
+    },
+    {
+     "t": "叶叶云服务器",
+     "u": "https://yeyeidc.com",
+     "d": "云服务器租用与高防 BGP 服务",
+     "b": "NEW",
+     "s": "net",
+     "f": "叶"
     }
    ]
   },
@@ -7042,6 +7154,270 @@
      "d": "以夸克网盘视频资源为主的搜索网站。",
      "b": "NEW",
      "s": "pan"
+    },
+    {
+     "t": "看片神器",
+     "u": "https://zhainanfl.isjdh.com",
+     "d": "网飞猫，奈飞免费看，每日更新",
+     "b": "NEW",
+     "s": "online",
+     "f": "看"
+    },
+    {
+     "t": "学霸盘",
+     "u": "https://xuebapan.com",
+     "d": "百度网盘资源搜索引擎，实时验链",
+     "b": "NEW",
+     "s": "pan",
+     "f": "学"
+    },
+    {
+     "t": "免费追剧",
+     "u": "https://zhuiju.kdns.fr",
+     "d": "无广告免会员，全网影视免费看",
+     "b": "NEW",
+     "s": "online",
+     "f": "免"
+    },
+    {
+     "t": "聚盘搜索",
+     "u": "https://dyuzi.com",
+     "d": "聚合百度、夸克、迅雷等网盘资源",
+     "b": "NEW",
+     "s": "pan",
+     "f": "聚"
+    },
+    {
+     "t": "搜盘鸭",
+     "u": "https://sopanya.com",
+     "d": "聚合多网盘公开分享资源检索",
+     "b": "NEW",
+     "s": "pan",
+     "f": "搜"
+    },
+    {
+     "t": "盘搜搜",
+     "u": "https://pansousou.cc",
+     "d": "专业网盘资源搜索引擎",
+     "b": "NEW",
+     "s": "pan",
+     "f": "盘"
+    },
+    {
+     "t": "AcFun直播",
+     "u": "https://live.acfun.cn",
+     "d": "AcFun 弹幕视频直播",
+     "b": "NEW",
+     "s": "online",
+     "f": "A"
+    },
+    {
+     "t": "可可看片影视",
+     "u": "https://wwbdc.lanzoub.com/i47MZ46nzzrg",
+     "d": "观影神器 App 下载页",
+     "b": "NEW",
+     "s": "download",
+     "f": "可"
+    },
+    {
+     "t": "追剧兔影视",
+     "u": "https://zhuijutu.cc",
+     "d": "最新电影电视剧综艺动漫免费看",
+     "b": "NEW",
+     "s": "online",
+     "f": "追"
+    },
+    {
+     "t": "耐看点播",
+     "u": "https://nkdb.cc",
+     "d": "最新电影电视剧在线观看",
+     "b": "NEW",
+     "s": "online",
+     "f": "耐"
+    },
+    {
+     "t": "宅男网盘",
+     "u": "https://v.time1080.xyz",
+     "d": "实时影视热搜榜，网盘资源一键获取",
+     "b": "NEW",
+     "s": "pan",
+     "f": "宅"
+    },
+    {
+     "t": "宅男影视",
+     "u": "https://znys.top",
+     "d": "宅男影视官方发布页，最新地址",
+     "b": "NEW",
+     "s": "online",
+     "f": "宅"
+    },
+    {
+     "t": "电影侠无广版",
+     "u": "https://wwbdc.lanzoub.com/iKLvB46o4r6h",
+     "d": "轻量化高清观影神器 App 下载页",
+     "b": "NEW",
+     "s": "download",
+     "f": "电"
+    },
+    {
+     "t": "片库",
+     "u": "https://4k01.pianku.online",
+     "d": "免费 VIP 电视剧与最新大片播放",
+     "b": "NEW",
+     "s": "online",
+     "f": "片"
+    },
+    {
+     "t": "剧OK",
+     "u": "https://juok3.top",
+     "d": "最新电视剧电影免费在线播放",
+     "b": "NEW",
+     "s": "online",
+     "f": "剧"
+    },
+    {
+     "t": "懒人电影",
+     "u": "https://lanrendy.top",
+     "d": "电影连续剧综艺动漫短剧搜索播放",
+     "b": "NEW",
+     "s": "online",
+     "f": "懒"
+    },
+    {
+     "t": "看片狂人",
+     "u": "https://kpkuang.fyi",
+     "d": "免费在线观看与超前点播下载",
+     "b": "NEW",
+     "s": "online",
+     "f": "看"
+    },
+    {
+     "t": "斗鱼主播榜",
+     "u": "https://douyu.com/directory/rank_list/PCgame",
+     "d": "斗鱼主播排行榜",
+     "b": "NEW",
+     "s": "online",
+     "f": "斗"
+    },
+    {
+     "t": "樱花动漫",
+     "u": "https://yhdmg.com",
+     "d": "最新热门经典动漫免费高清观看",
+     "b": "NEW",
+     "s": "anime",
+     "f": "樱"
+    },
+    {
+     "t": "云漫画",
+     "u": "https://mangayun.com",
+     "d": "日漫国漫韩漫纯净竖屏在线看",
+     "b": "NEW",
+     "s": "anime",
+     "f": "云"
+    },
+    {
+     "t": "动漫MIKU",
+     "u": "https://dmmiku.com",
+     "d": "动漫米库，新番与热门番剧",
+     "b": "NEW",
+     "s": "anime",
+     "f": "动"
+    },
+    {
+     "t": "E站弹幕网",
+     "u": "https://ezdmw.org",
+     "d": "二次元社区，在线动漫与下载",
+     "b": "NEW",
+     "s": "anime",
+     "f": "E"
+    },
+    {
+     "t": "囧次元",
+     "u": "https://jciyuan.com",
+     "d": "海量高清动画在线平台",
+     "b": "NEW",
+     "s": "anime",
+     "f": "囧"
+    },
+    {
+     "t": "新番动画",
+     "u": "https://fitacg.com",
+     "d": "新番动画、热门漫画与动漫资讯",
+     "b": "NEW",
+     "s": "anime",
+     "f": "新"
+    },
+    {
+     "t": "粤漫之家",
+     "u": "https://ymvid.com",
+     "d": "专注粤语配音动画资源站",
+     "b": "NEW",
+     "s": "anime",
+     "f": "粤"
+    },
+    {
+     "t": "G站漫画",
+     "u": "https://godamh.com",
+     "d": "连载漫画免费优质阅读体验",
+     "b": "NEW",
+     "s": "anime",
+     "f": "G"
+    },
+    {
+     "t": "漫画下载",
+     "u": "https://mheee.com",
+     "d": "高清 mobi、epub 格式漫画下载",
+     "b": "NEW",
+     "s": "anime",
+     "f": "漫"
+    },
+    {
+     "t": "OmoFun动漫",
+     "u": "https://pan.quark.cn/s/d1db0e8a8bd5#/list/share",
+     "d": "OmoFun 高清免费动漫影视网盘分享",
+     "b": "NEW",
+     "s": "anime",
+     "f": "O"
+    },
+    {
+     "t": "漫漫漫画",
+     "u": "https://manmanapp.com",
+     "d": "原创正版国漫连载平台",
+     "b": "NEW",
+     "s": "anime",
+     "f": "漫"
+    },
+    {
+     "t": "TvTFun",
+     "u": "https://tvtfun.net",
+     "d": "发现新番、浏览专辑与每周更新",
+     "b": "NEW",
+     "s": "anime",
+     "f": "T"
+    },
+    {
+     "t": "哔哩哔哩漫画",
+     "u": "https://manga.bilibili.com",
+     "d": "哔哩哔哩正版漫画阅读平台",
+     "b": "NEW",
+     "s": "anime",
+     "f": "哔"
+    },
+    {
+     "t": "看漫画",
+     "u": "https://kanman.com",
+     "d": "正版漫画阅读平台，国漫授权众多",
+     "b": "NEW",
+     "s": "anime",
+     "f": "看"
+    },
+    {
+     "t": "快看漫画",
+     "u": "https://kuaikanmanhua.com",
+     "d": "新生代漫画阅读平台与兴趣社区",
+     "b": "NEW",
+     "s": "anime",
+     "f": "快"
     }
    ]
   },
@@ -8489,6 +8865,134 @@
      "b": "分享美好数字生活与高颜值桌面EDC",
      "s": "community",
      "f": "尾巴"
+    },
+    {
+     "t": "深夜福利",
+     "u": "https://kuake.isjdh.com",
+     "d": "每日整理资源，按标签快速切换",
+     "b": "NEW",
+     "s": "community",
+     "f": "深"
+    },
+    {
+     "t": "小刀资源网",
+     "u": "https://301z.com",
+     "d": "小刀辅助网永久发布页",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "小"
+    },
+    {
+     "t": "美图123",
+     "u": "https://mt123.cc",
+     "d": "动漫、美女、二次元高清壁纸分享",
+     "b": "NEW",
+     "s": "wallpaper",
+     "f": "美"
+    },
+    {
+     "t": "爱Q生活网",
+     "u": "https://iqnew.com",
+     "d": "最新 QQ 活动、技巧与软件资讯",
+     "b": "NEW",
+     "s": "community",
+     "f": "爱"
+    },
+    {
+     "t": "橘子资源网",
+     "u": "https://juzia.cn",
+     "d": "影视、软件、游戏、教程资源整理",
+     "b": "NEW",
+     "s": "community",
+     "f": "橘"
+    },
+    {
+     "t": "暖糖壁纸",
+     "u": "https://nuantang.net",
+     "d": "精选高清全屏电脑桌面壁纸",
+     "b": "NEW",
+     "s": "wallpaper",
+     "f": "暖"
+    },
+    {
+     "t": "小刀娱乐网",
+     "u": "https://x6d.com",
+     "d": "活动线报、绿色软件与源码教程",
+     "b": "NEW",
+     "s": "community",
+     "f": "小"
+    },
+    {
+     "t": "老街拿图",
+     "u": "https://drive.uc.cn/s/1bafc9fd4d184",
+     "d": "高清头像与手机壁纸，无水印原图",
+     "b": "NEW",
+     "s": "wallpaper",
+     "f": "老"
+    },
+    {
+     "t": "多多软件站",
+     "u": "https://ddooo.com",
+     "d": "绿色软件与热门单机游戏下载平台",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "多"
+    },
+    {
+     "t": "ZOL下载",
+     "u": "https://xiazai.zol.com.cn",
+     "d": "中关村在线软件下载频道",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "Z"
+    },
+    {
+     "t": "51软件",
+     "u": "https://51ruanjian.com",
+     "d": "专业工具软件下载与安装教程",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "5"
+    },
+    {
+     "t": "应用控下载",
+     "u": "https://appskong.com",
+     "d": "正版热门游戏与精品应用下载站",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "应"
+    },
+    {
+     "t": "南北的猫",
+     "u": "https://nbdm.net",
+     "d": "Windows 与 Mac 软件下载站",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "南"
+    },
+    {
+     "t": "设计软件下载",
+     "u": "https://znztool.com/software",
+     "d": "室内设计与平面等设计软件大全",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "设"
+    },
+    {
+     "t": "五九软件库",
+     "u": "https://5909.net",
+     "d": "官方软件下载，PC 与手机应用",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "五"
+    },
+    {
+     "t": "腾牛下载站",
+     "u": "https://qqan.com",
+     "d": "QQ 软件免费下载与资讯",
+     "b": "NEW",
+     "s": "soft_hub",
+     "f": "腾"
     }
    ]
   },
@@ -9172,6 +9676,134 @@
      "b": "专业ASMR脑波音乐与晚安电台",
      "s": "radio",
      "f": "睡眠"
+    },
+    {
+     "t": "QQ音乐热门榜",
+     "u": "https://y.qq.com/n/ryqq_v2/toplist/4",
+     "d": "QQ 音乐热门榜",
+     "b": "NEW",
+     "s": "radio",
+     "f": "Q"
+    },
+    {
+     "t": "QQ音速网",
+     "u": "https://yinwe.com",
+     "d": "一站式音乐服务，海量高品质音乐",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "Q"
+    },
+    {
+     "t": "开开无损音乐",
+     "u": "https://kkws.top",
+     "d": "无损音乐免费下载，抖音热门音乐",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "开"
+    },
+    {
+     "t": "布谷音乐",
+     "u": "https://buguyy.cc",
+     "d": "高品质在线试听与无损下载",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "布"
+    },
+    {
+     "t": "动感酷音乐网",
+     "u": "https://dgcol.com",
+     "d": "高品质在线听与免费下载 MP3",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "动"
+    },
+    {
+     "t": "发现好音乐",
+     "u": "https://9sky.com",
+     "d": "九天音乐网，高品质试听与正版下载",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "发"
+    },
+    {
+     "t": "小蜜蜂音乐网",
+     "u": "https://xmfwav.com",
+     "d": "音乐在线试听、精选歌单与新歌推荐",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "小"
+    },
+    {
+     "t": "汽水音乐",
+     "u": "https://music.douyin.com/qishui",
+     "d": "抖音官方出品音乐 App，发现好音乐",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "汽"
+    },
+    {
+     "t": "波点音乐",
+     "u": "https://bodian.kuwo.cn",
+     "d": "年轻人都在用的音乐 App",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "波"
+    },
+    {
+     "t": "HiFiNi",
+     "u": "https://hifini.xyz",
+     "d": "音乐爱好者维护的永久免费分享平台",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "H"
+    },
+    {
+     "t": "动听音乐网",
+     "u": "https://dtwav.com",
+     "d": "抖音热歌经典老歌车载 DJ 在线试听",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "动"
+    },
+    {
+     "t": "凤梨音乐",
+     "u": "https://flmp3.pro",
+     "d": "高音质无损音乐资源分享平台",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "凤"
+    },
+    {
+     "t": "熊猫无损音乐",
+     "u": "https://xmwav.net",
+     "d": "海量曲库免费试听与无损格式下载",
+     "b": "NEW",
+     "s": "lossless",
+     "f": "熊"
+    },
+    {
+     "t": "抖音DJ车载合集",
+     "u": "https://pan.quark.cn/s/89c51b4ef4de",
+     "d": "抖音火爆 DJ 车载嗨曲合集",
+     "b": "NEW",
+     "s": "downloader",
+     "f": "抖"
+    },
+    {
+     "t": "无忧音乐网",
+     "u": "https://qeecc.com",
+     "d": "全网 MP3 歌曲免费下载，千万曲库",
+     "b": "NEW",
+     "s": "downloader",
+     "f": "无"
+    },
+    {
+     "t": "曼波音乐",
+     "u": "https://manboyy.cc",
+     "d": "无损音乐在线试听与免费下载",
+     "b": "NEW",
+     "s": "downloader",
+     "f": "曼"
     }
    ]
   },
@@ -9868,6 +10500,78 @@
      "d": "校对全本 TXT 小说下载网站。",
      "b": "NEW",
      "s": "library"
+    },
+    {
+     "t": "小说排行榜",
+     "u": "https://qimao.com/paihang",
+     "d": "七猫小说男生女生大热榜等",
+     "b": "NEW",
+     "s": "web_novel",
+     "f": "小"
+    },
+    {
+     "t": "微信读书榜",
+     "u": "https://weread.qq.com/web/category/all",
+     "d": "微信读书海量正版书籍小说漫画",
+     "b": "NEW",
+     "s": "web_novel",
+     "f": "微"
+    },
+    {
+     "t": "小力盘",
+     "u": "https://xiaolipan.com/index.html",
+     "d": "kindle、PDF、txt、epub 电子书下载",
+     "b": "NEW",
+     "s": "library",
+     "f": "小"
+    },
+    {
+     "t": "读书派",
+     "u": "https://dushupai.com",
+     "d": "靠谱的电子书下载网站导航",
+     "b": "NEW",
+     "s": "library",
+     "f": "读"
+    },
+    {
+     "t": "爱去小说网",
+     "u": "https://aqxsw123.com",
+     "d": "穿越言情玄幻全本完结 TXT 打包下载",
+     "b": "NEW",
+     "s": "web_novel",
+     "f": "爱"
+    },
+    {
+     "t": "笔趣阁",
+     "u": "https://pan.quark.cn/s/d577526f65b3#/list/share",
+     "d": "笔趣阁小说阅读网盘分享",
+     "b": "NEW",
+     "s": "web_novel",
+     "f": "笔"
+    },
+    {
+     "t": "雨鹿阅读",
+     "u": "https://pan.quark.cn/s/483549244f12",
+     "d": "雨鹿阅读 App，小说漫画聚合多源",
+     "b": "NEW",
+     "s": "web_novel",
+     "f": "雨"
+    },
+    {
+     "t": "鬼话连篇网",
+     "u": "https://guihualianpian.cn",
+     "d": "原创民间鬼故事与灵异怪谈",
+     "b": "NEW",
+     "s": "web_novel",
+     "f": "鬼"
+    },
+    {
+     "t": "熊猫速读",
+     "u": "https://qread.xmsoushu.com",
+     "d": "视频书速读速览平台",
+     "b": "NEW",
+     "s": "web_novel",
+     "f": "熊"
     }
    ]
   },
@@ -10725,6 +11429,134 @@
      "b": "免费千款3D动作库",
      "s": "pc",
      "f": "MX"
+    },
+    {
+     "t": "游戏发卡网",
+     "u": "https://301.nipdm.com",
+     "d": "24小时自助下单游戏小号与激活码",
+     "b": "NEW",
+     "s": "pc",
+     "f": "游"
+    },
+    {
+     "t": "暴走微游戏",
+     "u": "https://game.ioxapp.com",
+     "d": "台湾最大行动游戏平台，小游戏大全",
+     "b": "NEW",
+     "s": "online_game",
+     "f": "暴"
+    },
+    {
+     "t": "XHYGAME",
+     "u": "https://xhygame.top",
+     "d": "单机游戏资源网",
+     "b": "NEW",
+     "s": "pc",
+     "f": "X"
+    },
+    {
+     "t": "123资源库",
+     "u": "https://123zyk.com",
+     "d": "优质游戏内容每日持续更新",
+     "b": "NEW",
+     "s": "pc",
+     "f": "1"
+    },
+    {
+     "t": "小鱼资源库",
+     "u": "https://yzyk.xyz",
+     "d": "免费软件游戏下载站，Steam 与 Switch",
+     "b": "NEW",
+     "s": "pc",
+     "f": "小"
+    },
+    {
+     "t": "宝库一号",
+     "u": "https://baoku.one",
+     "d": "免费单机游戏资源搜索与下载",
+     "b": "NEW",
+     "s": "pc",
+     "f": "宝"
+    },
+    {
+     "t": "乐乐游戏",
+     "u": "https://6ll.com",
+     "d": "专注安卓游戏分享平台",
+     "b": "NEW",
+     "s": "pc",
+     "f": "乐"
+    },
+    {
+     "t": "地铁跑酷",
+     "u": "https://pan.quark.cn/s/5a4c935b8604",
+     "d": "安卓版地铁跑酷无限金币钥匙分享",
+     "b": "NEW",
+     "s": "pc",
+     "f": "地"
+    },
+    {
+     "t": "单机游戏合集",
+     "u": "https://xdgame.io",
+     "d": "热门单机游戏每日更新公益版",
+     "b": "NEW",
+     "s": "pc",
+     "f": "单"
+    },
+    {
+     "t": "蒸汽游戏宝库",
+     "u": "https://steambk.com",
+     "d": "Steam 及经典单机游戏资源下载",
+     "b": "NEW",
+     "s": "pc",
+     "f": "蒸"
+    },
+    {
+     "t": "Switch游戏",
+     "u": "https://gamer520.com",
+     "d": "Switch 与 PC 游戏免费下载站",
+     "b": "NEW",
+     "s": "pc",
+     "f": "S"
+    },
+    {
+     "t": "乐活小游戏",
+     "u": "https://levo.games/zh",
+     "d": "500 多个精美迷你游戏安卓应用",
+     "b": "NEW",
+     "s": "online_game",
+     "f": "乐"
+    },
+    {
+     "t": "赛博朋克2077",
+     "u": "https://pan.quark.cn/s/103967ea2d7b",
+     "d": "赛博朋克 2077 开放世界 RPG 分享",
+     "b": "NEW",
+     "s": "pc",
+     "f": "赛"
+    },
+    {
+     "t": "安卓侠盗飞车",
+     "u": "https://pan.quark.cn/s/c3bdf456d82a",
+     "d": "安卓侠盗飞车罪恶都市最终版分享",
+     "b": "NEW",
+     "s": "pc",
+     "f": "安"
+    },
+    {
+     "t": "植物大战僵尸",
+     "u": "https://pan.quark.cn/s/f07a32a7e2f5",
+     "d": "植物大战僵尸合集分享",
+     "b": "NEW",
+     "s": "pc",
+     "f": "植"
+    },
+    {
+     "t": "52SteamGame",
+     "u": "https://52steamgame.com",
+     "d": "精选 PC 单机游戏资源下载",
+     "b": "NEW",
+     "s": "pc",
+     "f": "5"
     }
    ]
   },
@@ -11771,6 +12603,134 @@
      "b": "自己动手换手机电池修Switch手柄",
      "s": "web_tool",
      "f": "iFix"
+    },
+    {
+     "t": "免费商用字体",
+     "u": "https://100font.com",
+     "d": "免费商用字体下载，可放心商用",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "免"
+    },
+    {
+     "t": "工具合集",
+     "u": "https://gongjuheji.com",
+     "d": "免费多功能在线工具箱，数百款工具",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "工"
+    },
+    {
+     "t": "免费视频解析",
+     "u": "https://xinai.rf.gd",
+     "d": "在线链接解析，提取可用媒体地址",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "免"
+    },
+    {
+     "t": "抠抠抠",
+     "u": "https://koukoukou.cn",
+     "d": "AI 智能抠图，批量一键去背景",
+     "b": "NEW",
+     "s": "img_proc",
+     "f": "抠"
+    },
+    {
+     "t": "免费API",
+     "u": "https://api.aa1.cn",
+     "d": "免费 API 聚合平台，上千款接口",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "免"
+    },
+    {
+     "t": "创建名片链接",
+     "u": "https://mylink.xin",
+     "d": "公众号抖音店铺收拢成短链聚合页",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "创"
+    },
+    {
+     "t": "蜜蜂图床",
+     "u": "https://beeimg.cn",
+     "d": "快速稳定的在线图床与外链分享",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "蜜"
+    },
+    {
+     "t": "在线压缩工具",
+     "u": "https://yasuo.app/zh-CN",
+     "d": "浏览器内直接压缩，文件不出设备",
+     "b": "NEW",
+     "s": "file_proc",
+     "f": "在"
+    },
+    {
+     "t": "抖音去水印",
+     "u": "https://dog886.com/tools/douyin-watermark-remover",
+     "d": "免费抖音短视频去水印解析",
+     "b": "NEW",
+     "s": "file_proc",
+     "f": "抖"
+    },
+    {
+     "t": "老照片无损修复",
+     "u": "https://jpghd.com",
+     "d": "AI 老照片无损高清修复与上色",
+     "b": "NEW",
+     "s": "img_proc",
+     "f": "老"
+    },
+    {
+     "t": "在线证件照制作",
+     "u": "https://id-photo.cn",
+     "d": "免费在线证件照，智能抠图换底色",
+     "b": "NEW",
+     "s": "img_proc",
+     "f": "在"
+    },
+    {
+     "t": "在线加水印",
+     "u": "https://watermark.chiloh.cn",
+     "d": "免费在线图片水印，本地处理",
+     "b": "NEW",
+     "s": "img_proc",
+     "f": "在"
+    },
+    {
+     "t": "扒网站工具",
+     "u": "https://templatespider.zvo.cn",
+     "d": "指定 URL 自动扒站做模板",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "扒"
+    },
+    {
+     "t": "在线录屏",
+     "u": "https://tool.browser.qq.com/screen_record.html",
+     "d": "在线录屏，支持标签页与窗口",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "在"
+    },
+    {
+     "t": "图片去水印工具",
+     "u": "https://jiandan.link/app/image-tools/editing-tools/remove-watermark",
+     "d": "智能去水印，还原图片原貌",
+     "b": "NEW",
+     "s": "img_proc",
+     "f": "图"
+    },
+    {
+     "t": "免费去水印",
+     "u": "https://hellotik.app/zh",
+     "d": "TikTok 等平台去水印解析下载",
+     "b": "NEW",
+     "s": "file_proc",
+     "f": "免"
     }
    ]
   },
@@ -13844,6 +14804,174 @@
      "b": "国内超火的大模型API、自建开源项目交流坛",
      "s": "dev",
      "f": "LDO"
+    },
+    {
+     "t": "宅男导航",
+     "u": "https://zhainandh.com",
+     "d": "收集各类好玩站点与实用工具",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "宅"
+    },
+    {
+     "t": "省钱小助手",
+     "u": "https://zhainandh.com/sq",
+     "d": "省钱助手收藏页",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "省"
+    },
+    {
+     "t": "街拍团",
+     "u": "https://jiepaiclub.com",
+     "d": "三里屯等地真实街拍作品博客",
+     "b": "NEW",
+     "s": "fun",
+     "f": "街"
+    },
+    {
+     "t": "喵糖cos",
+     "u": "https://4kmax.shouchong.vip/",
+     "d": "萝莉写真与网红热门精选",
+     "b": "NEW",
+     "s": "fun",
+     "f": "喵"
+    },
+    {
+     "t": "58宅男网",
+     "u": "https://58ydy.cc",
+     "d": "宅男网、影视资源与技术分享",
+     "b": "NEW",
+     "s": "fun",
+     "f": "5"
+    },
+    {
+     "t": "爱推图写真",
+     "u": "https://ww.aituitu.com",
+     "d": "高清美女写真美图在线套图浏览",
+     "b": "NEW",
+     "s": "fun",
+     "f": "爱"
+    },
+    {
+     "t": "美人湖写真",
+     "u": "https://meirenhu.com",
+     "d": "高清美女写真作品每日更新",
+     "b": "NEW",
+     "s": "fun",
+     "f": "美"
+    },
+    {
+     "t": "秀网阁写真",
+     "u": "https://xwang06.com",
+     "d": "秀人、微密与 Coser 写真集",
+     "b": "NEW",
+     "s": "fun",
+     "f": "秀"
+    },
+    {
+     "t": "美女写真",
+     "u": "https://mnxiezhen.com",
+     "d": "各类高清图片壁纸浏览下载",
+     "b": "NEW",
+     "s": "fun",
+     "f": "美"
+    },
+    {
+     "t": "微博美女",
+     "u": "https://weibomn.com",
+     "d": "收集新浪微博中的美女图片",
+     "b": "NEW",
+     "s": "fun",
+     "f": "微"
+    },
+    {
+     "t": "搜狗美女",
+     "u": "https://pic.sogou.com/pics?query=%E7%BE%8E%E5%A5%B3",
+     "d": "搜狗图片精选全网高清美图",
+     "b": "NEW",
+     "s": "fun",
+     "f": "搜"
+    },
+    {
+     "t": "就爱看妹子",
+     "u": "https://qingbuyaohaixiu.com",
+     "d": "美女图片分享站",
+     "b": "NEW",
+     "s": "fun",
+     "f": "就"
+    },
+    {
+     "t": "不找了导航",
+     "u": "https://daott.cn",
+     "d": "宝藏资源收集网站，免费下载",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "不"
+    },
+    {
+     "t": "别搜啦导航",
+     "u": "https://bsla.cn",
+     "d": "宝藏资源收集网站，免费下载",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "别"
+    },
+    {
+     "t": "扒拉一下",
+     "u": "https://998z.cn",
+     "d": "精选免费实用网站，多引擎聚合搜索",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "扒"
+    },
+    {
+     "t": "开发者导航",
+     "u": "https://codernav.com",
+     "d": "免费优质 AI 与资源干货导航",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "开"
+    },
+    {
+     "t": "上班人导航",
+     "u": "https://sbrdh.com",
+     "d": "上班人必备职场办公导航",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "上"
+    },
+    {
+     "t": "狐狸导航",
+     "u": "https://foxccs.cn",
+     "d": "高品质综合型网址导航",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "狐"
+    },
+    {
+     "t": "壹壹导航",
+     "u": "https://11nu.com",
+     "d": "设计师必备的设计导航站",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "壹"
+    },
+    {
+     "t": "新发现导航",
+     "u": "https://faxian.xin",
+     "d": "精品分类网址导航，一键直达",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "新"
+    },
+    {
+     "t": "聚合导航",
+     "u": "https://jhdh.com",
+     "d": "海量免费优质资源站点导航主页",
+     "b": "NEW",
+     "s": "nav_hubs",
+     "f": "聚"
     }
    ]
   },
@@ -17347,6 +18475,14 @@
      "b": "全球唯一公认最权威的大模型真人双盲PK排行榜",
      "s": "research_eval",
      "f": "Arena"
+    },
+    {
+     "t": "蛙蛙AI写作",
+     "u": "https://wawawriter.cgref.cn/s/dqndr53k2z",
+     "d": "AI 写作辅助，拆书、小说转剧本",
+     "b": "NEW",
+     "s": "office_writing",
+     "f": "蛙"
     }
    ]
   },
@@ -19445,6 +20581,14 @@
      "b": "NEW",
      "s": "youhuiquan",
      "f": "苏宁"
+    },
+    {
+     "t": "福利吧",
+     "u": "https://fuliba2025.net",
+     "d": "每日福利汇总、电影推荐与网赚",
+     "b": "NEW",
+     "s": "xianbao",
+     "f": "福"
     }
    ]
   },
@@ -20266,6 +21410,38 @@
      "b": "",
      "s": "jianji",
      "f": "St"
+    },
+    {
+     "t": "AI影视创作",
+     "u": "https://anishort.cgref.cn/s/50k93l9kg6",
+     "d": "AI 影视剧协同创作平台，多画布工作流",
+     "b": "NEW",
+     "s": "shengcheng",
+     "f": "A"
+    },
+    {
+     "t": "AI视频创作",
+     "u": "https://updream.cgref.cn/s/1zn5z02nqm",
+     "d": "B站自研轻量 AI 视频创作产品",
+     "b": "NEW",
+     "s": "shengcheng",
+     "f": "A"
+    },
+    {
+     "t": "AI漫画创作",
+     "u": "https://pixtv.cgref.cn/s/1le042xkoq",
+     "d": "一站式 AI 视频生成与无限画布平台",
+     "b": "NEW",
+     "s": "shengcheng",
+     "f": "A"
+    },
+    {
+     "t": "AI短剧创作",
+     "u": "https://seko.cgref.cn/s/9we231xkgo",
+     "d": "自然语言完成剧本分镜与视频生成",
+     "b": "NEW",
+     "s": "shengcheng",
+     "f": "A"
     }
    ]
   }
