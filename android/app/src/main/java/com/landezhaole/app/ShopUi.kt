@@ -898,7 +898,6 @@ fun ShopHome(
 
 // ---- 分类页：左 21 分类 + 右子类 chips + 2 列站点卡（前 6 个） ----
 // ---- 分类页：21 分类索引（点分类进独立详情页） ----
-@Composable
 // ---- Demo 玻璃渲染（GlassChat 代码的可移植部分：不含 Haze/AGSL、不改构建配置）----
 private fun glassSheenBrush(): Brush = Brush.verticalGradient(
     colorStops = arrayOf(
@@ -998,6 +997,7 @@ private fun Modifier.auroraBackground(): Modifier = this
         )
     }
 
+@Composable
 fun ShopCategory(
     pal: AppPalette,
     categories: List<Category>,
