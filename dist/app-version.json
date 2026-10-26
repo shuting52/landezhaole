@@ -1,13 +1,12 @@
 {
-  "versionCode": 16,
-  "versionName": "1.2.3",
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.2.3-release.apk",
-  "sha256": "1da02017e4239f16ea1353d6f0726d3cc20e5b4ece537aa308ad4f45404b418f",
+  "versionCode": 17,
+  "versionName": "1.2.4",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.2.4-release.apk",
+  "sha256": "1cdb0db8d90344da49a591b6e85f0527cd945a5ffea493d0d1f589e2e01ee9ec",
   "notes": [
-    "首页顶栏的更新 / 夜间模式 / 主题移到“我的”设置里，首页顶栏只留品牌和日期",
-    "我的新增设置区：检查更新（显示当前版本）、深色模式开关、主题（显示当前模式）",
-    "省钱文件夹 tab 对齐网站：选中 tab 加阴影 + 下方白带连进筛选卡，筛选卡去边框改阴影",
-    "全屏内容避开状态栏，省钱页标题不再被状态栏图标压住",
-    "含 1.2.1 全部内容：底部四栏、渐变文字 Logo、22 张领券卡、应用下载、翻页时钟、鱼眼 Dock、应用内更新"
+    "删翻页时钟，与网站同步（网站已删）",
+    "我的新增“支持与关于”：微信打赏 / QQ好友 / 支付宝打赏（点开扫码弹窗）与关于网站（从内置数据实时数收录分类与站点数）",
+    "首页新增直达底部悬浮钮（↓），与回顶钮成对，常驻显示",
+    "其余网站功能已全量对齐：21 分类 / 2436 站点、9 引擎（含应用下载）、站内搜索、角标、今日点击、NEW 提示、启动更新检查、快捷 Dock、背景气泡、省钱 22 卡、应用下载分段下载与安装"
   ]
 }
