@@ -1,11 +1,16 @@
 {
-  "versionCode": 20,
-  "versionName": "1.3.1",
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.1-release.apk",
-  "sha256": "1b5d7f5a2ac1f1a824c7f54c0b7afbb64cf401cf2ea38a6667f3e8bdd7e555e8",
+  "versionCode": 21,
+  "versionName": "1.3.2",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.2-release.apk",
+  "sha256": "55f0710669b16d74e6c3c238b8c58b9cf731d6caeda47cd505dfbc1489e0bfbd",
   "notes": [
-    "分类页显示该子类全部站点（1.3.0 只取 6 个的问题已修），标题改为“全部站点”",
-    "首页热门 12 个、猜你喜欢 20 个精选保留",
-    "其余与 1.3.0 一致：5 栏电商界面、9 引擎与应用下载、内置 21 分类 / 2456 站点"
+    "首页热搜词删除，顶部渐变跟随深浅色主题并加阴影立体感",
+    "轮播图扩到 10 张、可随意滑动，点开即该分类全部站点的独立页",
+    "首页分类网格可收纳展开，图标换彩色真实对应图标",
+    "首页热门与猜你喜欢右侧改为“更多”，点开为全部站点的独立页",
+    "分类页去掉侧边栏，改为分类索引 + 独立详情页",
+    "删除“我的收藏”版块（含底部栏与卡片星标）",
+    "我的页功能格删除，检查更新、深色模式、省钱小助手移到关于网站下方",
+    "关注我们改为官方网站，添加粉丝群改为 QQ 直接跳转（失败时回落网页加群链接）"
   ]
 }
