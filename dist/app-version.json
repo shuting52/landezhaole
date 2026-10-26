@@ -1,12 +1,11 @@
 {
-  "versionCode": 10,
-  "versionName": "1.1.7",
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.1.7-release.apk",
-  "sha256": "95e7fd3003205913015ca2649086d6c00d7592249c789177e522aa7b8c85caab",
+  "versionCode": 12,
+  "versionName": "1.1.9",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.1.9-release.apk",
+  "sha256": "ca2f30af0e4395bb4f74496ef033581de17d909f6d473b3ea808f1f3f3358405",
   "notes": [
-    "卡片改横版缩小、四个一排：图标在左、标题在右",
-    "应用下载引擎回炉：搜索引擎最后一位，App 内搜应用、分段下载、直接安装，不跳浏览器",
-    "软件库直达：Dock 最后加“软”图标，点一下跳到资源网站并切到软件库；搜索也能搜到子分类名",
-    "含 1.1.5 全部内容：双源版本检查、网站排版、粒子 Logo、翻页时钟、鱼眼 Dock"
+    "卡片改四个一排竖版：图标在上、名字在下放两行，站名看得全",
+    "修点立即更新闪退：补 WAKE_LOCK 权限 + 保活服务起不来也不连累主进程",
+    "含 1.1.7 全部内容：应用下载引擎、软件库直达与搜索、双源版本检查、网站排版、粒子 Logo、翻页时钟、鱼眼 Dock"
   ]
 }
