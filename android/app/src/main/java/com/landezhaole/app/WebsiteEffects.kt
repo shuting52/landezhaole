@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -383,16 +384,19 @@ fun WebCard(
     }
 }
 
-// ---- 网站快捷 Dock：鱼眼 + 名称提示（手机端手指版），点一下跳到对应分类 ----
+// ---- 网站快捷 Dock：鱼眼 + 名称提示（手机端手指版） ----
 // 鱼眼参数与网站一致：最大 1.5 倍，高斯 sigma 按间距 0.85；Dock 自成组合，滚动重组只影响它自己
+// 条目由调用方给：前 10 个分类 + 软件库直达（点一下跳到资源网站并切到软件库子分类）
+data class DockEntry(val name: String, val onClick: () -> Unit)
+
 @Composable
-fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit) {
+fun DockFishEye(entries: List<DockEntry>, pal: AppPalette) {
     val dockScroll = rememberScrollState()
     val density = LocalDensity.current
     var touchX by remember { mutableStateOf<Float?>(null) }
     var tipIndex by remember { mutableStateOf<Int?>(null) }
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        if (tipIndex != null && tipIndex!! < cats.size) {
+        if (tipIndex != null && tipIndex!! < entries.size) {
             Box(
                 modifier = Modifier
                     .shadow(2.dp, RoundedCornerShape(8.dp))
@@ -401,7 +405,7 @@ fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit)
                     .border(1.dp, pal.line, RoundedCornerShape(8.dp))
                     .padding(horizontal = 12.dp, vertical = 5.dp)
             ) {
-                Text(cats[tipIndex!!].name, fontSize = 12.sp, color = pal.foreground)
+                Text(entries[tipIndex!!].name, fontSize = 12.sp, color = pal.foreground)
             }
             Spacer(modifier = Modifier.height(6.dp))
         }
@@ -417,7 +421,7 @@ fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit)
                             val touchDp = pos.x / density.density + dockScroll.value / density.density
                             var nearest = 0
                             var best = Float.MAX_VALUE
-                            for (i in cats.indices) {
+                            for (i in entries.indices) {
                                 val d = kotlin.math.abs(touchDp - (i * 50f + 20f))
                                 if (d < best) { best = d; nearest = i }
                             }
@@ -444,7 +448,7 @@ fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit)
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
-                cats.forEachIndexed { i, cat ->
+                entries.forEachIndexed { i, entry ->
                     val s = if (touchX == null) 1f else {
                         val touchDp = touchX!! / density.density + dockScroll.value / density.density
                         val d = kotlin.math.abs(touchDp - (i * 50f + 20f))
@@ -461,12 +465,12 @@ fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit)
                                 transformOrigin = TransformOrigin(0.5f, 1f)
                             }
                             .clip(RoundedCornerShape(14.dp))
-                            .background(avatarColor(cat.name))
-                            .clickable { onJump(cat.id) },
+                            .background(avatarColor(entry.name))
+                            .clickable { entry.onClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            cat.name.trim().firstOrNull()?.toString() ?: "?",
+                            entry.name.trim().firstOrNull()?.toString() ?: "?",
                             color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold
                         )
                     }

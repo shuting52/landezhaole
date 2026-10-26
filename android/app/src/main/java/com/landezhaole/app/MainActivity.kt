@@ -211,6 +211,17 @@ val AI_API_MAP = mapOf(
     "cloud" to setOf("cloudflare", "azure", "aws", "gcp")
 )
 
+// 卡片所属子分类名（用于搜索：搜“软件库”也能找到该子分类下的站）
+fun subNameFor(cat: Category, card: SiteCard): String {
+    if (cat.id == "ai_api") {
+        for ((subId, vendors) in AI_API_MAP) {
+            if (card.s in vendors) return cat.subs.firstOrNull { it.id == subId }?.name ?: ""
+        }
+        return ""
+    }
+    return cat.subs.firstOrNull { it.id == card.s }?.name ?: ""
+}
+
 fun hostOf(u: String): String {
     return try { URL(u).host.replaceFirst("^www\\.".toRegex(), "") } catch (e: Exception) { "" }
 }
@@ -373,6 +384,8 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
     var pendingUpdate by remember { mutableStateOf<RemoteVersion?>(null) }
     var newToast by remember { mutableStateOf<List<SiteCard>?>(null) }
     var newToastChecked by remember { mutableStateOf(false) }
+    // Dock 直达某个子分类时用：Dock 点“软件库”会先把这项置为 soft_hub，再跳到资源网站区
+    val forcedSub = remember { mutableStateMapOf<String, String>() }
     if (showTheme) {
         ThemeAppearanceScreen(pal = pal, mode = themeMode, onModeChange = onThemeModeChange, uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false })
         return
@@ -433,7 +446,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
         val low = query.trim().lowercase()
         val all = mutableListOf<SiteCard>()
         for (cat in categories) for (c in cat.cards) {
-            val hay = (c.t + " " + c.d + " " + c.b + " " + c.u + " " + cat.name).lowercase()
+            val hay = (c.t + " " + c.d + " " + c.b + " " + c.u + " " + cat.name + " " + subNameFor(cat, c)).lowercase()
             if (hay.contains(low)) all.add(c)
         }
         fun rank(c: SiteCard): Int = when {
@@ -624,8 +637,12 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        // 网站快捷 Dock：鱼眼 + 名称提示，点一下跳到对应分类
-                        DockFishEye(cats = categories.take(10), pal = pal, onJump = { jumpToCategory(it) })
+                        // 网站快捷 Dock：鱼眼 + 名称提示，点一下跳到对应分类；最后是软件库直达
+                        DockFishEye(
+                            entries = categories.take(10).map { cat -> DockEntry(cat.name) { jumpToCategory(cat.id) } } +
+                                DockEntry("软件库") { forcedSub["resources"] = "soft_hub"; jumpToCategory("resources") },
+                            pal = pal
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
@@ -674,7 +691,11 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                     }
                 } else {
                     items(categories, key = { it.id }) { cat ->
-                        var sub by remember(cat.id) { mutableStateOf("all") }
+                        var sub by remember(cat.id) { mutableStateOf(forcedSub[cat.id] ?: "all") }
+                        LaunchedEffect(forcedSub[cat.id]) {
+                            val f = forcedSub[cat.id]
+                            if (f != null) { sub = f; forcedSub.remove(cat.id) }
+                        }
                         val shown = when {
                             sub == "all" -> cat.cards
                             cat.id == "ai_api" -> cat.cards.filter { (AI_API_MAP[sub] ?: emptySet()).contains(it.s) }
