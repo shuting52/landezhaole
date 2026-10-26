@@ -134,27 +134,6 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .update-dialog button{border:0;background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-  .flip-wrap{max-width:none;margin:0;padding:14px 0 0 8px;display:flex;justify-content:flex-start}
-.flip-clock{display:flex;align-items:center;justify-content:center;gap:5px;background:transparent;border:0;border-radius:0;padding:6px 10px;box-shadow:none;margin:14px auto 0}
-.flip-clock .group{display:flex;gap:6px}
-.flip-clock .colon{font-size:28px;color:#1f2937;line-height:48px;font-weight:700;user-select:none}
-.flip-clock .nums{--digit:'0';box-shadow:0 3px 10px rgba(0,0,0,.10);border:1px solid #d1d5db;height:48px;width:34px;perspective:1000px;position:relative;border-radius:5px;overflow:hidden}
-.flip-clock .nums:before{display:none}
-.flip-clock .nums:after{content:var(--digit);position:absolute;bottom:0;left:0;width:100%;height:50%;background:#f4f5f7;border-bottom:1px solid #d1d5db;border-radius:0 0 5px 5px;box-shadow:inset 0 15px 50px rgba(0,0,0,.05);color:#1f2937;font-size:34px;font-weight:700;line-height:0;text-align:center;overflow:hidden;z-index:0}
-.flip-clock .num{position:absolute;top:0;left:0;width:100%;height:100%;transform-style:preserve-3d}
-.flip-clock .num:before,.flip-clock .num:after{position:absolute;left:0;width:100%;height:50%;backface-visibility:hidden;color:#1f2937;font-size:34px;font-weight:700;text-align:center;overflow:hidden}
-.flip-clock .num:before{content:attr(data-num);top:0;background:#ffffff;border-radius:5px 5px 0 0;box-shadow:inset 0 15px 50px rgba(0,0,0,.05);line-height:1.38;z-index:1}
-.flip-clock .num:after{content:attr(data-num-next);top:0;background:#f4f5f7;border-radius:0 0 5px 5px;box-shadow:inset 0 15px 50px rgba(0,0,0,.05);line-height:0;transform:rotateX(180deg)}
-.flip-clock .num.current{z-index:0}
-.flip-clock .num.flip{animation:flipClock .6s ease-in forwards;z-index:50}
-@keyframes flipClock{0%{transform:rotateX(0);z-index:50}100%{transform:rotateX(-180deg);z-index:1}}
-[data-theme="dark"] .flip-clock .colon{color:#eeeeee;text-shadow:0 2px 4px #000}
-[data-theme="dark"] .flip-clock .nums{box-shadow:0 3px 10px #111;border-color:#393939}
-[data-theme="dark"] .flip-clock .nums:after{background:#2a2a2a;border-bottom-color:#444444;box-shadow:inset 0 15px 50px #202020;color:#eeeeee;text-shadow:0 1px 2px #333}
-[data-theme="dark"] .flip-clock .num:before,[data-theme="dark"] .flip-clock .num:after{color:#eeeeee;text-shadow:0 1px 2px #333}
-[data-theme="dark"] .flip-clock .num:before{background:#181818;box-shadow:inset 0 15px 50px #111111}
-[data-theme="dark"] .flip-clock .num:after{background:#2a2a2a;box-shadow:inset 0 15px 50px #202020}
-@media(max-width:640px){.flip-clock{padding:5px 7px;gap:3px}.flip-clock .group{gap:2px}.flip-clock .nums{height:40px;width:29px}.flip-clock .nums:after,.flip-clock .num:before,.flip-clock .num:after{font-size:28px}.flip-clock .colon{font-size:24px;line-height:40px}}
 
 .top-utils{position:absolute;top:-36px;right:16px;display:flex;gap:4px;z-index:55;padding:4px 6px;background:transparent;border:0;border-radius:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:gap .3s}
 .top-utils::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,0) 42%)}
@@ -197,16 +176,6 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
 <span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <button class="theme-btn" id="themeBtn">🌙 夜间模式</button></span>
 </div></div>
-
-<div class="flip-wrap">
-<div class="flip-clock" id="flipClock">
-<div class="group"><div class="nums" id="h1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="h2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
-<div class="colon">:</div>
-<div class="group"><div class="nums" id="m1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="m2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
-<div class="colon">:</div>
-<div class="group"><div class="nums" id="s1" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div><div class="nums" id="s2" style="--digit:'0'"><div class="num current" data-num="0" data-num-next="0"></div></div></div>
-</div>
-</div>
 
 <header class="header"><div class="wrap">
 
@@ -605,29 +574,6 @@ document.addEventListener('click',function(e){
  const link=e.target.closest?e.target.closest('.card'):null;if(link)recordTodayClick(link.href);
 });
 
-// 翻页时钟：数字变化时才翻牌，减动效偏好下直接静态切换
-const FLIP_IDS=['h1','h2','m1','m2','s1','s2'];
-let flipLast='';
-const flipReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-function flipPad(n){return n.toString().padStart(2,'0');}
-function flipSetStatic(el,digit){const c=el.querySelector('.current');c.dataset.num=digit;c.dataset.numNext=digit;el.style.setProperty('--digit',"'"+digit+"'");}
-function flipDigit(el,from,to){
- const c=el.querySelector('.current');c.dataset.num=to;
- const f=document.createElement('div');f.className='num flip';f.setAttribute('data-num',from);f.setAttribute('data-num-next',to);el.appendChild(f);
- f.addEventListener('animationend',function(){el.style.setProperty('--digit',"'"+to+"'");f.remove();});
-}
-function updateFlipClock(){
- const now=new Date();const str=flipPad(now.getHours())+flipPad(now.getMinutes())+flipPad(now.getSeconds());
- if(str===flipLast)return;
- for(let i=0;i<6;i++){
-  const el=document.getElementById(FLIP_IDS[i]);if(!el)continue;
-  const nd=str[i];const od=flipLast?flipLast[i]:el.querySelector('.current').dataset.num;
-  if(!flipLast)flipSetStatic(el,nd);
-  else if(od!==nd){if(flipReduced)flipSetStatic(el,nd);else flipDigit(el,od,nd);}
- }
- flipLast=str;
-}
-setInterval(updateFlipClock,200);updateFlipClock();
 
 function showUtilModal(title,html){document.getElementById('utilTitle').textContent=title;document.getElementById('utilBody').innerHTML=html;document.getElementById('utilOverlay').classList.add('show');}
 function showUtilQR(title,img,desc){showUtilModal(title,'<p style="text-align:center">'+desc+'</p><p style="text-align:center"><img src="'+img+'" alt="'+title+'" style="width:250px;max-width:82vw;border-radius:12px"></p>');}
