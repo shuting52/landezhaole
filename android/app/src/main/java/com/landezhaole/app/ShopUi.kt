@@ -99,6 +99,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.landezhaole.app.ui.ThemeAppearanceScreen
@@ -918,12 +919,13 @@ fun ShopCategory(
         Column(
             modifier = Modifier.weight(1f).fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy((-14).dp)
         ) {
-            Spacer(modifier = Modifier.height(4.dp))
             categories.forEachIndexed { i, cat ->
                 Row(
                     modifier = Modifier.fillMaxWidth()
+                        .zIndex((categories.size - i).toFloat())
                         .shadow(elevation = 16.dp, shape = glassShape)
                         .background(Color.White.copy(alpha = 0.1f), glassShape)
                         .border(
@@ -934,7 +936,7 @@ fun ShopCategory(
                             shape = glassShape
                         )
                         .clickable { onOpenCategory(cat.id) }
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -956,7 +958,6 @@ fun ShopCategory(
                     }
                     Text(">", fontSize = 18.sp, color = Color.White.copy(alpha = 0.6f))
                 }
-                Spacer(modifier = Modifier.height(12.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -1099,7 +1100,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.9" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.10" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1395,7 +1396,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.9" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.10" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
