@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-    <!-- 保活服务要拿 PARTIAL_WAKE_LOCK，缺了这条点“立即更新”会直接闪退（1.1.5/1.1.7 的更新器就是栽在这里） -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
