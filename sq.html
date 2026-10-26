@@ -31,18 +31,26 @@ a{color:inherit;text-decoration:none}
 .filters span.on::after{position:absolute;width:110%;border-radius:3px;bottom:12px;left:0;height:13px;transform:skewX(-15deg);background:linear-gradient(to right,transparent 0%,#f6dc3e 100%);content:'';z-index:-1}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 @media(max-width:640px){.grid{grid-template-columns:1fr}}
-.sq-card{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;align-items:flex-start}
-.sq-card:hover{border-color:var(--green)}
-.sq-left{flex:1;min-width:0}
-.sq-logo{width:44px;height:44px;border-radius:11px;object-fit:contain}
-.sq-title{font-size:16px;font-weight:800;margin:8px 0 4px}
-.sq-desc{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 8px}
-.sq-tags{display:flex;gap:6px;flex-wrap:wrap}
+.sq-card{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 12px 18px rgba(0,0,0,.06);z-index:1}
+.sq-body{flex:1;padding:25px 25px 0;position:relative}
+.sq-logo{position:absolute;top:20px;right:20px;width:48px;height:48px;border-radius:50px;padding:10px;background:linear-gradient(to left top,#f6f6ef 0%,#fff 100%);transition:opacity .25s}
+.sq-logo img{width:100%;height:100%;object-fit:contain}
+.sq-title{font-size:18px;font-weight:800;margin:0 0 5px;padding-right:60px;line-height:1.2;transition:opacity .25s}
+.sq-desc{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 8px;transition:opacity .25s}
+.sq-tags{display:flex;gap:6px;flex-wrap:wrap;transition:opacity .25s}
 .sq-tags span{font-size:11px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted)}
-.sq-qr{flex-shrink:0;text-align:center}
-.sq-qr img{width:110px;height:110px;border-radius:10px;display:block}
-.sq-qr p{font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.5}
-.sq-qr .go{display:inline-block;margin-top:8px;background:var(--green);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px}
+.sq-meta{margin:20px -25px 0;padding:10px 15px;border-top:2px dashed #f1f2f3;display:flex;justify-content:center;position:relative;color:#283593;font-size:14px}
+.sq-meta::before,.sq-meta::after{content:'';position:absolute;top:-8px;width:16px;height:16px;background:var(--bg)}
+.sq-meta::before{left:-8px;border-radius:0 50% 50% 0}
+.sq-meta::after{right:-8px;border-radius:50% 0 0 50%}
+.sq-meta span{transition:opacity .25s}
+.sq-qr{position:absolute;inset:0;background:#fff;display:flex;justify-content:center;align-items:center;gap:20px;opacity:0;pointer-events:none;transition:opacity .25s;padding:20px}
+.sq-qr img{width:120px;height:120px;flex:none}
+.sq-qr p{font-size:14px;line-height:1.7;color:var(--muted);margin:0}
+.sq-card:hover .sq-qr{opacity:1}
+.sq-card:hover .sq-logo,.sq-card:hover .sq-title,.sq-card:hover .sq-desc,.sq-card:hover .sq-tags,.sq-card:hover .sq-meta span{opacity:0}
+.sq-card:hover .sq-meta{border-top-color:#fff}
+@media(max-width:640px){.sq-logo{display:none}.sq-title{padding-right:0}.sq-body{padding:20px 20px 0}.sq-meta{margin:20px -20px 0}}
 .foot{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;padding:28px 16px}
 .foot a{color:var(--green)}
 </style>
@@ -84,11 +92,12 @@ function renderGrid(){
  });
  document.getElementById('grid').innerHTML=list.map(function(c){
   return '<a class="sq-card" href="'+esc(c.href)+'" target="_blank" rel="noopener">'
-   +'<div class="sq-left"><img class="sq-logo" src="'+esc(c.logo)+'" alt="'+esc(c.logoAlt)+'">'
+   +'<div class="sq-body"><div class="sq-logo"><img src="'+esc(c.logo)+'" alt="'+esc(c.logoAlt)+'"></div>'
    +'<div class="sq-title">'+esc(c.title)+'</div>'
    +'<p class="sq-desc">'+esc(c.desc)+'</p>'
-   +'<div class="sq-tags">'+c.tags.map(function(t){return '<span>'+esc(t)+'</span>';}).join('')+'</div></div>'
-   +'<div class="sq-qr"><img src="'+esc(c.qr)+'" alt="二维码"><p>打开手机<br>扫一扫领取</p><span class="go">领取优惠券</span></div></a>';
+   +'<div class="sq-tags">'+c.tags.map(function(t){return '<span>'+esc(t)+'</span>';}).join('')+'</div>'
+   +'<div class="sq-meta"><span>扫码领取</span></div></div>'
+   +'<div class="sq-qr"><img src="'+esc(c.qr)+'" alt="二维码"><p>打开手机<br>扫一扫领取</p></div></a>';
  }).join('');
 }
 renderTabs();renderFilters();renderGrid();
