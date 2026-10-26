@@ -33,8 +33,19 @@ class UpdateKeepingService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(NOTIFICATION_ID, buildNotification())
-        holdCpu()
+        // 前台通知或唤醒锁任一环节抛异常都不能连累主进程闪退：起不来就停服务，下载本身照常跑
+        try {
+            startForeground(NOTIFICATION_ID, buildNotification())
+        } catch (e: Throwable) {
+            android.util.Log.w("landezhaole-update", "前台通知起不来，停服务保下载:$e")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        try {
+            holdCpu()
+        } catch (e: Throwable) {
+            android.util.Log.w("landezhaole-update", "唤醒锁拿不到，下载照常:$e")
+        }
         return START_NOT_STICKY
     }
 
