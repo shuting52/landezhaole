@@ -104,22 +104,29 @@ suspend fun fetchRemoteVersion(): RemoteVersion? {
     }
 }
 
-/** 云端站点数据：拉得到就用云端的，拉不到/解析失败就继续用包里自带的。 */
+/** 云端站点数据：拉得到就用云端的，拉不到/解析失败就继续用包里自带的。
+ *  双源：raw.githubusercontent 慢或不通时走 jsdelivr CDN 镜像（同一仓库同一文件）。 */
 suspend fun fetchCloudCategories(): List<Category>? {
     return withContext(Dispatchers.IO) {
-        try {
-            val conn = (URL(CLOUD_DATA_URL).openConnection() as HttpURLConnection).apply {
-                connectTimeout = 8000
-                readTimeout = 8000
-                setRequestProperty("User-Agent", "Mozilla/5.0")
+        val urls = listOf(
+            CLOUD_DATA_URL,
+            "https://cdn.jsdelivr.net/gh/shuting52/landezhaole@main/data.json"
+        )
+        for (url in urls) {
+            try {
+                val conn = (URL(url).openConnection() as HttpURLConnection).apply {
+                    connectTimeout = 8000
+                    readTimeout = 8000
+                    setRequestProperty("User-Agent", "Mozilla/5.0")
+                }
+                if (conn.responseCode != 200) continue
+                val cats = parseCategories(conn.inputStream.bufferedReader().readText())
+                if (cats.isNotEmpty()) return@withContext cats
+            } catch (e: Exception) {
+                Log.w(TAG, "拉云端数据失败($url): $e")
             }
-            if (conn.responseCode != 200) return@withContext null
-            val cats = parseCategories(conn.inputStream.bufferedReader().readText())
-            if (cats.isEmpty()) null else cats
-        } catch (e: Exception) {
-            Log.w(TAG, "拉云端数据失败: $e")
-            null
         }
+        null
     }
 }
 
