@@ -33,9 +33,44 @@ button{font-family:inherit}
 .b3{width:420px;height:420px;left:30%;bottom:-160px;background:#fde68a}
 [data-theme="dark"] .b1{background:#064e3b}[data-theme="dark"] .b2{background:#1e3a8a}[data-theme="dark"] .b3{background:#78350f}
 .logo{font-size:46px;font-weight:900;letter-spacing:4px;display:flex;align-items:center;justify-content:center;gap:14px}
-.site-icon{width:56px;height:56px;border-radius:16px;box-shadow:0 6px 18px rgba(22,163,74,.3);animation:none;transition:transform .3s}
-.site-icon:hover{transform:scale(1.1) rotate(-8deg);animation-play-state:paused}
 .logo-text{background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shineText 6s linear infinite}
+.wave-logo{position:relative;width:120px;height:120px;flex:none}
+.wave-circle{position:absolute;left:0;top:0;width:220px;height:220px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#16a34a,#0ea5e9);box-shadow:0 8px 24px rgba(22,163,74,.35);transform:scale(.5454);transform-origin:top left}
+.wave-circle .wave{position:absolute;width:100%;height:100%;display:flex;align-items:flex-end}
+.wave-circle .wave:nth-child(1) .bar{width:2px;height:220px;background:rgba(255,255,255,.25)}
+.wave-circle .wave:nth-child(n+2) .bar{animation:waveBarHeight 3.9s infinite ease-in-out alternate,waveBarSkew 3.9s infinite ease-in-out alternate}
+.wave-circle .wave[data-level="1"] .bar{width:11px;background:rgba(255,255,255,.95);--f:-0.24375s;--h:40px}
+.wave-circle .wave[data-level="2"] .bar{width:8px;background:rgba(255,255,255,.7);--f:-0.4875s;--h:100px}
+.wave-circle .wave[data-level="3"] .bar{width:5px;background:rgba(255,255,255,.45);--f:-0.325s;--h:120px}
+.wave-circle .wave .bar:nth-child(1){animation-delay:calc(var(--f) * 0),calc(var(--f) * 0 - 1.95s)}
+.wave-circle .wave .bar:nth-child(2){animation-delay:calc(var(--f) * 1),calc(var(--f) * 1 - 1.95s)}
+.wave-circle .wave .bar:nth-child(3){animation-delay:calc(var(--f) * 2),calc(var(--f) * 2 - 1.95s)}
+.wave-circle .wave .bar:nth-child(4){animation-delay:calc(var(--f) * 3),calc(var(--f) * 3 - 1.95s)}
+.wave-circle .wave .bar:nth-child(5){animation-delay:calc(var(--f) * 4),calc(var(--f) * 4 - 1.95s)}
+.wave-circle .wave .bar:nth-child(6){animation-delay:calc(var(--f) * 5),calc(var(--f) * 5 - 1.95s)}
+.wave-circle .wave .bar:nth-child(7){animation-delay:calc(var(--f) * 6),calc(var(--f) * 6 - 1.95s)}
+.wave-circle .wave .bar:nth-child(8){animation-delay:calc(var(--f) * 7),calc(var(--f) * 7 - 1.95s)}
+.wave-circle .wave .bar:nth-child(9){animation-delay:calc(var(--f) * 8),calc(var(--f) * 8 - 1.95s)}
+.wave-circle .wave .bar:nth-child(10){animation-delay:calc(var(--f) * 9),calc(var(--f) * 9 - 1.95s)}
+.wave-circle .wave .bar:nth-child(11){animation-delay:calc(var(--f) * 10),calc(var(--f) * 10 - 1.95s)}
+.wave-circle .wave .bar:nth-child(12){animation-delay:calc(var(--f) * 11),calc(var(--f) * 11 - 1.95s)}
+.wave-circle .wave .bar:nth-child(13){animation-delay:calc(var(--f) * 12),calc(var(--f) * 12 - 1.95s)}
+.wave-circle .wave .bar:nth-child(14){animation-delay:calc(var(--f) * 13),calc(var(--f) * 13 - 1.95s)}
+.wave-circle .wave .bar:nth-child(15){animation-delay:calc(var(--f) * 14),calc(var(--f) * 14 - 1.95s)}
+.wave-circle .wave .bar:nth-child(16){animation-delay:calc(var(--f) * 15),calc(var(--f) * 15 - 1.95s)}
+.wave-circle .wave .bar:nth-child(17){animation-delay:calc(var(--f) * 16),calc(var(--f) * 16 - 1.95s)}
+.wave-circle .wave .bar:nth-child(18){animation-delay:calc(var(--f) * 17),calc(var(--f) * 17 - 1.95s)}
+.wave-circle .wave .bar:nth-child(19){animation-delay:calc(var(--f) * 18),calc(var(--f) * 18 - 1.95s)}
+.wave-circle .wave .bar:nth-child(20){animation-delay:calc(var(--f) * 19),calc(var(--f) * 19 - 1.95s)}
+.wave-circle .wave .bar:nth-child(21){animation-delay:calc(var(--f) * 20),calc(var(--f) * 20 - 1.95s)}
+.wave-circle .wave .bar:nth-child(22){animation-delay:calc(var(--f) * 21),calc(var(--f) * 21 - 1.95s)}
+.wave-circle .wave .bar:nth-child(23){animation-delay:calc(var(--f) * 22),calc(var(--f) * 22 - 1.95s)}
+.wave-circle .wave .bar:nth-child(24){animation-delay:calc(var(--f) * 23),calc(var(--f) * 23 - 1.95s)}
+@keyframes waveBarHeight{from{height:var(--h)}to{height:calc(var(--h) + 50px)}}
+@keyframes waveBarSkew{from{transform:skewY(30deg)}to{transform:skewY(-30deg)}}
+.wave-disc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:62px;height:62px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:2}
+.wave-disc img{width:56px;height:56px;border-radius:12px}
+@media(max-width:640px){.wave-logo{width:88px;height:88px}.wave-circle{transform:scale(.4)}.wave-disc{width:48px;height:48px;border-radius:12px}.wave-disc img{width:42px;height:42px;border-radius:10px}}
 .logo span{color:var(--green)}
 .tagline{color:var(--muted);margin-top:6px}
 .stat{display:inline-block;margin-top:12px;background:var(--card);border:1px solid var(--line);color:var(--green-d);border-radius:20px;padding:4px 18px;font-size:12px;font-weight:700}
@@ -185,7 +220,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 
 <header class="header"><div class="wrap">
 
-<div class="logo"><img class="site-icon" src="icon.png" alt="懒得找了图标"><span class="logo-text">懒得找了.</span></div>
+<div class="logo"><div class="wave-logo" aria-hidden="true"><div class="wave-circle"><div class="wave"><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i></div><div class="wave" data-level="1"><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i></div><div class="wave" data-level="2"><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i></div><div class="wave" data-level="3"><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i></div></div><div class="wave-disc"><img src="icon.png" alt=""></div></div><span class="logo-text">懒得找了.</span></div>
 <div class="searchbox">
 <div class="engines" id="engines"></div>
 <div class="searchrow"><input id="q" placeholder="搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…" autocomplete="off"><button id="go">搜索</button></div>
