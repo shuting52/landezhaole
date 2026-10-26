@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -54,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -79,7 +83,7 @@ fun AppShell(
 ) {
     var tab by remember { mutableStateOf(0) }
     Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
-        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars)) {
             when (tab) {
                 0 -> HomeScreen(
                     pal = pal, dark = dark, onToggleDark = onToggleDark,
@@ -166,25 +170,33 @@ fun SaveScreen(pal: AppPalette) {
         ) {
             COUPON_TABS.forEachIndexed { i, name ->
                 val selected = i == tab
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                        .background(if (selected) pal.barBackground else Color.Transparent)
-                        .clickable { tab = i; filter = "all" }
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                Column(
+                    modifier = Modifier.clickable { tab = i; filter = "all" },
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        name, fontSize = 16.sp, fontWeight = FontWeight.Bold,
-                        color = if (selected) Color(0xFF283593) else pal.foreground
+                    Box(
+                        modifier = Modifier
+                            .shadow(if (selected) 4.dp else 0.dp, RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp), clip = false)
+                            .background(if (selected) pal.barBackground else Color.Transparent, RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                            .padding(horizontal = 15.dp, vertical = 10.dp)
+                    ) {
+                        Text(
+                            name, fontSize = 16.sp, fontWeight = FontWeight.Bold,
+                            color = if (selected) Color(0xFF283593) else pal.foreground
+                        )
+                    }
+                    // 网站 .tab-line：选中 tab 下方一条同宽白带，把 tab 和筛选卡连成一个文件夹形
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(12.dp)
+                            .background(if (selected) pal.barBackground else Color.Transparent)
                     )
                 }
             }
         }
         Box(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(pal.barBackground)
-                .border(1.dp, pal.line, RoundedCornerShape(12.dp))
+                .shadow(6.dp, RoundedCornerShape(12.dp), clip = false)
+                .background(pal.barBackground, RoundedCornerShape(12.dp))
         ) {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState())
