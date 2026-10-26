@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 // 签名密钥文件路径（CI 上由 Secrets 还原，本地没有时为 null，不挂签名）
-val keystoreFile = keystoreFile
+val keystoreFile = System.getenv("KEYSTORE_PATH")?.let { java.io.File(it) }
 
 android {
     namespace = "com.landezhaole.app"
