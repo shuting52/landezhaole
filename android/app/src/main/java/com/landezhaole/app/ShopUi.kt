@@ -705,7 +705,7 @@ fun ShopCategory(
     }
     val cat = categories[selIdx.coerceIn(0, categories.size - 1)]
     val subs = if (cat.subs.isEmpty()) listOf(SubTab("all", "全部")) else cat.subs
-    val shown = filterCardsForSub(cat, selSub).take(6)
+    val shown = filterCardsForSub(cat, selSub)
     Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
         Box(
             modifier = Modifier.fillMaxWidth().background(SHOP_GRADIENT)
@@ -774,7 +774,7 @@ fun ShopCategory(
                     }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Text("热门站点", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
+                Text("全部站点", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
                 Spacer(modifier = Modifier.height(8.dp))
                 if (shown.isEmpty()) {
                     Text("该分类下暂无站点", fontSize = 13.sp, color = pal.secondary)
