@@ -1,11 +1,1 @@
-{
-  "versionCode": 22,
-  "versionName": "1.3.3",
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.3-release.apk",
-  "sha256": "834d8e5c56d9caa9d0cce266e86a3a77aa1937d6cacb1eeef58b9dce1a673795",
-  "notes": [
-    "美女视频接通：AIVideoHub_ 公开视频 4 条（X 原站直链播放，无水印），切换视频轮播",
-    "底部栏“消息”换成“省钱小助手”，我的页里那行省钱一并去掉，消息页取消",
-    "其余与 1.3.2 一致：电商 5 栏改 4 栏、9 引擎与应用下载、内置 21 分类 / 2456 站点（云端数据 2603 条启动时同步）"
-  ]
-}
+{"apkUrl":"https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.4-release.apk","notes":["优化：无","删除：无","增加：美女视频新增 1 条视频（吊带旗袍，14 秒）"],"sha256":"0887f1e59053727538e80aa86171d6f3ba270f74ec8ebe4eb1da8aa815355d60","versionCode":23,"versionName":"1.3.4"}
