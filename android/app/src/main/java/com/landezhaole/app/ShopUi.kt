@@ -87,6 +87,12 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -893,17 +899,113 @@ fun ShopHome(
 // ---- 分类页：左 21 分类 + 右子类 chips + 2 列站点卡（前 6 个） ----
 // ---- 分类页：21 分类索引（点分类进独立详情页） ----
 @Composable
+// ---- Demo 玻璃渲染（GlassChat 代码的可移植部分：不含 Haze/AGSL、不改构建配置）----
+private fun glassSheenBrush(): Brush = Brush.verticalGradient(
+    colorStops = arrayOf(
+        0.00f to Color.White.copy(alpha = 0.16f),
+        0.18f to Color.White.copy(alpha = 0.05f),
+        0.55f to Color.White.copy(alpha = 0.00f),
+        1.00f to Color.White.copy(alpha = 0.05f),
+    )
+)
+
+private fun Modifier.glassStroke(
+    cornerRadius: Dp,
+    width: Dp = 1.dp,
+    edgeHighlight: Float = 0.85f,
+): Modifier = drawWithContent {
+    drawContent()
+    val w = width.toPx()
+    if (w <= 0f) return@drawWithContent
+    val r = (cornerRadius.toPx() - w / 2f).coerceAtLeast(0f)
+    drawRoundRect(
+        brush = Brush.linearGradient(
+            colorStops = arrayOf(
+                0.00f to Color.White.copy(alpha = edgeHighlight.coerceIn(0f, 1f)),
+                0.10f to Color.White.copy(alpha = 0.30f),
+                0.32f to Color.White.copy(alpha = 0.05f),
+                0.60f to Color.White.copy(alpha = 0.03f),
+                0.84f to Color.White.copy(alpha = 0.28f),
+                1.00f to Color.White.copy(alpha = 0.72f),
+            ),
+            start = Offset.Zero,
+            end = Offset(size.width, size.height),
+        ),
+        topLeft = Offset(w / 2f, w / 2f),
+        size = Size((size.width - w).coerceAtLeast(0f), (size.height - w).coerceAtLeast(0f)),
+        cornerRadius = CornerRadius(r, r),
+        style = Stroke(width = w),
+    )
+}
+
+private fun Modifier.auroraBackground(): Modifier = this
+    .background(Color(0xFF100A16))
+    .drawBehind {
+        val w = size.width
+        val h = size.height
+        drawRect(
+            Brush.linearGradient(
+                colors = listOf(Color(0xFF1B1030), Color(0xFF3A1E52), Color(0xFF6E293C)),
+                start = Offset.Zero,
+                end = Offset(w, h),
+            )
+        )
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(Color(0xFFFF9B4A).copy(alpha = 0.80f), Color.Transparent),
+                center = Offset(w * 0.14f, h * 0.30f), radius = h * 0.28f,
+            ),
+            radius = h * 0.28f, center = Offset(w * 0.14f, h * 0.30f),
+        )
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(Color(0xFF3FD2E8).copy(alpha = 0.55f), Color.Transparent),
+                center = Offset(w * 0.98f, h * 0.08f), radius = h * 0.22f,
+            ),
+            radius = h * 0.22f, center = Offset(w * 0.98f, h * 0.08f),
+        )
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(Color(0xFFFF5A8A).copy(alpha = 0.42f), Color.Transparent),
+                center = Offset(w * 0.86f, h * 0.60f), radius = h * 0.24f,
+            ),
+            radius = h * 0.24f, center = Offset(w * 0.86f, h * 0.60f),
+        )
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(Color(0xFF43E0A0).copy(alpha = 0.30f), Color.Transparent),
+                center = Offset(w * 0.30f, h * 0.88f), radius = h * 0.22f,
+            ),
+            radius = h * 0.22f, center = Offset(w * 0.30f, h * 0.88f),
+        )
+        drawArc(
+            color = Color.White.copy(alpha = 0.07f),
+            startAngle = 195f, sweepAngle = 130f, useCenter = false,
+            topLeft = Offset(w * 0.30f, -h * 0.12f), size = Size(w * 1.25f, h * 0.95f),
+            style = Stroke(width = 1.5.dp.toPx(), cap = StrokeCap.Round),
+        )
+        drawArc(
+            color = Color.White.copy(alpha = 0.05f),
+            startAngle = 200f, sweepAngle = 120f, useCenter = false,
+            topLeft = Offset(w * 0.42f, h * 0.02f), size = Size(w * 1.05f, h * 0.78f),
+            style = Stroke(width = 1.dp.toPx(), cap = StrokeCap.Round),
+        )
+        drawRect(
+            Brush.verticalGradient(
+                colors = listOf(Color.Transparent, Color(0xFF0A0610).copy(alpha = 0.70f)),
+                startY = h * 0.45f, endY = h,
+            )
+        )
+    }
+
 fun ShopCategory(
     pal: AppPalette,
     categories: List<Category>,
     onOpenCategory: (String) -> Unit
 ) {
-    // 玻璃列表：按用户给的 GlassCard 代码改——渐变底 + 半透明卡 + 边缘高光 + 柔影，内容仍是真实分类
-    val glassBg = Brush.linearGradient(
-        colors = listOf(Color(0xFFFF7E5F), Color(0xFF4A90E2))
-    )
+    // 玻璃列表：按用户给的 GlassChat 代码改——极光底 + 渐变着色 + 内高光 + 渐变描边，内容仍是真实分类
     val glassShape = RoundedCornerShape(20.dp)
-    Column(modifier = Modifier.fillMaxSize().background(glassBg)) {
+    Column(modifier = Modifier.fillMaxSize().auroraBackground()) {
         Box(
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 10.dp)
@@ -926,15 +1028,23 @@ fun ShopCategory(
                 Row(
                     modifier = Modifier.fillMaxWidth()
                         .zIndex((categories.size - i).toFloat())
-                        .shadow(elevation = 16.dp, shape = glassShape)
-                        .background(Color.White.copy(alpha = 0.1f), glassShape)
-                        .border(
-                            width = 1.dp,
-                            brush = Brush.linearGradient(
-                                colors = listOf(Color.White.copy(alpha = 0.8f), Color.White.copy(alpha = 0.1f))
-                            ),
-                            shape = glassShape
+                        .shadow(
+                            elevation = 16.dp, shape = glassShape, clip = false,
+                            ambientColor = Color.Black.copy(alpha = 0.30f),
+                            spotColor = Color.Black.copy(alpha = 0.55f),
                         )
+                        .clip(glassShape)
+                        .background(
+                            Brush.linearGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.15f),
+                                    Color.White.copy(alpha = 0.045f),
+                                    Color.White.copy(alpha = 0.11f),
+                                )
+                            )
+                        )
+                        .background(glassSheenBrush())
+                        .glassStroke(cornerRadius = 20.dp, width = 1.dp)
                         .clickable { onOpenCategory(cat.id) }
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -1100,7 +1210,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.10" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.11" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1396,7 +1506,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.10" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.11" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
