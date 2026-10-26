@@ -112,7 +112,7 @@ section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;p
 .tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 15px;font-size:12px;cursor:pointer}
 .tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
-.more-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:center;padding:14px;border:1.5px dashed #6b7280;border-radius:12px;background:#1f2937;color:#fff;font-size:15px;font-weight:700;text-decoration:none;cursor:pointer}
+.more-bar{display:flex;align-items:center;justify-content:center;min-height:68px;padding:12px;border:1.5px dashed #6b7280;border-radius:14px;background:#1f2937;color:#fff;font-size:14px;font-weight:700;text-decoration:none;text-align:center;cursor:pointer}
 .more-bar:hover{border-color:#fff}
 .card-wrap{position:relative;display:flex;flex-direction:column}.card-wrap .card{flex:none}.appdl-wrap .card{height:auto}.apk-btn{position:relative;z-index:5;display:block;width:100%;text-align:center;background:var(--green);color:#fff;border:0;border-radius:10px;padding:8px;margin-top:6px;font-weight:700;font-size:13px;cursor:pointer}.apk-btn:hover{opacity:.9}.apk-prog{margin-top:6px}.apk-bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.apk-bar i{display:block;height:100%;width:0;background:var(--green)}.apk-text{font-size:12px;color:var(--muted);margin-top:4px}.apk-cancel{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:8px;padding:2px 10px;font-size:12px;cursor:pointer;margin-top:4px}
 .click-tip{position:absolute;top:-30px;left:50%;transform:translateX(-50%) translateY(4px);background:#1f2937;color:#fff;font-size:12px;padding:5px 12px;border-radius:999px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:20;box-shadow:0 6px 16px rgba(0,0,0,.25)}
@@ -212,13 +212,63 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .update-dialog .upd-tag.new{background:#16a34a}.update-dialog .upd-tag.fix{background:#ef4444}.update-dialog .upd-tag.opt{background:#2563eb}
 .update-dialog .upd-text{font-size:14px;line-height:1.7;color:var(--text)}
 @media(prefers-reduced-motion:reduce){.update-dialog .upd-row,.update-dialog .upd-tag{animation:none}}
+
+.optic-switch{display:inline-flex;position:relative;font-size:10px;width:20em;height:7em;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.optic-input{display:none}
+.optic-ambient{position:absolute;top:-3em;left:-2em;width:11em;bottom:-3em;background-color:rgba(255,59,48,0.12);border-radius:50%;filter:blur(2.5em);transition:transform 0.7s cubic-bezier(0.85,0,0.15,1),background-color 0.5s ease;pointer-events:none;z-index:0}
+.optic-input:checked~.optic-ambient{transform:translateX(13em);background-color:rgba(0,212,255,0.2)}
+.optic-track{position:absolute;top:0px;left:0px;width:100%;height:100%;background:linear-gradient(180deg,#e2e8f0,#f8fafc);border-radius:3.5em;box-shadow:inset 0px 0.2em 0.6em rgba(0,0,0,0.1),inset 0px -0.1em 0.2em rgba(255,255,255,0.8),0px 0.5em 1em rgba(0,0,0,0.05);overflow:hidden;z-index:1;transition:transform 0.2s cubic-bezier(0.2,0.8,0.2,1)}
+.optic-switch:active .optic-track{transform:scale(0.97)}
+.optic-rim{position:absolute;top:0px;left:0px;right:0px;bottom:0px;border-radius:3.5em;border:0.1em solid #ffffff;pointer-events:none;z-index:10}
+.optic-fiber{position:absolute;top:3.35em;left:3.5em;right:3.5em;height:0.3em;background-color:#cbd5e1;border-radius:0.15em;box-shadow:inset 0px 0.1em 0.2em rgba(0,0,0,0.15),0px 0.1em 0.1em rgba(255,255,255,0.9);z-index:1;overflow:hidden}
+.optic-fiber-fill{height:100%;width:0%;background:linear-gradient(90deg,#007aff,#00d4ff);border-radius:0.15em;box-shadow:0px 0px 0.8em rgba(0,212,255,0.6);transition:width 0.7s cubic-bezier(0.85,0,0.15,1)}
+.optic-input:checked~.optic-track .optic-fiber .optic-fiber-fill{width:100%}
+.optic-node{position:absolute;top:2.5em;width:2em;height:2em;border-radius:50%;background-color:#f1f5f9;box-shadow:inset 0px 0.1em 0.3em rgba(0,0,0,0.1),0px 0.1em 0.1em rgba(255,255,255,1);display:flex;align-items:center;justify-content:center;z-index:2}
+.optic-node-left{left:2.5em}
+.optic-node-right{right:2.5em}
+.optic-node-dot{width:0.4em;height:0.4em;border-radius:50%;background-color:#94a3b8;box-shadow:inset 0px 0.1em 0.1em rgba(0,0,0,0.1);transition:background-color 0.4s ease,box-shadow 0.4s ease}
+.optic-input:not(:checked)~.optic-track .optic-node-left .optic-node-dot{background-color:#ff3b30;box-shadow:0px 0px 0.5em rgba(255,59,48,0.6)}
+.optic-input:checked~.optic-track .optic-node-right .optic-node-dot{background-color:#00d4ff;box-shadow:0px 0px 0.5em rgba(0,212,255,0.6)}
+.optic-shuttle{position:absolute;top:0.5em;left:0.5em;width:6em;height:6em;z-index:5;transition:transform 0.7s cubic-bezier(0.85,0,0.15,1);display:flex;align-items:center;justify-content:center}
+.optic-input:checked~.optic-track .optic-shuttle{transform:translateX(13em)}
+.optic-chassis{position:absolute;top:0px;left:0px;width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#ffffff,#e2e8f0);box-shadow:inset 0px 0.1em 0.2em rgba(255,255,255,1),inset 0px -0.2em 0.5em rgba(0,0,0,0.05),0px 0.3em 0.6em rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;transition:transform 0.7s cubic-bezier(0.85,0,0.15,1)}
+.optic-input:checked~.optic-track .optic-shuttle .optic-chassis{transform:rotate(360deg)}
+.optic-mark{position:absolute;background-color:#cbd5e1;border-radius:0.15em;box-shadow:inset 0px 0.1em 0.2em rgba(0,0,0,0.1),0px 0.1em 0.1em rgba(255,255,255,1)}
+.optic-mark-vertical{width:0.3em;height:1em}
+.optic-mark-horizontal{width:1em;height:0.3em}
+.optic-m1{top:0.4em}
+.optic-m2{bottom:0.4em}
+.optic-m3{left:0.4em}
+.optic-m4{right:0.4em}
+.optic-aperture{width:3.5em;height:3.5em;border-radius:50%;background-color:#f8fafc;border:0.2em solid #e2e8f0;box-shadow:inset 0px 0.3em 0.6em rgba(0,0,0,0.1),0px 0.1em 0.2em rgba(255,255,255,1);display:flex;align-items:center;justify-content:center;position:relative;z-index:2;transition:border-color 0.5s ease,box-shadow 0.5s ease;overflow:hidden}
+.optic-input:checked~.optic-track .optic-shuttle .optic-chassis .optic-aperture{border-color:rgba(0,212,255,0.4);box-shadow:inset 0px 0.3em 0.6em rgba(0,0,0,0.1),0px 0px 0.8em rgba(0,212,255,0.2)}
+.optic-pupil{width:100%;height:100%;border-radius:50%;background-color:#ff3b30;box-shadow:0px 0px 0.4em rgba(255,59,48,0.6),inset 0px 0px 0.2em rgba(255,255,255,0.6);border:1.5em solid #ffffff;transition:border-width 0.6s cubic-bezier(0.85,0,0.15,1),background-color 0.4s ease,box-shadow 0.4s ease;box-sizing:border-box}
+.optic-input:checked~.optic-track .optic-shuttle .optic-chassis .optic-aperture .optic-pupil{border-width:0.3em;background-color:#00d4ff;box-shadow:0px 0px 1.2em 0.3em rgba(0,212,255,0.6),inset 0px 0px 0.6em rgba(255,255,255,0.9)}
+.optic-lens{position:absolute;top:0px;left:0px;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,0.6) 0%,transparent 40%,rgba(0,0,0,0.08) 100%);z-index:3;pointer-events:none}
+.topbar .optic-switch{font-size:4px;vertical-align:middle;flex:none}
+
+#topUtils .u-hint{display:none}
+@media(min-width:1361px) and (hover:hover){
+#topUtils{width:56px;overflow:visible}
+#topUtils a{width:56px;overflow:hidden;border-radius:12px;transition:width .45s cubic-bezier(.85,0,.15,1),background .3s,box-shadow .3s}
+#topUtils a:hover{width:216px;background:var(--card);box-shadow:0 8px 24px rgba(0,0,0,.18);transform:none;color:var(--text);z-index:2;flex-direction:row;align-items:center;gap:10px;padding:8px 10px}
+#topUtils a:hover .uicon{transform:scale(1.08)}
+#topUtils .uicon{transition:transform .3s}
+#topUtils .u-texts{display:contents}
+#topUtils .u-label{display:block}
+#topUtils .u-hint{display:none}
+#topUtils a:hover .u-texts{display:flex;flex-direction:column;gap:2px;min-width:0}
+#topUtils a:hover .u-label{font-size:13px;font-weight:800;white-space:nowrap}
+#topUtils a:hover .u-hint{display:block;font-size:11px;color:var(--muted);white-space:nowrap;opacity:0;animation:uHintIn .3s ease .15s forwards}
+@keyframes uHintIn{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:translateX(0)}}
+}
 </style>
 </head>
 <body>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 <div class="topbar"><div class="wrap">
 <span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
-<span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <button class="theme-btn" id="themeBtn">🌙 夜间模式</button></span>
+<span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <label class="optic-switch" title="切换夜间模式"><input class="optic-input" type="checkbox" id="opticTheme" aria-label="切换夜间模式"><span class="optic-ambient"></span><span class="optic-track"><span class="optic-fiber"><span class="optic-fiber-fill"></span></span><span class="optic-node optic-node-left"><span class="optic-node-dot"></span></span><span class="optic-node optic-node-right"><span class="optic-node-dot"></span></span><span class="optic-shuttle"><span class="optic-chassis"><span class="optic-mark optic-mark-vertical optic-m1"></span><span class="optic-mark optic-mark-vertical optic-m2"></span><span class="optic-mark optic-mark-horizontal optic-m3"></span><span class="optic-mark optic-mark-horizontal optic-m4"></span><span class="optic-aperture"><span class="optic-pupil"></span><span class="optic-lens"></span></span></span></span><span class="optic-rim"></span></span></label></span>
 </div></div>
 
 <header class="header"><div class="wrap">
@@ -241,7 +291,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div>本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈</div>
 <div style="margin-top:6px">© 2026 懒得找了 · <a href="javascript:void(0)" onclick="if(window.siteVersionData)showUpdateModal(window.siteVersionData,false)" style="color:var(--green)">查看更新日志</a></div>
 </div></footer>
-<nav class="top-utils" id="topUtils"><div class="util-items"><a style="animation-delay:240ms" style="animation-delay:180ms" style="animation-delay:120ms" style="animation-delay:60ms" style="animation-delay:0ms" onclick="showUtilAbout()"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 2.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5L12 3z"/><path d="M9 12l2 2 4-4"/></svg></span>关于网站</a><a onclick="showUtilQR('微信打赏','qr-wechat.jpg','微信扫一扫，支持一下')"><span class="uicon brand-wechat"><img src="icons/wechat-logo.png" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10" cy="9" rx="7" ry="5" fill="#07C160"/><polygon points="6,12.5 4,16.5 8.5,13.5" fill="#07C160"/><circle cx="8" cy="8.5" r="1.2" fill="#fff"/><circle cx="12" cy="8.5" r="1.2" fill="#fff"/><ellipse cx="17" cy="15" rx="4.5" ry="3.2" fill="#07C160"/><polygon points="15,17 14,20 17.5,17.5" fill="#07C160"/></svg></span>微信打赏</a><a onclick="showUtilQR('QQ好友','qr-qq.jpg','QQ扫一扫，加我好友')"><span class="uicon brand-qq"><img src="icons/qq-penguin.svg" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="7" fill="#12B7F5"/><ellipse cx="12" cy="15" rx="3.5" ry="4.5" fill="#fff"/><circle cx="10" cy="9" r="1.1" fill="#111"/><circle cx="14" cy="9" r="1.1" fill="#111"/><polygon points="11,10.5 13,10.5 12,12" fill="#FF9F1C"/><ellipse cx="9" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/><ellipse cx="15" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/></svg></span>QQ好友</a><a onclick="showUtilQR('支付宝打赏','qr-alipay.jpg','支付宝扫一扫，支持一下')"><span class="uicon brand-alipay"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1677FF"/><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" stroke="none" font-family="PingFang SC, Microsoft YaHei, sans-serif">支</text></svg></span>支付宝打赏</a><a href="https://qm.qq.com/q/vsaFRiPuO4" target="_blank" rel="noopener" title="QQ群 836869262，点此直接跳转加群"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 19.5c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.8"/><path d="M15.8 14.8c2.6.4 4.2 1.9 4.7 4.7"/></svg></span>最新Q群</a></div></nav>
+<nav class="top-utils" id="topUtils"><div class="util-items"><a style="animation-delay:240ms" style="animation-delay:180ms" style="animation-delay:120ms" style="animation-delay:60ms" style="animation-delay:0ms" onclick="showUtilAbout()"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 2.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5L12 3z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="u-texts"><span class="u-label">关于网站</span><span class="u-hint">了解本站收录与更新</span></span></a><a onclick="showUtilQR('微信打赏','qr-wechat.jpg','微信扫一扫，支持一下')"><span class="uicon brand-wechat"><img src="icons/wechat-logo.png" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10" cy="9" rx="7" ry="5" fill="#07C160"/><polygon points="6,12.5 4,16.5 8.5,13.5" fill="#07C160"/><circle cx="8" cy="8.5" r="1.2" fill="#fff"/><circle cx="12" cy="8.5" r="1.2" fill="#fff"/><ellipse cx="17" cy="15" rx="4.5" ry="3.2" fill="#07C160"/><polygon points="15,17 14,20 17.5,17.5" fill="#07C160"/></svg></span><span class="u-texts"><span class="u-label">微信打赏</span><span class="u-hint">微信扫码，支持一下</span></span></a><a onclick="showUtilQR('QQ好友','qr-qq.jpg','QQ扫一扫，加我好友')"><span class="uicon brand-qq"><img src="icons/qq-penguin.svg" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="7" fill="#12B7F5"/><ellipse cx="12" cy="15" rx="3.5" ry="4.5" fill="#fff"/><circle cx="10" cy="9" r="1.1" fill="#111"/><circle cx="14" cy="9" r="1.1" fill="#111"/><polygon points="11,10.5 13,10.5 12,12" fill="#FF9F1C"/><ellipse cx="9" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/><ellipse cx="15" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/></svg></span><span class="u-texts"><span class="u-label">QQ好友</span><span class="u-hint">QQ扫码，加我好友</span></span></a><a onclick="showUtilQR('支付宝打赏','qr-alipay.jpg','支付宝扫一扫，支持一下')"><span class="uicon brand-alipay"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1677FF"/><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" stroke="none" font-family="PingFang SC, Microsoft YaHei, sans-serif">支</text></svg></span><span class="u-texts"><span class="u-label">支付宝打赏</span><span class="u-hint">支付宝扫码，支持一下</span></span></a><a href="https://qm.qq.com/q/vsaFRiPuO4" target="_blank" rel="noopener" title="QQ群 836869262，点此直接跳转加群"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 19.5c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.8"/><path d="M15.8 14.8c2.6.4 4.2 1.9 4.7 4.7"/></svg></span><span class="u-texts"><span class="u-label">最新Q群</span><span class="u-hint">QQ群 836869262，点此加群</span></span></a></div></nav>
 <div id="sideTools">
 <button type="button" id="sideTopBtn" title="回到顶部">↑</button>
 <button type="button" id="sideShareBtn" title="分享本站"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
@@ -312,7 +362,7 @@ function applyRowCap(sec,cat,sub){
  wraps.forEach(w=>{w.style.display='';});
  if(!wraps.length)return;
  const cols=getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length||1;
- const limit=cols*4;
+ const limit=cols*4-1;
  if(wraps.length<=limit)return;
  wraps.forEach((w,i)=>{if(i>=limit)w.style.display='none';});
  const bar=document.createElement('a');
@@ -605,10 +655,10 @@ let appDlInputTimer=null;
 document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl'){clearTimeout(appDlInputTimer);appDlInputTimer=setTimeout(()=>doSearch(false),700);}else doSearch(true);});
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
-const tb=document.getElementById('themeBtn');
+const sw=document.getElementById('opticTheme');
 const saved=localStorage.getItem('landezhaole-theme');
-if(saved){document.documentElement.dataset.theme=saved;tb.textContent=saved==='dark'?'☀️ 日间模式':'🌙 夜间模式';}
-tb.onclick=()=>{const h=document.documentElement;const dark=h.dataset.theme!=='dark';h.dataset.theme=dark?'dark':'light';localStorage.setItem('landezhaole-theme',h.dataset.theme);tb.textContent=dark?'☀️ 日间模式':'🌙 夜间模式';};
+if(saved){document.documentElement.dataset.theme=saved;sw.checked=saved==='dark';}
+sw.onchange=()=>{const dark=sw.checked;document.documentElement.dataset.theme=dark?'dark':'light';localStorage.setItem('landezhaole-theme',document.documentElement.dataset.theme);};
 function showSideToast(msg){
  const toast=document.getElementById('toastNotify');if(!toast)return;
  toast.onclick=function(){};
