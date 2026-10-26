@@ -1,12 +1,13 @@
 {
-  "versionCode": 17,
-  "versionName": "1.2.4",
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.2.4-release.apk",
-  "sha256": "1cdb0db8d90344da49a591b6e85f0527cd945a5ffea493d0d1f589e2e01ee9ec",
+  "versionCode": 19,
+  "versionName": "1.3.0",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.0-release.apk",
+  "sha256": "97fca5ddcf7ba8a08196d98a5bc04503081b7fd9bfe351a52317b340a598dabb",
   "notes": [
-    "删翻页时钟，与网站同步（网站已删）",
-    "我的新增“支持与关于”：微信打赏 / QQ好友 / 支付宝打赏（点开扫码弹窗）与关于网站（从内置数据实时数收录分类与站点数）",
-    "首页新增直达底部悬浮钮（↓），与回顶钮成对，常驻显示",
-    "其余网站功能已全量对齐：21 分类 / 2436 站点、9 引擎（含应用下载）、站内搜索、角标、今日点击、NEW 提示、启动更新检查、快捷 Dock、背景气泡、省钱 22 卡、应用下载分段下载与安装"
+    "界面按电商风全量重做：首页 / 分类 / 我的收藏 / 消息 / 我的 5 栏",
+    "首页：渐变顶栏 + 搜索 + 热词 + 3 张轮播 + 21 分类网格 + 热门横滑 + 猜你喜欢",
+    "我的收藏：点星收藏本站点，支持全选删除；消息只记真实动态与本次之后的应用下载记录",
+    "省钱小助手与美女视频改为独立页（从首页轮播与我的进入），9 引擎与应用下载全保留",
+    "内置数据同步为 21 分类 / 2456 站点；旧首页回顶与直达底部悬浮钮随旧首页移除"
   ]
 }
