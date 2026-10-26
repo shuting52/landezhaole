@@ -82,6 +82,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -114,6 +117,151 @@ val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xF
 fun isGallerySchemePal(pal: AppPalette): Boolean =
     pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette
 fun shopBrand(pal: AppPalette): Color = if (isGallerySchemePal(pal)) pal.accent else SHOP_RED
+// 主题组件样式：颜色之外，卡片/Tab/芯片/按钮的形状与阴影也跟主题走
+data class ThemeStyle(
+    val cardShape: Shape,
+    val cardBorderWidth: Dp,
+    val cardBorderColor: Color,
+    val cardElevation: Dp,
+    val cardHardShadow: Dp,
+    val cardHardShadowColor: Color,
+    val tabBarShape: Shape,
+    val tabBarBg: Color,
+    val tabBarBorderWidth: Dp,
+    val tabBarBorderColor: Color,
+    val tabBarElevation: Dp,
+    val tabBarHardShadow: Dp,
+    val tabBarHardShadowColor: Color,
+    val tabSelBg: Color,
+    val tabSelText: Color,
+    val tabShape: Shape,
+    val chipShape: Shape,
+    val chipBorderWidth: Dp,
+    val chipBorderColor: Color,
+    val chipSelBg: Color,
+    val chipSelText: Color,
+    val chipSelBorderColor: Color,
+    val chipHardShadow: Dp,
+    val chipHardShadowColor: Color,
+    val buttonShape: Shape,
+    val buttonBorderWidth: Dp,
+    val buttonBorderColor: Color,
+    val buttonElevation: Dp,
+    val buttonHardShadow: Dp,
+    val buttonHardShadowColor: Color,
+    val buttonGradient: Boolean
+)
+
+private fun darken(c: Color, f: Float): Color = Color(c.red * f, c.green * f, c.blue * f, c.alpha)
+
+private fun wobShape(a: Dp, b: Dp, c: Dp, d: Dp): Shape =
+    RoundedCornerShape(topStart = a, topEnd = b, bottomEnd = c, bottomStart = d)
+
+fun styleOf(pal: AppPalette): ThemeStyle = when (pal) {
+    NeuPalette -> ThemeStyle(
+        cardShape = RoundedCornerShape(24.dp), cardBorderWidth = 2.dp,
+        cardBorderColor = Color(0x55FFFFFF), cardElevation = 6.dp,
+        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = pal.pageBackground,
+        tabBarBorderWidth = 2.dp, tabBarBorderColor = Color(0x55FFFFFF),
+        tabBarElevation = 6.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+        tabSelBg = pal.accentSoft, tabSelText = pal.accent, tabShape = RoundedCornerShape(22.dp),
+        chipShape = RoundedCornerShape(32.dp), chipBorderWidth = 2.dp,
+        chipBorderColor = Color(0x55FFFFFF), chipSelBg = pal.accentSoft, chipSelText = pal.accent,
+        chipSelBorderColor = Color(0x55FFFFFF), chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+        buttonShape = RoundedCornerShape(40.dp), buttonBorderWidth = 2.dp,
+        buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 4.dp,
+        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = false
+    )
+    GlassPalette -> ThemeStyle(
+        cardShape = RoundedCornerShape(20.dp), cardBorderWidth = 1.dp,
+        cardBorderColor = Color(0x8CFFFFFF), cardElevation = 8.dp,
+        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = Color(0x66FFFFFF),
+        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0x8CFFFFFF),
+        tabBarElevation = 8.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+        tabSelBg = Color(0xA6FFFFFF), tabSelText = pal.accent, tabShape = RoundedCornerShape(22.dp),
+        chipShape = RoundedCornerShape(32.dp), chipBorderWidth = 1.dp,
+        chipBorderColor = Color(0x8CFFFFFF), chipSelBg = pal.accent, chipSelText = Color.White,
+        chipSelBorderColor = pal.accent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+        buttonShape = RoundedCornerShape(8.dp), buttonBorderWidth = 0.dp,
+        buttonBorderColor = Color.Transparent, buttonElevation = 4.dp,
+        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = false
+    )
+    DoodlePalette -> ThemeStyle(
+        cardShape = wobShape(26.dp, 32.dp, 24.dp, 30.dp), cardBorderWidth = 3.dp,
+        cardBorderColor = pal.foreground, cardElevation = 0.dp,
+        cardHardShadow = 4.dp, cardHardShadowColor = Color(0x29444433),
+        tabBarShape = wobShape(30.dp, 36.dp, 28.dp, 38.dp), tabBarBg = pal.surface,
+        tabBarBorderWidth = 3.dp, tabBarBorderColor = pal.foreground,
+        tabBarElevation = 0.dp, tabBarHardShadow = 4.dp, tabBarHardShadowColor = Color(0x29444433),
+        tabSelBg = pal.foreground, tabSelText = pal.surface, tabShape = wobShape(20.dp, 24.dp, 18.dp, 22.dp),
+        chipShape = wobShape(16.dp, 20.dp, 14.dp, 18.dp), chipBorderWidth = 2.dp,
+        chipBorderColor = pal.foreground, chipSelBg = pal.foreground, chipSelText = pal.surface,
+        chipSelBorderColor = pal.foreground, chipHardShadow = 2.dp, chipHardShadowColor = Color(0x21444433),
+        buttonShape = wobShape(24.dp, 30.dp, 22.dp, 28.dp), buttonBorderWidth = 2.dp,
+        buttonBorderColor = pal.foreground, buttonElevation = 0.dp,
+        buttonHardShadow = 3.dp, buttonHardShadowColor = Color(0x24444433), buttonGradient = false
+    )
+    LeverPalette -> ThemeStyle(
+        cardShape = RoundedCornerShape(18.dp), cardBorderWidth = 0.dp,
+        cardBorderColor = Color.Transparent, cardElevation = 0.dp,
+        cardHardShadow = 3.dp, cardHardShadowColor = Color(0xFFB9D2E6),
+        tabBarShape = RoundedCornerShape(50), tabBarBg = Color.White,
+        tabBarBorderWidth = 0.dp, tabBarBorderColor = Color.Transparent,
+        tabBarElevation = 0.dp, tabBarHardShadow = 3.dp, tabBarHardShadowColor = darken(pal.accent, 0.75f),
+        tabSelBg = pal.accent, tabSelText = Color.White, tabShape = RoundedCornerShape(50),
+        chipShape = RoundedCornerShape(50), chipBorderWidth = 2.dp,
+        chipBorderColor = pal.accent, chipSelBg = pal.accent, chipSelText = Color.White,
+        chipSelBorderColor = pal.accent, chipHardShadow = 3.dp, chipHardShadowColor = darken(pal.accent, 0.75f),
+        buttonShape = RoundedCornerShape(16.dp), buttonBorderWidth = 0.dp,
+        buttonBorderColor = Color.Transparent, buttonElevation = 0.dp,
+        buttonHardShadow = 4.dp, buttonHardShadowColor = darken(pal.accent, 0.75f), buttonGradient = false
+    )
+    Y2kPalette -> ThemeStyle(
+        cardShape = RoundedCornerShape(24.dp), cardBorderWidth = 1.dp,
+        cardBorderColor = Color(0xCCFFFFFF), cardElevation = 8.dp,
+        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+        tabBarShape = RoundedCornerShape(26.dp), tabBarBg = Color(0xE0FFFFFF),
+        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0xCCFFFFFF),
+        tabBarElevation = 8.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+        tabSelBg = pal.accent.copy(alpha = 0.15f), tabSelText = pal.accent, tabShape = RoundedCornerShape(20.dp),
+        chipShape = RoundedCornerShape(50), chipBorderWidth = 1.dp,
+        chipBorderColor = pal.accent.copy(alpha = 0.35f), chipSelBg = pal.accent, chipSelText = Color.White,
+        chipSelBorderColor = Color.Transparent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+        buttonShape = RoundedCornerShape(22.dp), buttonBorderWidth = 0.dp,
+        buttonBorderColor = Color.Transparent, buttonElevation = 6.dp,
+        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
+    )
+    else -> ThemeStyle(
+        cardShape = RoundedCornerShape(12.dp), cardBorderWidth = 1.dp,
+        cardBorderColor = pal.line, cardElevation = 0.dp,
+        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+        tabBarShape = RoundedCornerShape(0.dp), tabBarBg = pal.barBackground,
+        tabBarBorderWidth = 0.dp, tabBarBorderColor = Color.Transparent,
+        tabBarElevation = 0.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+        tabSelBg = pal.accent.copy(alpha = 0.12f), tabSelText = pal.accent, tabShape = RoundedCornerShape(16.dp),
+        chipShape = RoundedCornerShape(16.dp), chipBorderWidth = 1.dp,
+        chipBorderColor = pal.line, chipSelBg = shopBrand(pal), chipSelText = Color.White,
+        chipSelBorderColor = shopBrand(pal), chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+        buttonShape = RoundedCornerShape(8.dp), buttonBorderWidth = 0.dp,
+        buttonBorderColor = Color.Transparent, buttonElevation = 0.dp,
+        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = false
+    )
+}
+
+// 实心偏移阴影：画在裁剪之外，放在 clip 之前才不会被裁掉（006 手绘 / 009 玩具的硬阴影）
+fun Modifier.hardShadow(shape: Shape, offset: Dp, color: Color): Modifier = this.then(
+    Modifier.drawBehind {
+        if (offset > 0.dp && color.alpha > 0f) {
+            val px = offset.toPx()
+            translate(px, px) {
+                drawOutline(shape.createOutline(size, layoutDirection, this), color)
+            }
+        }
+    }
+)
+
 fun shopBrandGradient(pal: AppPalette): Brush =
     if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else SHOP_GRADIENT
 
@@ -169,11 +317,14 @@ fun ShopCard(
     pal: AppPalette,
     onOpen: () -> Unit
 ) {
+    val sty = styleOf(pal)
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
+            .hardShadow(sty.cardShape, sty.cardHardShadow, sty.cardHardShadowColor)
+            .shadow(sty.cardElevation, sty.cardShape)
+            .clip(sty.cardShape)
             .background(pal.barBackground)
-            .border(1.dp, pal.line, RoundedCornerShape(12.dp))
+            .border(sty.cardBorderWidth, sty.cardBorderColor, sty.cardShape)
             .clickable { onOpen() }
     ) {
         Column {
@@ -216,8 +367,11 @@ fun ShopCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 Box(
                     modifier = Modifier.fillMaxWidth().height(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(shopBrand(pal))
+                        .hardShadow(sty.buttonShape, sty.buttonHardShadow, sty.buttonHardShadowColor)
+                        .shadow(sty.buttonElevation, sty.buttonShape)
+                        .clip(sty.buttonShape)
+                        .background(if (sty.buttonGradient) shopBrandGradient(pal) else shopBrand(pal))
+                        .border(sty.buttonBorderWidth, sty.buttonBorderColor, sty.buttonShape)
                         .clickable { onOpen() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -790,17 +944,20 @@ fun ShopCategoryDetail(
         ) {
             subs.forEach { s ->
                 val sel = selSub == s.id
+                val sty = styleOf(pal)
                 Box(
-                    modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                        .background(if (sel) shopBrand(pal) else pal.barBackground)
-                        .border(1.dp, if (sel) shopBrand(pal) else pal.line, RoundedCornerShape(16.dp))
+                    modifier = Modifier
+                        .hardShadow(sty.chipShape, if (sel) sty.chipHardShadow else 0.dp, sty.chipHardShadowColor)
+                        .clip(sty.chipShape)
+                        .background(if (sel) sty.chipSelBg else pal.barBackground)
+                        .border(sty.chipBorderWidth, if (sel) sty.chipSelBorderColor else sty.chipBorderColor, sty.chipShape)
                         .clickable { selSub = s.id }
                         .padding(horizontal = 12.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         s.name, fontSize = 12.sp,
-                        color = if (sel) Color.White else pal.foreground
+                        color = if (sel) styleOf(pal).chipSelText else pal.foreground
                     )
                 }
             }
@@ -901,7 +1058,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.6" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.7" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1197,7 +1354,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.6" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.7" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center

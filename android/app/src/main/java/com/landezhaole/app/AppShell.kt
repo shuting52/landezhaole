@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -164,6 +165,41 @@ fun SubPageWrapper(
         }
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             content()
+        }
+    }
+}
+
+// 画廊主题的底部 Tab 栏：悬浮胶囊，形状/边框/阴影/选中 pill 全部跟主题走（默认主题仍用系统 NavigationBar）
+@Composable
+fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
+    val sty = styleOf(pal)
+    Box(
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding()
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .hardShadow(sty.tabBarShape, sty.tabBarHardShadow, sty.tabBarHardShadowColor)
+                .shadow(sty.tabBarElevation, sty.tabBarShape)
+                .clip(sty.tabBarShape)
+                .background(sty.tabBarBg)
+                .border(sty.tabBarBorderWidth, sty.tabBarBorderColor, sty.tabBarShape)
+                .padding(6.dp)
+        ) {
+            listOf("🏠" to "首页", "🗂️" to "分类", "💰" to "省钱小助手", "👤" to "我的").forEachIndexed { i, (emoji, label) ->
+                val sel = tab == i
+                Box(
+                    modifier = Modifier.weight(1f).clip(sty.tabShape)
+                        .background(if (sel) sty.tabSelBg else Color.Transparent)
+                        .clickable { goTab(i) }.padding(vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(emoji, fontSize = 22.sp)
+                        Text(label, fontSize = 11.sp, color = if (sel) sty.tabSelText else pal.secondary)
+                    }
+                }
+            }
         }
     }
 }
@@ -423,14 +459,18 @@ fun AppShell(
                     }
                 }
             }
-            NavigationBar(
-                containerColor = pal.barBackground,
-                contentColor = pal.foreground
-            ) {
-                ShopNavItem(pal, "🏠", "首页", tab == 0, null) { goTab(0) }
-                ShopNavItem(pal, "🗂️", "分类", tab == 1, null) { goTab(1) }
-                ShopNavItem(pal, "💰", "省钱小助手", tab == 2, null) { goTab(2) }
-                ShopNavItem(pal, "👤", "我的", tab == 3, null) { goTab(3) }
+            if (isGallerySchemePal(pal)) {
+                GalleryTabBar(pal = pal, tab = tab, goTab = { goTab(it) })
+            } else {
+                NavigationBar(
+                    containerColor = pal.barBackground,
+                    contentColor = pal.foreground
+                ) {
+                    ShopNavItem(pal, "🏠", "首页", tab == 0, null) { goTab(0) }
+                    ShopNavItem(pal, "🗂️", "分类", tab == 1, null) { goTab(1) }
+                    ShopNavItem(pal, "💰", "省钱小助手", tab == 2, null) { goTab(2) }
+                    ShopNavItem(pal, "👤", "我的", tab == 3, null) { goTab(3) }
+                }
             }
         }
         if (pendingUpdate != null) {

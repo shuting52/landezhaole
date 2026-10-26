@@ -230,7 +230,7 @@ val Y2kPalette = AppPalette(
 fun GlassPanel(modifier: Modifier = Modifier, pal: AppPalette, content: @Composable () -> Unit) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(if (isGallerySchemePal(pal)) styleOf(pal).cardShape else RoundedCornerShape(20.dp))
             .background(if (pal.isDark) Color(0x26FFFFFF) else Color(0x8CFFFFFF))
     ) { content() }
 }
