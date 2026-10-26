@@ -98,8 +98,11 @@ section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;p
 .desc{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #results{display:none} #results.show{display:block}
 .empty{text-align:center;color:var(--muted);padding:40px}
-#topbtn{position:fixed;right:22px;bottom:26px;width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;border:0;font-size:20px;cursor:pointer;box-shadow:0 8px 22px rgba(22,163,74,.35);display:none;z-index:99}
-#topbtn.show{display:block}
+#sideTools{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:99}
+#sideTools button,#sideTools a{width:46px;height:46px;border-radius:14px;background:var(--card);border:1px solid var(--line);box-shadow:0 8px 22px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);text-decoration:none;font-size:20px;font-weight:700}
+#sideTools button:hover,#sideTools a:hover{border-color:var(--green)}
+#sideTools svg{width:24px;height:24px}
+@media(max-width:640px){#sideTools{top:auto;bottom:84px;transform:none;right:12px}#sideTools button,#sideTools a{width:42px;height:42px}}
 footer{margin-top:36px;padding:28px 0 44px;text-align:center;color:var(--muted);font-size:12px}
 footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px}
 @media(max-width:640px){.logo{font-size:34px}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.card .desc{display:none}section.cat{padding:18px 14px}}
@@ -219,7 +222,11 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div>本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈</div>
 <div style="margin-top:6px">© 2026 懒得找了 · <a href="javascript:void(0)" onclick="if(window.siteVersionData)showUpdateModal(window.siteVersionData,false)" style="color:var(--green)">查看更新日志</a></div>
 </div></footer>
-<button id="topbtn" title="回到顶部">↑</button>
+<div id="sideTools">
+<button type="button" id="sideTopBtn" title="回到顶部">↑</button>
+<button type="button" id="sideShareBtn" title="分享本站"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+<a id="sideJumpBtn" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener" title="下载 Android App"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M9 15L17 7M12 7h5v5" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+</div>
 
 <script>
 const ENGINES=[
@@ -551,9 +558,24 @@ const tb=document.getElementById('themeBtn');
 const saved=localStorage.getItem('landezhaole-theme');
 if(saved){document.documentElement.dataset.theme=saved;tb.textContent=saved==='dark'?'☀️ 日间模式':'🌙 夜间模式';}
 tb.onclick=()=>{const h=document.documentElement;const dark=h.dataset.theme!=='dark';h.dataset.theme=dark?'dark':'light';localStorage.setItem('landezhaole-theme',h.dataset.theme);tb.textContent=dark?'☀️ 日间模式':'🌙 夜间模式';};
-const topbtn=document.getElementById('topbtn');
-window.addEventListener('scroll',()=>topbtn.classList.toggle('show',window.scrollY>600));
-topbtn.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+document.getElementById('sideTopBtn').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+function showSideToast(msg){
+ const toast=document.getElementById('toastNotify');if(!toast)return;
+ toast.onclick=function(){};
+ document.getElementById('toastIc').textContent='享';
+ document.getElementById('toastTt').textContent='分享';
+ document.getElementById('toastBd').textContent=msg;
+ toast.style.visibility='visible';toast.style.opacity='1';
+ setTimeout(()=>{toast.style.visibility='hidden';},2500);
+}
+document.getElementById('sideShareBtn').onclick=async()=>{
+ const url=location.href,title=document.title;
+ try{ if(navigator.share){ await navigator.share({title,url}); return; } throw new Error('no share'); }
+ catch(e){
+  try{ await navigator.clipboard.writeText(url); showSideToast('链接已复制，去粘贴分享吧'); }
+  catch(_){ showSideToast('分享失败，请手动复制地址栏链接'); }
+ }
+};
 function todayClickKey(){return 'landezhaole-clicks-'+new Date().toLocaleDateString('en-CA');}
 function getTodayClicks(url){try{return (JSON.parse(localStorage.getItem(todayClickKey())||'{}')[url]||0);}catch(e){return 0;}}
 function recordTodayClick(url){try{const k=todayClickKey();const d=JSON.parse(localStorage.getItem(k)||'{}');d[url]=(d[url]||0)+1;localStorage.setItem(k,JSON.stringify(d));}catch(e){}}
