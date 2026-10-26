@@ -226,12 +226,42 @@ val Y2kPalette = AppPalette(
     line = Color(0xFFBFE2F7)
 )
 
+// CRYSTAL 水晶液态（由 Update 按钮复刻 + 水晶液态组件库翻译而来）
+// 主色水晶蓝，卡片半透明白 + 白描边，页面底为竖向四段液态渐变
+val CrystalPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF1668DC),
+    accentSoft = Color(0x141668DC),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFEEF2FB),
+    foreground = Color(0xFF1E2A3A),
+    secondary = Color(0xFF64748B),
+    barBackground = Color(0xA6FFFFFF),
+    pageBackground = Color(0xFFEEF2FB),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFD3E3F8)
+)
+
+// 水晶液态页面底：蓝 → 雾白 → 粉 → 薄荷，四段竖向渐变（与 HTML 组件库一致）
+fun crystalPageBrush(): Brush = Brush.verticalGradient(
+    listOf(Color(0xFFD8E6FB), Color(0xFFEEF2FB), Color(0xFFFDEEF4), Color(0xFFE2F7F0))
+)
+
+// 页面根背景：水晶主题用渐变底，其他主题保持原单色底
+fun Modifier.pageBg(pal: AppPalette): Modifier =
+    if (pal == CrystalPalette) background(crystalPageBrush()) else background(pal.pageBackground)
+
 @Composable
 fun GlassPanel(modifier: Modifier = Modifier, pal: AppPalette, content: @Composable () -> Unit) {
     Box(
         modifier = modifier
             .clip(if (isGallerySchemePal(pal)) styleOf(pal).cardShape else RoundedCornerShape(20.dp))
             .background(if (pal.isDark) Color(0x26FFFFFF) else Color(0x8CFFFFFF))
+            .border(
+                if (pal == CrystalPalette) 1.dp else 0.dp,
+                if (pal == CrystalPalette) Color(0xCCFFFFFF) else Color.Transparent,
+                if (isGallerySchemePal(pal)) styleOf(pal).cardShape else RoundedCornerShape(20.dp)
+            )
     ) { content() }
 }
 
@@ -503,6 +533,7 @@ class MainActivity : ComponentActivity() {
                 "doodle006" -> DoodlePalette
                 "lever009" -> LeverPalette
                 "y2k032" -> Y2kPalette
+                "crystal" -> CrystalPalette
                 else -> if (dark) DarkPalette else LightPalette
             }
             MaterialTheme(

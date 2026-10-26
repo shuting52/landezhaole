@@ -151,7 +151,7 @@ fun SubPageWrapper(
     onBack: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -372,7 +372,7 @@ fun AppShell(
         overlay = null
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Box(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars)) {
                 UiZoom(scale = uiScale) {
@@ -539,7 +539,7 @@ fun SaveScreen(pal: AppPalette) {
     val shown = COUPON_CARDS.filter { c ->
         c.tab == tab && (filter == "all" || c.tagClasses.contains(filter))
     }
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -713,7 +713,7 @@ fun VideoScreen(pal: AppPalette, onBackHome: () -> Unit) {
     var videoIndex by remember { mutableStateOf(0) }
     var hint by remember { mutableStateOf("") }
     val url = VIDEO_URLS.getOrNull(videoIndex)
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically

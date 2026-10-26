@@ -53,6 +53,7 @@ fun themeSchemeLabel(scheme: String): String = when (scheme) {
     "doodle006" -> "DOODLE 手绘"
     "lever009" -> "LEVER 拨杆"
     "y2k032" -> "S11 千禧复兴"
+    "crystal" -> "CRYSTAL 水晶液态"
     else -> "默认（跟随深浅）"
 }
 
@@ -165,7 +166,7 @@ fun ThemeAppearanceScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             ExpandableThemeCard(pal = pal, title = "主题风格", currentValue = themeSchemeLabel(scheme)) {
-                listOf("default", "neu003", "glass004", "doodle006", "lever009", "y2k032").forEach { s ->
+                listOf("default", "neu003", "glass004", "doodle006", "lever009", "y2k032", "crystal").forEach { s ->
                     ThemeChoiceRow(pal = pal, label = themeSchemeLabel(s), selected = scheme == s, onClick = { onSchemeChange(s) })
                 }
             }

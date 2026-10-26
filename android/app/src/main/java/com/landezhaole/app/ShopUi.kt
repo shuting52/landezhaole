@@ -118,7 +118,7 @@ val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xF
 
 // 画廊主题生效时顶栏与品牌红跟主题主色走；默认主题保持电商红
 fun isGallerySchemePal(pal: AppPalette): Boolean =
-    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette
+    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette || pal == CrystalPalette
 fun shopBrand(pal: AppPalette): Color = if (isGallerySchemePal(pal)) pal.accent else SHOP_RED
 // 主题组件样式：颜色之外，卡片/Tab/芯片/按钮的形状与阴影也跟主题走
 data class ThemeStyle(
@@ -236,6 +236,21 @@ fun styleOf(pal: AppPalette): ThemeStyle = when (pal) {
         buttonBorderColor = Color.Transparent, buttonElevation = 6.dp,
         buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
     )
+    CrystalPalette -> ThemeStyle(
+        cardShape = RoundedCornerShape(22.dp), cardBorderWidth = 1.dp,
+        cardBorderColor = Color(0xCCFFFFFF), cardElevation = 8.dp,
+        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = Color(0x66FFFFFF),
+        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0xCCFFFFFF),
+        tabBarElevation = 8.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+        tabSelBg = pal.accent, tabSelText = Color.White, tabShape = RoundedCornerShape(50),
+        chipShape = RoundedCornerShape(50), chipBorderWidth = 1.dp,
+        chipBorderColor = Color(0xCCFFFFFF), chipSelBg = pal.accent, chipSelText = Color.White,
+        chipSelBorderColor = pal.accent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+        buttonShape = RoundedCornerShape(50), buttonBorderWidth = 1.dp,
+        buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 4.dp,
+        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
+    )
     else -> ThemeStyle(
         cardShape = RoundedCornerShape(12.dp), cardBorderWidth = 1.dp,
         cardBorderColor = pal.line, cardElevation = 0.dp,
@@ -271,7 +286,9 @@ fun Modifier.hardShadow(shape: Shape, offset: Dp, color: Color): Modifier = this
 )
 
 fun shopBrandGradient(pal: AppPalette): Brush =
-    if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else SHOP_GRADIENT
+    if (pal == CrystalPalette) Brush.horizontalGradient(
+        listOf(Color(0xFF60A5FA), Color(0xFF1668DC), Color(0xFF7C3AED))
+    ) else if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else SHOP_GRADIENT
 
 val CAT_ICONS = mapOf(
     "cloud_browser" to Icons.Filled.Language, "ai_api" to Icons.Filled.Api,
@@ -594,7 +611,7 @@ fun ShopHome(
     }
     val showAppResults = ENGINES[engineIdx].id == "appdl" && appResults != null
 
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         // ---- 顶栏：logo + 搜索框 + 引擎药丸（背景跟随深色/浅色主题，带阴影立体感） ----
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -886,7 +903,7 @@ fun ShopCategory(
         }
         return
     }
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Box(
             modifier = Modifier.fillMaxWidth().background(shopBrandGradient(pal))
                 .padding(horizontal = 12.dp, vertical = 10.dp)
@@ -942,7 +959,7 @@ fun ShopCategoryDetail(
     val subs = if (cat.subs.isEmpty()) listOf(SubTab("all", "全部")) else cat.subs
     val shown = filterCardsForSub(cat, selSub)
     Column(
-        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+        modifier = Modifier.fillMaxSize().pageBg(pal)
             .verticalScroll(rememberScrollState())
             .padding(10.dp)
     ) {
@@ -1005,7 +1022,7 @@ fun ShopMoreList(
     onOpenCard: (SiteCard) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+        modifier = Modifier.fillMaxSize().pageBg(pal)
             .verticalScroll(rememberScrollState())
             .padding(10.dp)
     ) {
@@ -1086,7 +1103,7 @@ fun ShopMessages(
         2 -> systemMsgs
         else -> downloadMsgs + systemMsgs
     }
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Box(
             modifier = Modifier.fillMaxWidth().background(pal.barBackground)
                 .padding(vertical = 14.dp),
@@ -1216,7 +1233,7 @@ fun ShopMine(
         return
     }
     Column(
-        modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+        modifier = Modifier.fillMaxSize().pageBg(pal)
             .verticalScroll(rememberScrollState())
     ) {
         Box(
