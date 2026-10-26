@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>省钱小助手 · 懒得找了</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#16a34a;--green-d:#15803d;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line)}
+.topbar .wrap{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.back{font-size:14px;color:var(--green);font-weight:700;white-space:nowrap}
+.topbar h1{font-size:20px;margin:0}
+.topbar .sub{font-size:13px;color:var(--muted);margin-left:4px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text)}
+.tab img{width:20px;height:20px}
+.tab.on{background:var(--green);border-color:var(--green);color:#fff}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.filters button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;color:var(--text)}
+.filters button.on{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.sq-card{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;align-items:flex-start}
+.sq-card:hover{border-color:var(--green)}
+.sq-left{flex:1;min-width:0}
+.sq-logo{width:44px;height:44px;border-radius:11px;object-fit:contain}
+.sq-title{font-size:16px;font-weight:800;margin:8px 0 4px}
+.sq-desc{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 8px}
+.sq-tags{display:flex;gap:6px;flex-wrap:wrap}
+.sq-tags span{font-size:11px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted)}
+.sq-qr{flex-shrink:0;text-align:center}
+.sq-qr img{width:110px;height:110px;border-radius:10px;display:block}
+.sq-qr p{font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.5}
+.sq-qr .go{display:inline-block;margin-top:8px;background:var(--green);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px}
+.foot{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;padding:28px 16px}
+.foot a{color:var(--green)}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap"><a class="back" href="index.html">← 回导航</a><h1>省钱小助手</h1><span class="sub">领券 · 出行 · 生活</span></div></div>
+<div class="wrap">
+<div class="tabs" id="tabs"></div>
+<div class="filters" id="filters"></div>
+<div class="grid" id="grid"></div>
+</div>
+<div class="foot"><div>© 2026 懒得找了 · <a href="index.html">回导航首页</a></div><div>优惠金额与活动以各平台实际页面为准</div></div>
+<script>
+var DATA={"tabs": [{"id": "food", "name": "吃喝餐饮", "icon": "sq/food.svg", "filters": [["all", "全部"], ["meituan", "美团"], ["taobao", "淘宝闪购"], ["jingdong", "京东"], ["xiawucha", "下午茶"], ["xianxia", "堂食"]]}, {"id": "travel", "name": "旅游出行", "icon": "sq/travel.svg", "filters": [["all", "全部"], ["jipiao", "机票"], ["huochepiao", "火车票"], ["dache", "网约车"], ["jiudian", "酒店"], ["danche", "单车"], ["daijia", "代驾"], ["shunfengche", "顺风车"], ["lahuoche", "货车"]]}, {"id": "life", "name": "生活服务", "icon": "sq/film.svg", "filters": [["all", "全部"], ["liuliangka", "流量卡"], ["dianyingpiao", "电影"], ["kuaidi", "快递"]]}], "cards": [{"tab": 0, "href": "http://dpurl.cn/5ERL3sSz", "logo": "sq/meituan.svg", "logoAlt": "美团", "title": "外卖节红包", "desc": "最高288元红包", "tagClasses": ["meituan", "waimai"], "tags": ["美团", "外卖"], "qr": "sq/meituan-waimaijie.jpg"}, {"tab": 0, "href": "http://dpurl.cn/gSbheEVz", "logo": "sq/meituan.svg", "logoAlt": "美团", "title": "大牌饮品券", "desc": "奶茶/咖啡/甜点/汉堡都能用", "tagClasses": ["meituan", "waimai", "xiawucha"], "tags": ["美团", "外卖", "下午茶"], "qr": "sq/meituan-yinpin.jpg"}, {"tab": 0, "href": "http://dpurl.cn/qKozVKAz", "logo": "sq/meituan.svg", "logoAlt": "美团", "title": "美团买药", "desc": "买药先领大额神券", "tagClasses": ["meituan", "waimai"], "tags": ["美团", "外卖"], "qr": "sq/meituan-maiyao.jpg"}, {"tab": 0, "href": "http://dpurl.cn/BM2pnh8z", "logo": "sq/meituan.svg", "logoAlt": "美团", "title": "时令水果季", "desc": "领券满59元减20元", "tagClasses": ["meituan", "waimai"], "tags": ["美团", "外卖"], "qr": "sq/meituan-shuiguo.jpg"}, {"tab": 0, "href": "https://p0.meituan.net/marketingcpsmedia/54ca1fe3fd52375911454a771e5e579320682.jpg", "logo": "sq/meituan.svg", "logoAlt": "美团", "title": "神券包", "desc": "9.9元购360元神券", "tagClasses": ["meituan", "waimai"], "tags": ["美团", "外卖"], "qr": "sq/meituan-shenquan.jpg"}, {"tab": 0, "href": "https://kurl04.cn/tHrixf", "logo": "sq/taobao.svg", "logoAlt": "淘宝闪购", "title": "闪购品牌日", "desc": "最高22元的可叠加红包", "tagClasses": ["taobao", "waimai"], "tags": ["淘宝闪购", "外卖"], "qr": "sq/taobao-diehongbao.png"}, {"tab": 0, "href": "https://u.ele.me/Z2dZLyd8", "logo": "sq/taobao.svg", "logoAlt": "淘宝闪购", "title": "天天领红包", "desc": "津贴叠加红包，下单抽免单", "tagClasses": ["taobao", "waimai"], "tags": ["淘宝闪购", "外卖"], "qr": "sq/taobao-linghongbao.png"}, {"tab": 0, "href": "https://u.jd.com/fDDLk4W", "logo": "sq/jingdong.svg", "logoAlt": "京东外卖", "title": "惊喜红包", "desc": "惊喜大额红包随机领取", "tagClasses": ["jingdong", "waimai"], "tags": ["京东外卖", "外卖"], "qr": "sq/jingdong-jingxi.png"}, {"tab": 0, "href": "https://u.jd.com/fGDbxls", "logo": "sq/jingdong.svg", "logoAlt": "京东外卖", "title": "京东外卖券", "desc": "满25元减13元", "tagClasses": ["jingdong", "waimai"], "tags": ["京东外卖", "外卖"], "qr": "sq/jingdong-waimai.png"}, {"tab": 0, "href": "http://dpurl.cn/ksHYLoOz", "logo": "sq/naicha.svg", "logoAlt": "饮品专场", "title": "奶茶饮品", "desc": "喜茶/茶姬/奈雪/百果园5折起", "tagClasses": ["xianxia", "waimai", "xiawucha"], "tags": ["堂食", "外卖", "下午茶"], "qr": "sq/yinpin.png"}, {"tab": 0, "href": "https://s.t28.cn/X6Dohm2i", "logo": "sq/kafei.svg", "logoAlt": "咖啡专场", "title": "咖啡专场", "desc": "瑞幸/星巴克/库迪5折起", "tagClasses": ["xianxia", "waimai", "xiawucha"], "tags": ["堂食", "外卖", "下午茶"], "qr": "sq/yinpin.png"}, {"tab": 0, "href": "https://s.t28.cn/X6Dohm2i", "logo": "sq/hanbao.svg", "logoAlt": "汉堡专场", "title": "汉堡西餐专场", "desc": "KFC/麦当劳/必胜客/德克士5折起", "tagClasses": ["xianxia", "waimai", "xiawucha"], "tags": ["堂食", "外卖", "下午茶"], "qr": "sq/yinpin.png"}, {"tab": 1, "href": "https://vv.didi.cn/rlqb33L?source_id=38561jutuike123456&ref_from=dunion", "logo": "sq/didi.svg", "logoAlt": "滴滴出行", "title": "滴滴出行", "desc": "出行5折起", "tagClasses": ["dache", "shunfengche", "jipiao", "huochepiao", "danche", "daijia", "zuche", "lahuoche"], "tags": ["打车", "顺风车", "机票", "火车票", "单车", "代驾", "租车", "货车"], "qr": "sq/didi.png"}, {"tab": 1, "href": "https://kurl06.cn/tuKlsr", "logo": "sq/huaxiaozhu.svg", "logoAlt": "花小猪", "title": "花小猪打车", "desc": "最高128元券包", "tagClasses": ["dache"], "tags": ["打车"], "qr": "sq/huaxiaozhu.png"}, {"tab": 1, "href": "http://dpurl.cn/VYaJttEz", "logo": "sq/meituan.svg", "logoAlt": "美团", "title": "美团出行", "desc": "领100元福利券包", "tagClasses": ["huochepiao", "jipiao"], "tags": ["火车票", "机票"], "qr": "sq/meituan-chuxing.png"}, {"tab": 1, "href": "https://a.feizhu.com/1KjqBc", "logo": "sq/feizhu.svg", "logoAlt": "飞猪", "title": "飞猪旅行", "desc": "最高立减75元", "tagClasses": ["jiudian", "huochepiao", "jipiao"], "tags": ["酒店", "火车票", "机票"], "qr": "sq/feizhu.jpg"}, {"tab": 1, "href": "https://a.feizhu.com/00akoI", "logo": "sq/feizhu.svg", "logoAlt": "飞猪", "title": "飞猪酒店", "desc": "星级酒店最高立减300元", "tagClasses": ["jiudian"], "tags": ["酒店"], "qr": "sq/feizhu-jiudian.jpg"}, {"tab": 1, "href": "https://kurl01.cn/t0ZgGQ", "logo": "sq/tongcheng.svg", "logoAlt": "同城", "title": "同程民宿", "desc": "民宿好房特惠甩卖，3折起", "tagClasses": ["jiudian"], "tags": ["民宿"], "qr": "sq/tongcheng-minsu.png"}, {"tab": 2, "href": "https://ka.huojukj.com/?u=357159", "logo": "sq/liuliangka.svg", "logoAlt": "流量卡", "title": "超值流量卡", "desc": "电信/联通/移动/广电，大流量才过瘾", "tagClasses": ["liuliangka"], "tags": ["流量卡"], "qr": "sq/liuliangka.png"}, {"tab": 2, "href": "https://kzurl18.cn/tu5Wj9", "logo": "sq/dianyingpiao.svg", "logoAlt": "美团", "title": "电影票", "desc": "8折起，全国可通用", "tagClasses": ["dianyingpiao"], "tags": ["电影票"], "qr": "sq/dianyingpiao.png"}, {"tab": 2, "href": "https://kzurl18.cn/tu5UDa", "logo": "sq/taopiaopiao.svg", "logoAlt": "淘票票", "title": "特价门票", "desc": "景点门票活动，官方出票特价优惠", "tagClasses": ["dianyingpiao"], "tags": ["景点门票"], "qr": "sq/menpiaoa.png"}, {"tab": 2, "href": "https://kurl06.cn/tu5Wz3", "logo": "sq/kuaidi.svg", "logoAlt": "快递", "title": "发快递", "desc": "快递、物流、同城都能享优惠", "tagClasses": ["kuaidi"], "tags": ["快递"], "qr": "sq/kuaidi.png"}]};
+function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var curTab=0,curFilter='all';
+function renderTabs(){
+ document.getElementById('tabs').innerHTML=DATA.tabs.map(function(t,i){
+  return '<button class="tab'+(i===curTab?' on':'')+'" data-i="'+i+'"><img src="'+esc(t.icon)+'" alt="">'+esc(t.name)+'</button>';
+ }).join('');
+ document.querySelectorAll('#tabs .tab').forEach(function(b){
+  b.onclick=function(){curTab=parseInt(b.dataset.i,10);curFilter='all';renderFilters();renderGrid();renderTabs();};
+ });
+}
+function renderFilters(){
+ var fs=DATA.tabs[curTab].filters;
+ document.getElementById('filters').innerHTML=fs.map(function(f){
+  return '<button class="'+(f[0]===curFilter?'on':'')+'" data-f="'+f[0]+'">'+esc(f[1])+'</button>';
+ }).join('');
+ document.querySelectorAll('#filters button').forEach(function(b){
+  b.onclick=function(){curFilter=b.dataset.f;renderFilters();renderGrid();};
+ });
+}
+function renderGrid(){
+ var list=DATA.cards.filter(function(c){
+  if(c.tab!==curTab)return false;
+  if(curFilter==='all')return true;
+  return c.tagClasses.indexOf(curFilter)>=0;
+ });
+ document.getElementById('grid').innerHTML=list.map(function(c){
+  return '<a class="sq-card" href="'+esc(c.href)+'" target="_blank" rel="noopener">'
+   +'<div class="sq-left"><img class="sq-logo" src="'+esc(c.logo)+'" alt="'+esc(c.logoAlt)+'">'
+   +'<div class="sq-title">'+esc(c.title)+'</div>'
+   +'<p class="sq-desc">'+esc(c.desc)+'</p>'
+   +'<div class="sq-tags">'+c.tags.map(function(t){return '<span>'+esc(t)+'</span>';}).join('')+'</div></div>'
+   +'<div class="sq-qr"><img src="'+esc(c.qr)+'" alt="二维码"><p>打开手机<br>扫一扫领取</p><span class="go">领取优惠券</span></div></a>';
+ }).join('');
+}
+renderTabs();renderFilters();renderGrid();
+</script>
+</body>
+</html>
