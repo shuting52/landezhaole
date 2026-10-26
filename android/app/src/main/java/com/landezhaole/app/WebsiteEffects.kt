@@ -46,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.awaitPointerEventScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -407,11 +406,12 @@ fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit)
         }
         Box(
             modifier = Modifier.pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent(PointerEventPass.Initial)
-                        val pos = event.changes.firstOrNull()?.position
-                        if (pos != null && event.changes.any { it.pressed }) {
+                // 只用 foundation.gestures 的 awaitEachGesture（本工程已验证可编过）：
+                // 每轮手势内用 Initial 通道观测位置但不消费，底下的点击仍能收到
+                while (true) {
+                    awaitEachGesture {
+                        val down = awaitFirstDown()
+                        fun track(pos: Offset) {
                             touchX = pos.x
                             val touchDp = pos.x / density.density + dockScroll.value / density.density
                             var nearest = 0
@@ -421,9 +421,18 @@ fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit)
                                 if (d < best) { best = d; nearest = i }
                             }
                             tipIndex = if (best < 60f) nearest else null
-                        } else {
-                            touchX = null
-                            tipIndex = null
+                        }
+                        track(down.position)
+                        while (true) {
+                            val event = awaitPointerEvent(PointerEventPass.Initial)
+                            val change = event.changes.firstOrNull() ?: break
+                            if (change.pressed) {
+                                track(change.position)
+                            } else {
+                                touchX = null
+                                tipIndex = null
+                                break
+                            }
                         }
                     }
                 }
