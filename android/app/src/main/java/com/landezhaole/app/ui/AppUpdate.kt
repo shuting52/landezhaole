@@ -354,7 +354,7 @@ class UpdateDownloader {
                     RandomAccessFile(outFile, "rw").use { raf ->
                         raf.seek(start)
                         val buf = ByteArray(8192)
-                        var n: Int
+                        var n = 0
                         val input = conn.inputStream
                         while (!cancelled.get() &&
                             input.read(buf).also { n = it } != -1
@@ -399,7 +399,7 @@ class UpdateDownloader {
                     if (conn.responseCode != 200) throw IOException("HTTP ${conn.responseCode}")
                     outFile.outputStream().buffered().use { out ->
                         val buf = ByteArray(8192)
-                        var n: Int
+                        var n = 0
                         val input = conn.inputStream
                         while (!cancelled.get() &&
                             input.read(buf).also { n = it } != -1
@@ -428,7 +428,7 @@ class UpdateDownloader {
         val digest = MessageDigest.getInstance("SHA-256")
         file.inputStream().buffered().use { input ->
             val buf = ByteArray(8192)
-            var n: Int
+            var n = 0
             while (input.read(buf).also { n = it } != -1) digest.update(buf, 0, n)
         }
         return digest.digest().joinToString("") { "%02x".format(it) }
