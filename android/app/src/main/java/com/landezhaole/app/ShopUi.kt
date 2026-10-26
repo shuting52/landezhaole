@@ -355,7 +355,7 @@ fun ShopHome(
     fun startAppDownload(entry: AppEntry) {
         if (appDlJobs[entry.appId]?.isActive == true) return
         appDlJobs[entry.appId] = scope.launch {
-            appDlStates[entry.appId] = DlState.Downloading(0f, 0, entry.size)
+            appDlStates[entry.appId] = DlState.Downloading(0f, 0L, entry.size)
             try {
                 val file = downloadAppApk(ctx, entry) { w, t ->
                     appDlStates[entry.appId] =
