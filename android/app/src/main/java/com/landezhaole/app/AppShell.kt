@@ -1,9 +1,12 @@
 package com.landezhaole.app
 
 import android.content.Intent
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.VideoView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,8 +47,14 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SystemUpdate
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Payment
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -64,6 +73,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.PathEffect
 import android.widget.Toast
@@ -81,6 +92,7 @@ import com.landezhaole.app.ui.ThemeMode
 import com.landezhaole.app.ui.UpdateDialog
 import com.landezhaole.app.ui.currentVersionCode
 import com.landezhaole.app.ui.fetchRemoteVersion
+import org.json.JSONObject
 
 // 美女栏视频源：待接入。把 mp4 直链填进来即可播放（连续开关控制循环，切换视频切下一个）。
 val VIDEO_URLS: List<String> = emptyList()
@@ -483,6 +495,10 @@ fun MineScreen(
     val scope = rememberCoroutineScope()
     var showTheme by remember { mutableStateOf(false) }
     var pendingUpdate by remember { mutableStateOf<RemoteVersion?>(null) }
+    var qrTitle by remember { mutableStateOf<String?>(null) }
+    var qrAsset by remember { mutableStateOf("") }
+    var qrHint by remember { mutableStateOf("") }
+    var showAbout by remember { mutableStateOf(false) }
     if (showTheme) {
         ThemeAppearanceScreen(pal = pal, mode = themeMode, onModeChange = onThemeModeChange, uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false })
         return
@@ -559,6 +575,49 @@ fun MineScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+            Text("支持与关于", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.secondary)
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(pal.barBackground)
+                    .border(1.dp, pal.line, RoundedCornerShape(12.dp))
+            ) {
+                Column {
+                    MineRow(
+                        icon = Icons.Filled.Chat,
+                        iconTint = Color(0xFF07C160),
+                        label = "微信打赏",
+                        pal = pal,
+                        onClick = { qrTitle = "微信打赏"; qrAsset = "qr-wechat.jpg"; qrHint = "微信扫一扫，支持一下" }
+                    )
+                    Divider(color = pal.line)
+                    MineRow(
+                        icon = Icons.Filled.AccountCircle,
+                        iconTint = Color(0xFF12B7F5),
+                        label = "QQ好友",
+                        pal = pal,
+                        onClick = { qrTitle = "QQ好友"; qrAsset = "qr-qq.jpg"; qrHint = "QQ扫一扫，加我好友" }
+                    )
+                    Divider(color = pal.line)
+                    MineRow(
+                        icon = Icons.Filled.Payment,
+                        iconTint = Color(0xFF1677FF),
+                        label = "支付宝打赏",
+                        pal = pal,
+                        onClick = { qrTitle = "支付宝打赏"; qrAsset = "qr-alipay.jpg"; qrHint = "支付宝扫一扫，支持一下" }
+                    )
+                    Divider(color = pal.line)
+                    MineRow(
+                        icon = Icons.Filled.Info,
+                        iconTint = pal.secondary,
+                        label = "关于网站",
+                        pal = pal,
+                        onClick = { showAbout = true }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             Text("设置", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.secondary)
             Spacer(modifier = Modifier.height(8.dp))
             Box(
@@ -601,6 +660,65 @@ fun MineScreen(
     if (pendingUpdate != null) {
         UpdateDialog(version = pendingUpdate!!, pal = pal, onDismiss = { pendingUpdate = null })
     }
+    if (qrTitle != null) {
+        QrDialog(title = qrTitle!!, asset = qrAsset, hint = qrHint, onDismiss = { qrTitle = null })
+    }
+    if (showAbout) {
+        AboutDialog(onDismiss = { showAbout = false })
+    }
+}
+
+fun loadAssetImageBitmap(ctx: Context, name: String): ImageBitmap? {
+    return try {
+        ctx.assets.open(name).use { BitmapFactory.decodeStream(it)?.asImageBitmap() }
+    } catch (e: Exception) {
+        null
+    }
+}
+
+@Composable
+fun QrDialog(title: String, asset: String, hint: String, onDismiss: () -> Unit) {
+    val ctx = LocalContext.current
+    val bitmap = remember(asset) { loadAssetImageBitmap(ctx, asset) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                if (bitmap != null) {
+                    Image(bitmap = bitmap, contentDescription = title, modifier = Modifier.size(240.dp))
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(hint, fontSize = 14.sp, color = Color.Gray)
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("知道了") } }
+    )
+}
+
+@Composable
+fun AboutDialog(onDismiss: () -> Unit) {
+    val ctx = LocalContext.current
+    val counts = remember {
+        try {
+            val raw = ctx.assets.open("data.json").bufferedReader().use { it.readText() }
+            val obj = JSONObject(raw)
+            val cats = obj.getJSONArray("cats")
+            var total = 0
+            for (i in 0 until cats.length()) total += cats.getJSONObject(i).getJSONArray("cards").length()
+            Pair(cats.length(), total)
+        } catch (e: Exception) {
+            Pair(21, 2436)
+        }
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("关于网站") },
+        text = {
+            Text("懒得找了 · 免费资源导航\n已收录 ${counts.first} 大分类 · ${counts.second} 个精选站点，一搜即达。\n本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈。")
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("知道了") } }
+    )
 }
 
 @Composable

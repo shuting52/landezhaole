@@ -41,6 +41,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
@@ -574,9 +575,6 @@ fun HomeScreen(pal: AppPalette, uiScale: Float) {
                                 fontSize = 12.sp, color = pal.secondary
                             )
                         }
-                        Spacer(modifier = Modifier.height(14.dp))
-                        // 网站左上翻页时钟
-                        FlipClock(pal = pal)
                         Spacer(modifier = Modifier.height(10.dp))
                         // 网站页头：居中图标 + 渐变文字 Logo（与网站同步，不用粒子）
                         Row(
@@ -862,5 +860,10 @@ fun HomeScreen(pal: AppPalette, uiScale: Float) {
                 containerColor = pal.accent, contentColor = Color.White
             ) { Icon(Icons.Filled.ArrowUpward, contentDescription = "回到顶部") }
         }
+        FloatingActionButton(
+            onClick = { scope.launch { val n = listState.layoutInfo.totalItemsCount; if (n > 0) listState.animateScrollToItem(n - 1) } },
+            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 22.dp, bottom = 166.dp).size(48.dp),
+            containerColor = pal.accent, contentColor = Color.White
+        ) { Icon(Icons.Filled.ArrowDownward, contentDescription = "直达底部") }
     }
 }
