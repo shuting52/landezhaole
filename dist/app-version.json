@@ -1,11 +1,13 @@
 {
-  "versionCode": 12,
-  "versionName": "1.1.9",
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.1.9-release.apk",
-  "sha256": "ca2f30af0e4395bb4f74496ef033581de17d909f6d473b3ea808f1f3f3358405",
+  "versionCode": 13,
+  "versionName": "1.2.0",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.2.0-release.apk",
+  "sha256": "63d390e56f47afa92ecfac76c0caa420a689d6040f6456baa2f5a444b11138b6",
   "notes": [
-    "卡片改四个一排竖版：图标在上、名字在下放两行，站名看得全",
-    "修点立即更新闪退：补 WAKE_LOCK 权限 + 保活服务起不来也不连累主进程",
-    "含 1.1.7 全部内容：应用下载引擎、软件库直达与搜索、双源版本检查、网站排版、粒子 Logo、翻页时钟、鱼眼 Dock"
+    "底部四栏：首页 / 省钱 / 美女 / 我的，照对标 App 布局重做",
+    "省钱栏接 22 张领券卡（吃喝餐饮 / 旅游出行 / 生活服务 + 子筛选），点卡进领券短链",
+    "美女栏播放器壳与连续 / 切换视频 / 返回主页按钮已搭好，视频源待接入",
+    "我的栏：关注我们、分享给朋友、添加粉丝群（QQ 群）",
+    "首页保留全部功能：分类、搜索、应用下载、主题、粒子 Logo、翻页时钟、鱼眼 Dock、应用内更新"
   ]
 }
