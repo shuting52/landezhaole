@@ -601,19 +601,6 @@ fun HomeScreen(pal: AppPalette, uiScale: Float) {
                                 )
                             )
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        // 网站数据胶囊
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(pal.barBackground)
-                                    .border(1.dp, pal.line, RoundedCornerShape(20.dp))
-                                    .padding(horizontal = 18.dp, vertical = 4.dp)
-                            ) {
-                                Text("共 $total 个精选站点", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = greenDarkText)
-                            }
-                        }
                         Spacer(modifier = Modifier.height(10.dp))
                         // 网站搜索引擎：药丸（手机端横滑）+ 搜索行
                         Row(
