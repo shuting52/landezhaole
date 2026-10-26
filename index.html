@@ -152,7 +152,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 [data-theme="dark"] .flip-clock .num:after{background:#2a2a2a;box-shadow:inset 0 15px 50px #202020}
 @media(max-width:640px){.flip-clock{padding:5px 7px;gap:3px}.flip-clock .group{gap:2px}.flip-clock .nums{height:40px;width:29px}.flip-clock .nums:after,.flip-clock .num:before,.flip-clock .num:after{font-size:28px}.flip-clock .colon{font-size:24px;line-height:40px}}
 
-.top-utils{position:absolute;top:-36px;right:16px;display:flex;gap:6px;z-index:55;padding:10px 14px;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.25));-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);border:1px solid rgba(255,255,255,.6);border-radius:26px;box-shadow:0 18px 50px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.12);transition:gap .3s}
+.top-utils{position:absolute;top:-36px;right:16px;display:flex;gap:4px;z-index:55;padding:4px 6px;background:transparent;border:0;border-radius:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:gap .3s}
 .top-utils::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,0) 42%)}
 /* 悬浮工具菜单：默认只剩一个悬浮触发钮，点一下弹出 5 个入口，再点收回 */
 .top-utils .util-toggle{width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--text);font-size:20px;font-weight:700;cursor:pointer;box-shadow:none;flex:none;transition:transform .3s;animation:utilFloat 3s ease-in-out infinite}
@@ -166,14 +166,14 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .top-utils .uicon img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:6px;box-sizing:border-box;z-index:1}
 .top-utils .uicon svg{position:relative;z-index:0}
 @media(prefers-reduced-motion:reduce){.top-utils .util-toggle,.top-utils.open .util-items a{animation:none}}
-.top-utils a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted);cursor:pointer;transition:transform .3s}
+.top-utils a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);cursor:pointer;transition:transform .3s}
 .top-utils a:hover{color:var(--green);transform:translateY(-8px) scale(1.12);z-index:2}
-.top-utils .uicon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--card);border:2px solid rgba(255,255,255,.7);box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.top-utils .uicon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--card);border:0;box-shadow:none}
 .top-utils .uicon{color:var(--text)}
-.top-utils .uicon svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.top-utils .uicon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .top-utils .uicon.brand-wechat svg{stroke:#07C160}
 .top-utils .uicon.brand-qq svg,.top-utils .uicon.brand-alipay svg{stroke:none}
-[data-theme="dark"] .top-utils{background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.38);box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.12)}
+[data-theme="dark"] .top-utils{background:transparent;border:0;box-shadow:none}
 @media(max-width:640px){.top-utils{display:none}}
 .util-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
 .util-overlay.show{display:flex}
