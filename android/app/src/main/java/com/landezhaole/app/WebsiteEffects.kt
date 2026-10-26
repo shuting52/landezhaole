@@ -354,32 +354,33 @@ fun WebCard(
                 .border(1.dp, if (pressed) pal.accent else pal.line, RoundedCornerShape(14.dp))
                 .clickable(interactionSource = interaction, indication = null) { onClick() }
         ) {
-            // 横版缩小卡：图标在左、标题在右，一行只放标题（超长省略），4 张一排
-            Row(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+            // 竖版卡：图标在上、名字在下，名字放两行（四列横版留给名字只剩两三个字，用户已否决）
+            Column(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp, vertical = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SiteIcon(card, 28.dp)
-                Spacer(modifier = Modifier.width(4.dp))
-                Column(modifier = Modifier.weight(1f)) {
+                SiteIcon(card)
+                Spacer(modifier = Modifier.height(6.dp))
+                Box(modifier = Modifier.height(32.dp), contentAlignment = Alignment.TopCenter) {
                     Text(
-                        card.t, fontSize = 11.sp, fontWeight = FontWeight.Bold,
-                        color = pal.foreground, maxLines = 1, overflow = TextOverflow.Ellipsis
+                        card.t, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                        color = pal.foreground, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                        lineHeight = 16.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
-                    if (todayClicks > 0) {
-                        Text("今日点击 $todayClicks 次", fontSize = 9.sp, color = pal.danger, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
+                }
+                if (todayClicks > 0) {
+                    Text("今日点击 $todayClicks 次", fontSize = 10.sp, color = pal.danger)
                 }
             }
         }
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .offset(x = (-6).dp, y = (-6).dp)
+                .offset(x = (-8).dp, y = (-8).dp)
                 .background(RAINBOW, RoundedCornerShape(999.dp))
-                .padding(horizontal = 5.dp, vertical = 2.dp)
+                .padding(horizontal = 8.dp, vertical = 3.dp)
         ) {
-            Text(label, color = Color.White, fontSize = 8.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+            Text(label, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1)
         }
     }
 }
