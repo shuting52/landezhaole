@@ -361,32 +361,108 @@ fun fetchBitmap(urlStr: String): Bitmap? {
     }
 }
 
+
+// 图标直链表：仓库 icons.json（host -> 图标 URL），启动时同步，查表命中才联网；无表项直接显示字母，绝不逐个探。
+private var iconManifestState = mutableStateOf<Map<String, String>>(emptyMap())
+private var iconManifestVersion = mutableStateOf(0)
+
+private fun parseIconManifest(text: String): Map<String, String> {
+    return try {
+        val icons = JSONObject(text).optJSONObject("icons") ?: return emptyMap()
+        val out = mutableMapOf<String, String>()
+        val keys = icons.keys()
+        while (keys.hasNext()) {
+            val k = keys.next()
+            val v = icons.optString(k)
+            if (v.isNotBlank()) out[k] = v
+        }
+        out
+    } catch (e: Exception) {
+        emptyMap()
+    }
+}
+
+private suspend fun loadIconManifest(ctx: Context) {
+    withContext(Dispatchers.IO) {
+        try {
+            val bundled = parseIconManifest(ctx.assets.open("icons.json").bufferedReader().readText())
+            if (bundled.isNotEmpty()) {
+                iconManifestState.value = bundled
+                iconManifestVersion.value++
+            }
+        } catch (e: Exception) {
+        }
+        try {
+            val cached = ctx.getSharedPreferences("landezhaole-icons", Context.MODE_PRIVATE).getString("manifest", null)
+            if (!cached.isNullOrBlank()) {
+                val m = parseIconManifest(cached)
+                if (m.isNotEmpty()) {
+                    iconManifestState.value = m
+                    iconManifestVersion.value++
+                }
+            }
+        } catch (e: Exception) {
+        }
+        try {
+            val conn = URL("https://raw.githubusercontent.com/shuting52/landezhaole/main/icons.json").openConnection() as HttpURLConnection
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0")
+            conn.connectTimeout = 10000
+            conn.readTimeout = 10000
+            if (conn.responseCode == 200) {
+                val text = conn.inputStream.bufferedReader().readText()
+                val m = parseIconManifest(text)
+                if (m.isNotEmpty()) {
+                    iconManifestState.value = m
+                    iconManifestVersion.value++
+                    ctx.getSharedPreferences("landezhaole-icons", Context.MODE_PRIVATE).edit().putString("manifest", text).apply()
+                }
+            }
+        } catch (e: Exception) {
+        }
+    }
+}
+
+private fun iconCacheFile(ctx: Context, host: String): java.io.File {
+    val dir = java.io.File(ctx.cacheDir, "icon_cache").apply { if (!exists()) mkdirs() }
+    val hex = try {
+        val md = java.security.MessageDigest.getInstance("SHA-256")
+        md.digest(host.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
+    } catch (e: Exception) {
+        host.hashCode().toString()
+    }
+    return java.io.File(dir, "$hex.png")
+}
+
 @Composable
 fun SiteIcon(card: SiteCard, size: Dp = 44.dp) {
     var bitmap by remember(card.u) { mutableStateOf<Bitmap?>(null) }
-    var tried by remember(card.u) { mutableStateOf(false) }
-    LaunchedEffect(card.u) {
-        if (tried) return@LaunchedEffect
-        tried = true
+    val manifest = iconManifestState.value
+    val manifestVersion = iconManifestVersion.value
+    val ctx = LocalContext.current
+    LaunchedEffect(card.u, manifestVersion) {
+        if (bitmap != null) return@LaunchedEffect
         val host = hostOf(card.u)
         val urls = mutableListOf<String>()
         if (card.i.isNotBlank()) urls.add(card.i)
-        if (host.isNotBlank()) {
-            urls.add("https://www.google.com/s2/favicons?domain=$host&sz=128")
-            urls.add("https://$host/apple-touch-icon.png")
-            urls.add("https://$host/favicon.ico")
-        }
+        val m = if (host.isNotBlank()) manifest[host] else null
+        if (m != null && m != card.i) urls.add(m)
+        if (urls.isEmpty()) return@LaunchedEffect
         val found = withContext(Dispatchers.IO) {
-            var found: Bitmap? = null
-            for (u in urls) {
-                val bm = fetchBitmap(u)
-                if (bm != null) {
-                    if (u.contains("google.com/s2") && bm.width < 32) continue
-                    found = bm
-                    break
+            val cacheFile = if (host.isNotBlank()) iconCacheFile(ctx, host) else null
+            var bm: Bitmap? = null
+            if (cacheFile != null && cacheFile.exists()) {
+                bm = try { BitmapFactory.decodeFile(cacheFile.absolutePath) } catch (e: Exception) { null }
+            }
+            if (bm == null) {
+                for (u in urls) {
+                    bm = fetchBitmap(u)
+                    if (bm != null) break
+                }
+                if (bm != null && cacheFile != null) {
+                    try { cacheFile.outputStream().use { out -> bm.compress(Bitmap.CompressFormat.PNG, 100, out) } } catch (e: Exception) { }
                 }
             }
-            found
+            bm
         }
         bitmap = found
     }
@@ -412,6 +488,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themeCtx = LocalContext.current
             val themePrefs = remember { themeCtx.getSharedPreferences("landezhaole-theme", Context.MODE_PRIVATE) }
+            LaunchedEffect(Unit) { loadIconManifest(themeCtx) }
             var themeMode by remember { mutableStateOf(runCatching { ThemeMode.valueOf(themePrefs.getString("mode", "SYSTEM") ?: "SYSTEM") }.getOrDefault(ThemeMode.SYSTEM)) }
             var themeScheme by remember { mutableStateOf(themePrefs.getString("scheme", "default") ?: "default") }
             var uiScale by remember { mutableStateOf(themePrefs.getFloat("scale", 1f)) }
