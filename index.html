@@ -178,9 +178,6 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 @keyframes tagPop{from{transform:scale(.7)}to{transform:scale(1)}}
 .update-dialog .upd-tag.new{background:#16a34a}.update-dialog .upd-tag.fix{background:#ef4444}.update-dialog .upd-tag.opt{background:#2563eb}
 .update-dialog .upd-text{font-size:14px;line-height:1.7;color:var(--text)}
-.update-dialog .hist-btn{border:0;background:none;color:var(--muted);font-size:13px;cursor:pointer;padding:6px 0}
-.update-dialog .hist-list{display:none;margin:8px 0 0;padding-left:20px}
-.update-dialog .hist-list.show{display:block}
 @media(prefers-reduced-motion:reduce){.update-dialog .upd-row,.update-dialog .upd-tag{animation:none}}
 </style>
 </head>
@@ -379,10 +376,6 @@ function showUpdateModal(data,markSeen){
  const tagCls={新增:'new',修复:'fix',优化:'opt'};
  const changes=data.changes||(data.changelog||[]).map(c=>({tag:'',text:c}));
  document.getElementById('updateList').innerHTML=changes.map((c,i)=>`<div class="upd-row" style="animation-delay:${i*90}ms">${c.tag?`<span class="upd-tag ${tagCls[c.tag]||''}">${esc(c.tag)}</span>`:''}<span class="upd-text">${esc(c.text)}</span></div>`).join('');
- const hist=data.history||[];
- document.getElementById('updateHist').innerHTML=hist.map(c=>`<li>${esc(c)}</li>`).join('');
- const hb=document.getElementById('updateHistBtn');hb.style.display=hist.length?'':'none';hb.textContent='往期更新 ▾';
- hb.onclick=function(){const hl=document.getElementById('updateHist');const show=hl.classList.toggle('show');hb.textContent=show?'往期更新 ▴':'往期更新 ▾';};
  const overlay=document.getElementById('updateOverlay');
  overlay.classList.add('show');
  const close=function(){overlay.classList.remove('show');if(markSeen){try{localStorage.setItem('landezhaole-seen-site-version',data.version);}catch(e){}}};
@@ -671,6 +664,6 @@ fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{docu
 <div class="toast-notify" id="toastNotify"><div class="tic" id="toastIc">新</div><div><div class="tt" id="toastTt"></div><div class="bd" id="toastBd"></div></div><button class="toast-close" id="toastClose" aria-label="关闭提醒">×</button></div>
 
 <div class="util-overlay" id="utilOverlay"><div class="util-dialog"><h2 id="utilTitle"></h2><div id="utilBody"></div><div class="actions"><button onclick="document.getElementById('utilOverlay').classList.remove('show')">知道了</button></div></div></div>
-<div class="update-overlay" id="updateOverlay"><div class="update-dialog"><h2>网站更新</h2><div class="ver" id="updateVer"></div><div id="updateList"></div><button type="button" class="hist-btn" id="updateHistBtn">往期更新 ▾</button><ul class="hist-list" id="updateHist"></ul><div class="actions"><button id="updateCloseBtn">知道了</button></div></div></div>
+<div class="update-overlay" id="updateOverlay"><div class="update-dialog"><h2>网站更新</h2><div class="ver" id="updateVer"></div><div id="updateList"></div><div class="actions"><button id="updateCloseBtn">知道了</button></div></div></div>
 </body>
 </html>
