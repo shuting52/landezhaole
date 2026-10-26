@@ -236,6 +236,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <a id="sideJumpBtn" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener" title="下载 Android App"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M9 15L17 7M12 7h5v5" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </div>
 
+<div class="share-overlay" id="shareOverlay"><div class="share-dialog"><div class="share-title">耶！复制成功~</div><div class="share-body">你可以分享给好友，或发布到小红书、豆瓣、微博等平台，让他们与你一起踏上「不找了」。</div><div class="share-dots"><span style="background:#ef4444"></span><span style="background:#1f2937"></span><span style="background:#ec4899"></span><span style="background:#22c55e"></span><span style="background:#14b8a6"></span></div><div class="actions"><button id="shareCloseBtn">知道了</button></div></div></div>
 <script>
 const ENGINES=[
  {id:'site',name:'站内',url:null},
@@ -701,6 +702,5 @@ fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{docu
 
 <div class="util-overlay" id="utilOverlay"><div class="util-dialog"><h2 id="utilTitle"></h2><div id="utilBody"></div><div class="actions"><button onclick="document.getElementById('utilOverlay').classList.remove('show')">知道了</button></div></div></div>
 <div class="update-overlay" id="updateOverlay"><div class="update-dialog"><h2>网站更新</h2><div class="ver" id="updateVer"></div><div id="updateList"></div><div class="actions"><button id="updateCloseBtn">知道了</button></div></div></div>
-<div class="share-overlay" id="shareOverlay"><div class="share-dialog"><div class="share-title">耶！复制成功~</div><div class="share-body">你可以分享给好友，或发布到小红书、豆瓣、微博等平台，让他们与你一起踏上「不找了」。</div><div class="share-dots"><span style="background:#ef4444"></span><span style="background:#1f2937"></span><span style="background:#ec4899"></span><span style="background:#22c55e"></span><span style="background:#14b8a6"></span></div><div class="actions"><button id="shareCloseBtn">知道了</button></div></div></div>
 </body>
 </html>
