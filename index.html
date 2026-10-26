@@ -169,7 +169,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .top-utils.open .util-items a{animation:utilPop .35s ease both}
 @keyframes utilPop{from{opacity:0;transform:translateY(10px) scale(.8)}to{opacity:1;transform:translateY(0) scale(1)}}
 .top-utils .uicon{position:relative;overflow:hidden}
-.top-utils .uicon img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:transparent;padding:3px;box-sizing:border-box;z-index:1}
+.top-utils .uicon img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:transparent;padding:3px;box-sizing:border-box;z-index:1;border-radius:50%}
 .top-utils .uicon svg{position:relative;z-index:0}
 @media(prefers-reduced-motion:reduce){.top-utils .util-toggle,.top-utils.open .util-items a{animation:none}}
 .top-utils a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);cursor:pointer;transition:transform .3s}
@@ -640,7 +640,8 @@ setInterval(updateFlipClock,200);updateFlipClock();
 function showUtilModal(title,html){document.getElementById('utilTitle').textContent=title;document.getElementById('utilBody').innerHTML=html;document.getElementById('utilOverlay').classList.add('show');}
 function showUtilQR(title,img,desc){showUtilModal(title,'<p style="text-align:center">'+desc+'</p><p style="text-align:center"><img src="'+img+'" alt="'+title+'" style="width:250px;max-width:82vw;border-radius:12px"></p>');}
 function utilIconNext(img){const step=parseInt(img.dataset.step||'0',10);const next=[img.dataset.s1];if(step<next.length&&next[step]){img.dataset.step=step+1;img.src=next[step];}else img.remove();}
-function toggleUtils(){document.getElementById('topUtils').classList.toggle('open');}
+var utilTimer=null;
+function toggleUtils(){var el=document.getElementById('topUtils');el.classList.toggle('open');if(utilTimer){clearTimeout(utilTimer);utilTimer=null;}if(el.classList.contains('open')){utilTimer=setTimeout(function(){el.classList.remove('open');utilTimer=null;},5000);}}
 function showUtilAbout(){
  const total=DATA?DATA.cats.reduce((n,c)=>n+c.cards.length,0):2320;
  const cats=DATA?DATA.cats.length:19;
