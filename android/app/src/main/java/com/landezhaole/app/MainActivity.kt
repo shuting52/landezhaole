@@ -72,7 +72,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.landezhaole.app.ui.DoodleUpdateDialog
+import com.landezhaole.app.ui.RemoteVersion
+import com.landezhaole.app.ui.UpdateDialog
+import com.landezhaole.app.ui.cleanupUpdateLeftovers
+import com.landezhaole.app.ui.currentVersionCode
+import com.landezhaole.app.ui.fetchCloudCategories
+import com.landezhaole.app.ui.fetchRemoteVersion
 import com.landezhaole.app.ui.ThemeAppearanceScreen
 import com.landezhaole.app.ui.ThemeMode
 import com.landezhaole.app.ui.UiZoom
@@ -184,9 +189,8 @@ val RAINBOW = Brush.horizontalGradient(
 fun hostOf(u: String): String {
     return try { URL(u).host.replaceFirst("^www\\.".toRegex(), "") } catch (e: Exception) { "" }
 }
-fun loadCategories(ctx: Context): List<Category> {
+fun parseCategories(text: String): List<Category> {
     return try {
-        val text = ctx.assets.open("data.json").bufferedReader().readText()
         val root = JSONObject(text)
         val cats = root.getJSONArray("cats")
         val out = mutableListOf<Category>()
@@ -207,6 +211,13 @@ fun loadCategories(ctx: Context): List<Category> {
             out.add(Category(c.optString("id"), c.optString("name"), c.optString("desc"), subs, cards))
         }
         out
+    } catch (e: Exception) {
+        emptyList()
+    }
+}
+fun loadCategories(ctx: Context): List<Category> {
+    return try {
+        parseCategories(ctx.assets.open("data.json").bufferedReader().readText())
     } catch (e: Exception) {
         emptyList()
     }
@@ -327,11 +338,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMode: ThemeMode, onThemeModeChange: (ThemeMode) -> Unit, uiScale: Float, onUiScaleChange: (Float) -> Unit) {
     val ctx = LocalContext.current
-    val categories = remember { loadCategories(ctx) }
+    var categories by remember { mutableStateOf(loadCategories(ctx)) }
+    var pendingUpdate by remember { mutableStateOf<RemoteVersion?>(null) }
     var query by remember { mutableStateOf("") }
     var engineIdx by remember { mutableStateOf(0) }
     var dockCat by remember { mutableStateOf<String?>(null) }
-    var showUpdate by remember { mutableStateOf(false) }
     var toastMsg by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
     var showTheme by remember { mutableStateOf(false) }
@@ -368,6 +379,15 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
     }
     val listState = rememberLazyListState()
     LaunchedEffect(showToast) { if (showToast) { delay(1800); showToast = false } }
+    // 启动：先清上次更新的残留，再拉云端数据与云端版本（失败就静默用本地的）
+    LaunchedEffect(Unit) {
+        cleanupUpdateLeftovers(ctx)
+        fetchCloudCategories()?.let { categories = it }
+        val remote = fetchRemoteVersion()
+        if (remote != null && remote.versionCode > currentVersionCode(ctx)) {
+            pendingUpdate = remote
+        }
+    }
     val scope = rememberCoroutineScope()
     val total = categories.sumOf { it.cards.size }
     val isSearching = query.isNotBlank() && engineIdx == 0
@@ -402,7 +422,16 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                         Text("懒得找了", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
                         Text("共 $total 个精选站点", fontSize = 12.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
-                    IconButton(onClick = { showUpdate = true }) {
+                    IconButton(onClick = {
+                        scope.launch {
+                            val remote = fetchRemoteVersion()
+                            when {
+                                remote == null -> { toastMsg = "检查失败，请稍后再试"; showToast = true }
+                                remote.versionCode > currentVersionCode(ctx) -> pendingUpdate = remote
+                                else -> { toastMsg = "已是最新版本"; showToast = true }
+                            }
+                        }
+                    }) {
                         Icon(Icons.Filled.SystemUpdate, contentDescription = "检查更新", tint = pal.foreground)
                     }
                     IconButton(onClick = onToggleDark) {
@@ -514,8 +543,8 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
             item { Spacer(modifier = Modifier.height(96.dp)) }
         }
         }
-        if (showUpdate) {
-            DoodleUpdateDialog(onClose = { showUpdate = false }, onToast = { toastMsg = it; showToast = true })
+        if (pendingUpdate != null) {
+            UpdateDialog(version = pendingUpdate!!, pal = pal, onDismiss = { pendingUpdate = null })
         }
         if (showToast) {
             Box(modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp).clip(RoundedCornerShape(16.dp)).background(Color(0xFF2B2B2B)).padding(horizontal = 22.dp, vertical = 10.dp)) {

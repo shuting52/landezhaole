@@ -13,10 +13,17 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v3
-      - name: Build debug APK
-        run: cd android && chmod +x gradlew && ./gradlew :app:assembleDebug --stacktrace
+      - name: Build release APK
+        env:
+          KEYSTORE_BASE64: ${{ secrets.LANDEZHAOLE_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.LANDEZHAOLE_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.LANDEZHAOLE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.LANDEZHAOLE_KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > /tmp/landezhaole-release.keystore
+          cd android && KEYSTORE_PATH=/tmp/landezhaole-release.keystore ./gradlew :app:assembleRelease --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: landezhaole-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: landezhaole-release-apk
+          path: android/app/build/outputs/apk/release/*.apk

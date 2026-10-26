@@ -9,14 +9,30 @@ android {
         applicationId = "com.landezhaole.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.1.2"
+        versionCode = 6
+        versionName = "1.1.3"
         vectorDrawables { useSupportLibrary = true }
+    }
+    signingConfigs {
+        create("release") {
+            // 统一签名：密钥只存在 GitHub Actions 密文里，从不进仓库、不进代码。
+            // 本地没配 KEYSTORE_PATH 时不挂签名配置，CI 上一定有。
+            storeFile = System.getenv("KEYSTORE_PATH")?.let { java.io.File(it) }
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+        }
     }
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     buildFeatures { compose = true }
