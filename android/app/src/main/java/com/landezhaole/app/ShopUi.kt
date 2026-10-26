@@ -84,6 +84,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.Brush
@@ -97,6 +99,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.landezhaole.app.ui.ThemeAppearanceScreen
 import com.landezhaole.app.ui.ThemeMode
@@ -256,7 +259,12 @@ fun Modifier.hardShadow(shape: Shape, offset: Dp, color: Color): Modifier = this
         if (offset > 0.dp && color.alpha > 0f) {
             val px = offset.toPx()
             translate(px, px) {
-                drawOutline(shape.createOutline(size, layoutDirection, this), color)
+                val path = when (val o = shape.createOutline(size, layoutDirection, this)) {
+                    is Outline.Rounded -> Path().apply { addRoundRect(o.roundRect) }
+                    is Outline.Generic -> o.path
+                    is Outline.Rectangle -> Path().apply { addRect(o.rect) }
+                }
+                drawPath(path, color)
             }
         }
     }
@@ -370,7 +378,7 @@ fun ShopCard(
                         .hardShadow(sty.buttonShape, sty.buttonHardShadow, sty.buttonHardShadowColor)
                         .shadow(sty.buttonElevation, sty.buttonShape)
                         .clip(sty.buttonShape)
-                        .background(if (sty.buttonGradient) shopBrandGradient(pal) else shopBrand(pal))
+                        .then(if (sty.buttonGradient) Modifier.background(shopBrandGradient(pal)) else Modifier.background(shopBrand(pal)))
                         .border(sty.buttonBorderWidth, sty.buttonBorderColor, sty.buttonShape)
                         .clickable { onOpen() },
                     contentAlignment = Alignment.Center
