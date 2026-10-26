@@ -43,10 +43,16 @@ button{font-family:inherit}
 .engines{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
 .engines button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 16px;font-size:12px;cursor:pointer}
 .engines button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
-.searchrow{display:flex;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.searchrow{display:flex;border-radius:14px;overflow:hidden;border:1px solid transparent;background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.06);position:relative;isolation:isolate}
 .searchrow{transition:box-shadow .25s,transform .25s}
 .searchrow:hover{transform:translateY(-2px)}
 .searchrow:focus-within{box-shadow:0 0 0 3px rgba(22,163,74,.25)}
+.searchrow::before{content:"";position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0deg,transparent 290deg,rgba(34,197,94,.95) 305deg,rgba(255,255,255,.95) 322deg,transparent 350deg);animation:searchGlowSpin 5s linear infinite;opacity:.85;z-index:0}
+.searchrow::after{content:"";position:absolute;inset:2px;border-radius:12px;background:var(--card);z-index:0}
+.searchrow>*{position:relative;z-index:1}
+.searchrow:hover::before,.searchrow:focus-within::before{opacity:1;animation-duration:2.5s}
+@keyframes searchGlowSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.searchrow::before{display:none}.searchrow{border-color:var(--line)}}
 .searchrow input{flex:1;border:0;outline:none;padding:14px 20px;font-size:16px;background:transparent;color:var(--text)}
 .searchrow button{border:0;background:var(--green);color:#fff;font-size:16px;font-weight:700;padding:0 36px;cursor:pointer}
 .hint{text-align:center;color:var(--muted);font-size:12px;margin-top:6px}
