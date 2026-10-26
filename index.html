@@ -643,16 +643,16 @@ function showUtilHot(){
 }
 var utilEl=document.getElementById('utilOverlay');if(utilEl)utilEl.addEventListener('click',function(e){if(e.target.id==='utilOverlay')e.target.classList.remove('show');});
 
-/* 页头粒子 Logo：canvas 采样“懒得找了.”约 2000 粒，飞入 1.5s 先快后慢，呼吸浮动，鼠标 80px 推开、弹簧回弹，品牌渐变色 */
+/* 页头粒子 Logo：canvas 采样“懒得找了.”约 4500 粒，飞入 1.5s 先快后慢，呼吸浮动，鼠标 80px 推开、弹簧回弹，品牌渐变色 */
 (function(){
  var cv=document.getElementById('particleLogo');if(!cv)return;
  var ctx=cv.getContext('2d');
  var off=document.createElement('canvas');off.width=600;off.height=130;
  var octx=off.getContext('2d');octx.font='900 84px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';octx.textAlign='center';octx.textBaseline='middle';octx.fillStyle='#fff';octx.fillText('懒得找了.',300,68);
  var data=octx.getImageData(0,0,600,130).data,pts=[];
- for(var y=0;y<130;y+=2)for(var x=0;x<600;x+=2){if(data[(y*600+x)*4+3]>128)pts.push([x,y]);}
+ for(var y=0;y<130;y+=1)for(var x=0;x<600;x+=1){if(data[(y*600+x)*4+3]>128)pts.push([x,y]);}
  for(var i=pts.length-1;i>0;i--){var j=(Math.random()*(i+1))|0;var tmp=pts[i];pts[i]=pts[j];pts[j]=tmp;}
- pts=pts.slice(0,2000);
+ pts=pts.slice(0,4500);
  function gradColor(x){var t=x/600,r,g,b;
   function mix(a,b2,k){return Math.round(a+(b2-a)*k);}
   if(t<0.5){var k=t*2;r=mix(22,14,k);g=mix(163,165,k);b=mix(74,233,k);}
@@ -683,16 +683,16 @@ var utilEl=document.getElementById('utilOverlay');if(utilEl)utilEl.addEventListe
      if(lt<0){pt.x=pt.sx;pt.y=pt.sy;}
      else if(lt<1.5){var pr=lt/1.5,ease=pr===1?1:1-Math.pow(2,-10*pr);pt.x=pt.sx+(pt.tx-pt.sx)*ease;pt.y=pt.sy+(pt.ty-pt.sy)*ease;}
      else{
-       var bx=pt.tx+Math.sin(now*0.0012+pt.ph)*1.3, by=pt.ty+Math.sin(now*0.001+pt.ph2)*1.3;
+       var bx=pt.tx+Math.sin(now*0.0012+pt.ph)*0.6, by=pt.ty+Math.sin(now*0.001+pt.ph2)*0.6;
        pt.vx+=(bx-pt.x)*0.075; pt.vy+=(by-pt.y)*0.075;
        if(mx>-9000){var dx=pt.x-mx,dy=pt.y-my,d=Math.sqrt(dx*dx+dy*dy),rad=80*(600/cv.getBoundingClientRect().width);
          if(d<rad&&d>0.01){var f=(1-d/rad)*6;pt.vx+=dx/d*f;pt.vy+=dy/d*f;}}
        pt.vx*=0.86;pt.vy*=0.86;pt.x+=pt.vx;pt.y+=pt.vy;
      }
-     ctx.fillStyle=pt.col;ctx.beginPath();ctx.arc(pt.x,pt.y,2.6,0,Math.PI*2);ctx.fill();
+     ctx.fillStyle=pt.col;ctx.beginPath();ctx.arc(pt.x,pt.y,3.0,0,Math.PI*2);ctx.fill();
    });
  }
- if(reduced){parts.forEach(function(pt){pt.x=pt.tx;pt.y=pt.ty;});ctx.clearRect(0,0,600,130);parts.forEach(function(pt){ctx.fillStyle=pt.col;ctx.beginPath();ctx.arc(pt.x,pt.y,2.6,0,Math.PI*2);ctx.fill();});}
+ if(reduced){parts.forEach(function(pt){pt.x=pt.tx;pt.y=pt.ty;});ctx.clearRect(0,0,600,130);parts.forEach(function(pt){ctx.fillStyle=pt.col;ctx.beginPath();ctx.arc(pt.x,pt.y,3.0,0,Math.PI*2);ctx.fill();});}
  else{(function loop(now){draw(now);requestAnimationFrame(loop);})(performance.now());}
 })();
 fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{document.getElementById('cats').innerHTML='<p style="text-align:center;color:var(--muted);padding:40px">数据加载失败，请刷新再试。</p>';});
