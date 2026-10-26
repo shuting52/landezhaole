@@ -84,7 +84,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.landezhaole.app.ui.RemoteVersion
-import com.landezhaole.app.ui.ThemeAppearanceScreen
 import com.landezhaole.app.ui.ThemeMode
 import com.landezhaole.app.ui.UiZoom
 import com.landezhaole.app.ui.UpdateDialog
@@ -377,7 +376,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMode: ThemeMode, onThemeModeChange: (ThemeMode) -> Unit, uiScale: Float, onUiScaleChange: (Float) -> Unit) {
+fun HomeScreen(pal: AppPalette, uiScale: Float) {
     val ctx = LocalContext.current
     var categories by remember { mutableStateOf(loadCategories(ctx)) }
     var query by remember { mutableStateOf("") }
@@ -392,16 +391,11 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
     val appDlJobs = remember { mutableMapOf<String, Job>() }
     var toastMsg by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
-    var showTheme by remember { mutableStateOf(false) }
     var pendingUpdate by remember { mutableStateOf<RemoteVersion?>(null) }
     var newToast by remember { mutableStateOf<List<SiteCard>?>(null) }
     var newToastChecked by remember { mutableStateOf(false) }
     // Dock 直达某个子分类时用：Dock 点“软件库”会先把这项置为 soft_hub，再跳到资源网站区
     val forcedSub = remember { mutableStateMapOf<String, String>() }
-    if (showTheme) {
-        ThemeAppearanceScreen(pal = pal, mode = themeMode, onModeChange = onThemeModeChange, uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false })
-        return
-    }
     val clicks = remember { mutableStateMapOf<String, Int>() }
     val prefs = remember { ctx.getSharedPreferences("landezhaole-clicks", Context.MODE_PRIVATE) }
     remember {
@@ -502,16 +496,6 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
         appResults = null
         scope.launch { listState.animateScrollToItem(idx + 1) }
     }
-    fun manualCheckUpdate() {
-        scope.launch {
-            val remote = fetchRemoteVersion()
-            when {
-                remote == null -> { toastMsg = "检查失败，请稍后再试"; showToast = true }
-                remote.versionCode > currentVersionCode(ctx) -> pendingUpdate = remote
-                else -> { toastMsg = "已是最新版本"; showToast = true }
-            }
-        }
-    }
     fun searchAppsNow(q: String) {
         appQuery = q
         appLoading = true
@@ -577,7 +561,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                         }
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        // 网站顶栏：左品牌，右日期 + 更新 + 夜间模式 + 主题
+                        // 网站顶栏：左品牌，右日期（更新 / 夜间模式 / 主题已移到“我的”设置里）
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 "懒得找了 · 免费资源导航", fontSize = 12.sp, color = pal.secondary,
@@ -589,23 +573,6 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                                 "${cal.get(java.util.Calendar.MONTH) + 1}月${cal.get(java.util.Calendar.DAY_OF_MONTH)}日 ${weekdays[cal.get(java.util.Calendar.DAY_OF_WEEK) - 1]}",
                                 fontSize = 12.sp, color = pal.secondary
                             )
-                            IconButton(onClick = { manualCheckUpdate() }, modifier = Modifier.size(36.dp)) {
-                                Icon(Icons.Filled.SystemUpdate, contentDescription = "检查更新", tint = pal.foreground, modifier = Modifier.size(20.dp))
-                            }
-                            IconButton(onClick = onToggleDark, modifier = Modifier.size(36.dp)) {
-                                Icon(
-                                    if (dark) Icons.Filled.LightMode else Icons.Filled.DarkMode,
-                                    contentDescription = "夜间模式", tint = pal.foreground,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                            Button(
-                                onClick = { showTheme = true },
-                                colors = ButtonDefaults.buttonColors(containerColor = pal.subtleFill, contentColor = pal.foreground),
-                                shape = RoundedCornerShape(20.dp),
-                                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 2.dp),
-                                modifier = Modifier.height(30.dp)
-                            ) { Text("主题", fontSize = 12.sp) }
                         }
                         Spacer(modifier = Modifier.height(14.dp))
                         // 网站左上翻页时钟

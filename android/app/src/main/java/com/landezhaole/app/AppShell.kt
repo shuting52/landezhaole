@@ -34,22 +34,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.Switch
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,6 +65,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.PathEffect
+import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -66,7 +73,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.launch
+import com.landezhaole.app.ui.RemoteVersion
+import com.landezhaole.app.ui.ThemeAppearanceScreen
 import com.landezhaole.app.ui.ThemeMode
+import com.landezhaole.app.ui.UpdateDialog
+import com.landezhaole.app.ui.currentVersionCode
+import com.landezhaole.app.ui.fetchRemoteVersion
 
 // 美女栏视频源：待接入。把 mp4 直链填进来即可播放（连续开关控制循环，切换视频切下一个）。
 val VIDEO_URLS: List<String> = emptyList()
@@ -85,14 +98,14 @@ fun AppShell(
     Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
         Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars)) {
             when (tab) {
-                0 -> HomeScreen(
+                0 -> HomeScreen(pal = pal, uiScale = uiScale)
+                1 -> SaveScreen(pal = pal)
+                2 -> VideoScreen(pal = pal, onBackHome = { tab = 0 })
+                3 -> MineScreen(
                     pal = pal, dark = dark, onToggleDark = onToggleDark,
                     themeMode = themeMode, onThemeModeChange = onThemeModeChange,
                     uiScale = uiScale, onUiScaleChange = onUiScaleChange
                 )
-                1 -> SaveScreen(pal = pal)
-                2 -> VideoScreen(pal = pal, onBackHome = { tab = 0 })
-                3 -> MineScreen(pal = pal)
             }
         }
         NavigationBar(
@@ -456,8 +469,38 @@ fun VideoButton(
 }
 
 @Composable
-fun MineScreen(pal: AppPalette) {
+fun MineScreen(
+    pal: AppPalette,
+    dark: Boolean,
+    onToggleDark: () -> Unit,
+    themeMode: ThemeMode,
+    onThemeModeChange: (ThemeMode) -> Unit,
+    uiScale: Float,
+    onUiScaleChange: (Float) -> Unit
+) {
     val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var showTheme by remember { mutableStateOf(false) }
+    var pendingUpdate by remember { mutableStateOf<RemoteVersion?>(null) }
+    if (showTheme) {
+        ThemeAppearanceScreen(pal = pal, mode = themeMode, onModeChange = onThemeModeChange, uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false })
+        return
+    }
+    fun checkUpdate() {
+        scope.launch {
+            val remote = fetchRemoteVersion()
+            when {
+                remote == null -> Toast.makeText(ctx, "检查失败，请稍后再试", Toast.LENGTH_SHORT).show()
+                remote.versionCode > currentVersionCode(ctx) -> pendingUpdate = remote
+                else -> Toast.makeText(ctx, "已是最新版本", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    val modeName = when (themeMode) {
+        ThemeMode.SYSTEM -> "跟随系统"
+        ThemeMode.LIGHT -> "浅色"
+        ThemeMode.DARK -> "深色"
+    }
     Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
         Box(
             modifier = Modifier.fillMaxWidth().height(180.dp)
@@ -466,7 +509,7 @@ fun MineScreen(pal: AppPalette) {
         ) {
             Text("我的", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White)
         }
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp)) {
             Box(
                 modifier = Modifier.fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
@@ -508,7 +551,48 @@ fun MineScreen(pal: AppPalette) {
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("设置", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.secondary)
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(pal.barBackground)
+                    .border(1.dp, pal.line, RoundedCornerShape(12.dp))
+            ) {
+                Column {
+                    MineRow(
+                        icon = Icons.Filled.SystemUpdate,
+                        iconTint = pal.accent,
+                        label = "检查更新",
+                        trailing = "当前 " + BuildConfig.VERSION_NAME,
+                        pal = pal,
+                        onClick = { checkUpdate() }
+                    )
+                    Divider(color = pal.line)
+                    MineSwitchRow(
+                        icon = if (dark) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                        iconTint = Color(0xFF5B67A6),
+                        label = "深色模式",
+                        checked = dark,
+                        pal = pal,
+                        onCheckedChange = { onToggleDark() }
+                    )
+                    Divider(color = pal.line)
+                    MineRow(
+                        icon = Icons.Filled.Palette,
+                        iconTint = Color(0xFFEC4899),
+                        label = "主题",
+                        trailing = modeName,
+                        pal = pal,
+                        onClick = { showTheme = true }
+                    )
+                }
+            }
         }
+    }
+    if (pendingUpdate != null) {
+        UpdateDialog(version = pendingUpdate!!, pal = pal, onDismiss = { pendingUpdate = null })
     }
 }
 
@@ -518,7 +602,8 @@ fun MineRow(
     iconTint: Color,
     label: String,
     pal: AppPalette,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    trailing: String? = null
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().clickable { onClick() }
@@ -528,6 +613,31 @@ fun MineRow(
         Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(26.dp))
         Spacer(modifier = Modifier.width(14.dp))
         Text(label, fontSize = 16.sp, color = pal.foreground, modifier = Modifier.weight(1f))
+        if (trailing != null) {
+            Text(trailing, fontSize = 13.sp, color = pal.secondary)
+            Spacer(modifier = Modifier.width(8.dp))
+        }
         Text(">", fontSize = 18.sp, color = pal.secondary)
+    }
+}
+
+@Composable
+fun MineSwitchRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    label: String,
+    checked: Boolean,
+    pal: AppPalette,
+    onCheckedChange: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable { onCheckedChange() }
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(26.dp))
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(label, fontSize = 16.sp, color = pal.foreground, modifier = Modifier.weight(1f))
+        Switch(checked = checked, onCheckedChange = { onCheckedChange() })
     }
 }
