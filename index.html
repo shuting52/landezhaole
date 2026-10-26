@@ -223,7 +223,6 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div style="margin-top:6px">© 2026 懒得找了 · <a href="javascript:void(0)" onclick="if(window.siteVersionData)showUpdateModal(window.siteVersionData,false)" style="color:var(--green)">查看更新日志</a></div>
 </div></footer>
 <div id="sideTools">
-<button type="button" id="sideTopBtn" title="回到顶部">↑</button>
 <button type="button" id="sideShareBtn" title="分享本站"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
 <a id="sideJumpBtn" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener" title="下载 Android App"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M9 15L17 7M12 7h5v5" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </div>
@@ -558,7 +557,6 @@ const tb=document.getElementById('themeBtn');
 const saved=localStorage.getItem('landezhaole-theme');
 if(saved){document.documentElement.dataset.theme=saved;tb.textContent=saved==='dark'?'☀️ 日间模式':'🌙 夜间模式';}
 tb.onclick=()=>{const h=document.documentElement;const dark=h.dataset.theme!=='dark';h.dataset.theme=dark?'dark':'light';localStorage.setItem('landezhaole-theme',h.dataset.theme);tb.textContent=dark?'☀️ 日间模式':'🌙 夜间模式';};
-document.getElementById('sideTopBtn').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 function showSideToast(msg){
  const toast=document.getElementById('toastNotify');if(!toast)return;
  toast.onclick=function(){};
