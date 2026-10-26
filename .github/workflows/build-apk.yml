@@ -21,7 +21,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.LANDEZHAOLE_KEY_PASSWORD }}
         run: |
           echo "$KEYSTORE_BASE64" | base64 -d > /tmp/landezhaole-release.keystore
-          cd android && KEYSTORE_PATH=/tmp/landezhaole-release.keystore ./gradlew :app:assembleRelease --stacktrace
+          cd android && chmod +x gradlew && KEYSTORE_PATH=/tmp/landezhaole-release.keystore ./gradlew :app:assembleRelease --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
