@@ -33,7 +33,6 @@ button{font-family:inherit}
 .b3{width:420px;height:420px;left:30%;bottom:-160px;background:#fde68a}
 [data-theme="dark"] .b1{background:#064e3b}[data-theme="dark"] .b2{background:#1e3a8a}[data-theme="dark"] .b3{background:#78350f}
 .logo{font-size:46px;font-weight:900;letter-spacing:4px;display:flex;align-items:center;justify-content:center;gap:14px}
-#particleLogo{width:min(300px,64vw);height:auto;display:block;cursor:pointer}
 .site-icon{width:56px;height:56px;border-radius:16px;box-shadow:0 6px 18px rgba(22,163,74,.3);animation:none;transition:transform .3s}
 .site-icon:hover{transform:scale(1.1) rotate(-8deg);animation-play-state:paused}
 .logo-text{background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shineText 6s linear infinite}
@@ -213,7 +212,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <header class="header"><div class="wrap">
 
 <nav class="top-utils" id="topUtils"><button type="button" class="util-toggle" onclick="toggleUtils()" aria-label="展开工具">＋</button><div class="util-items"><a style="animation-delay:240ms" style="animation-delay:180ms" style="animation-delay:120ms" style="animation-delay:60ms" style="animation-delay:0ms" onclick="showUtilAbout()"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 2.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5L12 3z"/><path d="M9 12l2 2 4-4"/></svg></span>关于网站</a><a onclick="showUtilQR('微信打赏','qr-wechat.jpg','微信扫一扫，支持一下')"><span class="uicon brand-wechat"><img src="https://weixin.qq.com/favicon.ico" data-step="0" data-s1="https://www.google.com/s2/favicons?domain=weixin.qq.com&sz=128" onerror="utilIconNext(this)" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10" cy="9" rx="7" ry="5" fill="#07C160"/><polygon points="6,12.5 4,16.5 8.5,13.5" fill="#07C160"/><circle cx="8" cy="8.5" r="1.2" fill="#fff"/><circle cx="12" cy="8.5" r="1.2" fill="#fff"/><ellipse cx="17" cy="15" rx="4.5" ry="3.2" fill="#07C160"/><polygon points="15,17 14,20 17.5,17.5" fill="#07C160"/></svg></span>微信打赏</a><a onclick="showUtilQR('QQ好友','qr-qq.jpg','QQ扫一扫，加我好友')"><span class="uicon brand-qq"><img src="https://im.qq.com/favicon.ico" data-step="0" data-s1="https://www.google.com/s2/favicons?domain=im.qq.com&sz=128" onerror="utilIconNext(this)" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="7" fill="#12B7F5"/><ellipse cx="12" cy="15" rx="3.5" ry="4.5" fill="#fff"/><circle cx="10" cy="9" r="1.1" fill="#111"/><circle cx="14" cy="9" r="1.1" fill="#111"/><polygon points="11,10.5 13,10.5 12,12" fill="#FF9F1C"/><ellipse cx="9" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/><ellipse cx="15" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/></svg></span>QQ好友</a><a onclick="showUtilQR('支付宝打赏','qr-alipay.jpg','支付宝扫一扫，支持一下')"><span class="uicon brand-alipay"><img src="https://www.alipay.com/favicon.ico" data-step="0" data-s1="https://www.google.com/s2/favicons?domain=alipay.com&sz=128" onerror="utilIconNext(this)" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#1677FF"/><text x="12" y="18" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" stroke="none" font-family="PingFang SC, Microsoft YaHei, sans-serif">支</text></svg></span>支付宝打赏</a><a href="https://qm.qq.com/q/vsaFRiPuO4" target="_blank" rel="noopener" title="QQ群 836869262，点此直接跳转加群"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 19.5c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.8"/><path d="M15.8 14.8c2.6.4 4.2 1.9 4.7 4.7"/></svg></span>最新Q群</a></div></nav>
-<div class="logo"><img class="site-icon" src="icon.png" alt="懒得找了图标"><canvas id="particleLogo" width="600" height="130" aria-label="懒得找了" title="点一下，粒子重新飞入"></canvas></div>
+<div class="logo"><img class="site-icon" src="icon.png" alt="懒得找了图标"><span class="logo-text">懒得找了.</span></div>
 <div class="searchbox">
 <div class="engines" id="engines"></div>
 <div class="searchrow"><input id="q" placeholder="搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…" autocomplete="off"><button id="go">搜索</button></div>
@@ -648,58 +647,6 @@ function showUtilHot(){
 }
 var utilEl=document.getElementById('utilOverlay');if(utilEl)utilEl.addEventListener('click',function(e){if(e.target.id==='utilOverlay')e.target.classList.remove('show');});
 
-/* 页头粒子 Logo：canvas 采样“懒得找了.”约 4500 粒，飞入 1.5s 先快后慢，呼吸浮动，鼠标 80px 推开、弹簧回弹，品牌渐变色 */
-(function(){
- var cv=document.getElementById('particleLogo');if(!cv)return;
- var ctx=cv.getContext('2d');
- var off=document.createElement('canvas');off.width=600;off.height=130;
- var octx=off.getContext('2d');octx.font='900 84px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';octx.textAlign='center';octx.textBaseline='middle';octx.fillStyle='#fff';octx.fillText('懒得找了.',300,68);
- var data=octx.getImageData(0,0,600,130).data,pts=[];
- for(var y=0;y<130;y+=1)for(var x=0;x<600;x+=1){if(data[(y*600+x)*4+3]>128)pts.push([x,y]);}
- for(var i=pts.length-1;i>0;i--){var j=(Math.random()*(i+1))|0;var tmp=pts[i];pts[i]=pts[j];pts[j]=tmp;}
- pts=pts.slice(0,4500);
- function gradColor(x){var t=x/600,r,g,b;
-  function mix(a,b2,k){return Math.round(a+(b2-a)*k);}
-  if(t<0.5){var k=t*2;r=mix(22,14,k);g=mix(163,165,k);b=mix(74,233,k);}
-  else{var k=(t-0.5)*2;r=mix(14,139,k);g=mix(165,92,k);b=mix(233,246,k);}
-  return 'rgb('+r+','+g+','+b+')';}
- var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- var parts=pts.map(function(pt){
-   var side=(Math.random()*4)|0,sx,sy;
-   if(side===0){sx=-20;sy=Math.random()*130;}else if(side===1){sx=620;sy=Math.random()*130;}
-   else if(side===2){sx=Math.random()*600;sy=-20;}else{sx=Math.random()*600;sy=150;}
-   return {tx:pt[0],ty:pt[1],x:sx,y:sy,sx:sx,sy:sy,delay:Math.random()*0.35,vx:0,vy:0,ph:Math.random()*Math.PI*2,ph2:Math.random()*Math.PI*2,col:gradColor(pt[0])};
- });
- var start=performance.now(),mx=-9999,my=-9999;
- function toCanvas(e){var r=cv.getBoundingClientRect();var s=600/r.width;return [(e.clientX-r.left)*s,(e.clientY-r.top)*s,80*s];}
- cv.addEventListener('mousemove',function(e){var p=toCanvas(e);mx=p[0];my=p[1];});
- cv.addEventListener('mouseleave',function(){mx=-9999;my=-9999;});
- cv.addEventListener('touchmove',function(e){if(e.touches[0]){var p=toCanvas(e.touches[0]);mx=p[0];my=p[1];}},{passive:true});
- cv.addEventListener('touchend',function(){mx=-9999;my=-9999;});
- cv.addEventListener('click',function(){start=performance.now();parts.forEach(function(pt){var side=(Math.random()*4)|0;
-   if(side===0){pt.sx=-20;pt.sy=Math.random()*130;}else if(side===1){pt.sx=620;pt.sy=Math.random()*130;}
-   else if(side===2){pt.sx=Math.random()*600;pt.sy=-20;}else{pt.sx=Math.random()*600;pt.sy=150;}
-   pt.delay=Math.random()*0.35;pt.vx=0;pt.vy=0;});});
- function draw(now){
-   ctx.clearRect(0,0,600,130);
-   var el=(now-start)/1000;
-   parts.forEach(function(pt){
-     var lt=el-pt.delay;
-     if(lt<0){pt.x=pt.sx;pt.y=pt.sy;}
-     else if(lt<1.5){var pr=lt/1.5,ease=pr===1?1:1-Math.pow(2,-10*pr);pt.x=pt.sx+(pt.tx-pt.sx)*ease;pt.y=pt.sy+(pt.ty-pt.sy)*ease;}
-     else{
-       var bx=pt.tx+Math.sin(now*0.0012+pt.ph)*0.6, by=pt.ty+Math.sin(now*0.001+pt.ph2)*0.6;
-       pt.vx+=(bx-pt.x)*0.075; pt.vy+=(by-pt.y)*0.075;
-       if(mx>-9000){var dx=pt.x-mx,dy=pt.y-my,d=Math.sqrt(dx*dx+dy*dy),rad=80*(600/cv.getBoundingClientRect().width);
-         if(d<rad&&d>0.01){var f=(1-d/rad)*6;pt.vx+=dx/d*f;pt.vy+=dy/d*f;}}
-       pt.vx*=0.86;pt.vy*=0.86;pt.x+=pt.vx;pt.y+=pt.vy;
-     }
-     ctx.fillStyle=pt.col;ctx.beginPath();ctx.arc(pt.x,pt.y,3.0,0,Math.PI*2);ctx.fill();
-   });
- }
- if(reduced){parts.forEach(function(pt){pt.x=pt.tx;pt.y=pt.ty;});ctx.clearRect(0,0,600,130);parts.forEach(function(pt){ctx.fillStyle=pt.col;ctx.beginPath();ctx.arc(pt.x,pt.y,3.0,0,Math.PI*2);ctx.fill();});}
- else{(function loop(now){draw(now);requestAnimationFrame(loop);})(performance.now());}
-})();
 fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{document.getElementById('cats').innerHTML='<p style="text-align:center;color:var(--muted);padding:40px">数据加载失败，请刷新再试。</p>';});
 </script>
 <div class="toast-notify" id="toastNotify"><div class="tic" id="toastIc">新</div><div><div class="tt" id="toastTt"></div><div class="bd" id="toastBd"></div></div><button class="toast-close" id="toastClose" aria-label="关闭提醒">×</button></div>
