@@ -41,7 +41,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -400,7 +400,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text("懒得找了", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
-                        Text("找网站，懒得找了 · $total 个精选站点", fontSize = 12.sp, color = pal.secondary)
+                        Text("共 $total 个精选站点", fontSize = 12.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                     IconButton(onClick = { showUpdate = true }) {
                         Icon(Icons.Filled.SystemUpdate, contentDescription = "检查更新", tint = pal.foreground)
@@ -426,7 +426,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                         OutlinedTextField(
                             value = query,
                             onValueChange = { query = it },
-                            placeholder = { Text("搜本站资源，或切到其他引擎搜全网…", fontSize = 14.sp, color = pal.secondary) },
+                            placeholder = { Text("搜本站，或切引擎搜全网", fontSize = 13.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             singleLine = true,
                             modifier = Modifier.weight(1f),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -454,32 +454,32 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                     }
                 }
                 Text(
-                    "站内搜索：标题 / 简介 / 标签匹配，NEW 置顶 · 搜索时只显示结果列表",
-                    fontSize = 11.sp, color = pal.secondary,
+                    "站内搜索：标题 / 简介 / 标签匹配，NEW 置顶",
+                    fontSize = 11.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(top = 6.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable { dockCat = null }) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(84.dp).clickable { dockCat = null }) {
                         Box(
                             modifier = Modifier.size(48.dp).clip(RoundedCornerShape(14.dp)).background(pal.subtleFill)
                                 .then(if (dockCat == null) Modifier.border(2.dp, pal.accent, RoundedCornerShape(14.dp)) else Modifier),
                             contentAlignment = Alignment.Center
                         ) { Text("全", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = pal.foreground) }
-                        Text("全部", fontSize = 10.sp, color = pal.secondary, modifier = Modifier.padding(top = 4.dp))
+                        Text("全部", fontSize = 10.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 4.dp))
                     }
                     categories.take(10).forEach { cat ->
                         val selected = dockCat == cat.id
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { dockCat = if (selected) null else cat.id }
+                            modifier = Modifier.width(84.dp).clickable { dockCat = if (selected) null else cat.id }
                         ) {
                             Box(
                                 modifier = Modifier.size(48.dp).clip(RoundedCornerShape(14.dp)).background(avatarColor(cat.name))
                                     .then(if (selected) Modifier.border(2.dp, pal.accent, RoundedCornerShape(14.dp)) else Modifier),
                                 contentAlignment = Alignment.Center
                             ) { Text(cat.name.trim().firstOrNull()?.toString() ?: "?", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
-                            Text(cat.name.split("·")[0].trim().take(6), fontSize = 10.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 4.dp))
+                            Text(cat.name.split("·")[0].trim(), fontSize = 10.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 4.dp))
                         }
                     }
                 }
@@ -511,7 +511,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-            item { Spacer(modifier = Modifier.height(72.dp)) }
+            item { Spacer(modifier = Modifier.height(96.dp)) }
         }
         }
         if (showUpdate) {
@@ -522,7 +522,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                 Text(toastMsg, color = Color(0xFFFFFDF8), fontSize = 14.sp)
             }
         }
-        FloatingActionButton(
+        SmallFloatingActionButton(
             onClick = { scope.launch { listState.scrollToItem(0) } },
             modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
             containerColor = pal.accent, contentColor = Color.White
@@ -543,12 +543,12 @@ fun CategorySection(cat: Category, pal: AppPalette, onCardClick: (SiteCard) -> U
                 Text("${cat.cards.size} 个站点", fontSize = 11.sp, color = pal.secondary)
             }
             if (cat.desc.isNotBlank()) {
-                Text(cat.desc, fontSize = 12.sp, color = pal.secondary, modifier = Modifier.padding(top = 4.dp))
+                Text(cat.desc, fontSize = 12.sp, color = pal.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 4.dp))
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 PillChip(text = "全部", selected = sub == "all", pal = pal, onClick = { sub = "all" })
-                cat.subs.forEach { s ->
+                cat.subs.filter { it.id != "all" }.forEach { s ->
                     PillChip(text = s.name, selected = sub == s.id, pal = pal, onClick = { sub = s.id })
                 }
             }
@@ -568,25 +568,29 @@ fun CategorySection(cat: Category, pal: AppPalette, onCardClick: (SiteCard) -> U
 
 @Composable
 fun SiteCardView(card: SiteCard, todayClicks: Int, pal: AppPalette, onClick: () -> Unit) {
-    Box {
-        Box(
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(pal.surface).clickable { onClick() }
-        ) {
-            Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                SiteIcon(card)
-                Spacer(modifier = Modifier.width(10.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(card.t, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text(card.d, fontSize = 11.sp, color = pal.secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    if (todayClicks > 0) {
-                        Text("今日点击 $todayClicks 次", fontSize = 10.sp, color = pal.danger)
+    val label = if (card.b.isNotBlank()) card.b else "精选"
+    Box(
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+            .background(if (pal.isDark) pal.surface else Color.White)
+            .border(1.dp, pal.subtleFill, RoundedCornerShape(14.dp))
+            .clickable { onClick() }
+    ) {
+        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            SiteIcon(card)
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(card.t, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(modifier = Modifier.background(RAINBOW, RoundedCornerShape(999.dp)).padding(horizontal = 7.dp, vertical = 2.dp)) {
+                        Text(label, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
+                }
+                Text(card.d, fontSize = 11.sp, color = pal.secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (todayClicks > 0) {
+                    Text("今日点击 $todayClicks 次", fontSize = 10.sp, color = pal.danger)
                 }
             }
         }
-        val label = if (card.b.isNotBlank()) card.b else "精选"
-        Box(
-            modifier = Modifier.align(Alignment.TopEnd).padding(top = 4.dp, end = 8.dp).background(RAINBOW, RoundedCornerShape(999.dp)).padding(horizontal = 8.dp, vertical = 3.dp)
-        ) { Text(label, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold) }
     }
 }
