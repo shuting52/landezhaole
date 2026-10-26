@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -496,6 +497,12 @@ fun MineScreen(
             }
         }
     }
+    val verNameText = try {
+        val v = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName
+        if (v.isNullOrEmpty()) null else "当前 $v"
+    } catch (e: Exception) {
+        null
+    }
     val modeName = when (themeMode) {
         ThemeMode.SYSTEM -> "跟随系统"
         ThemeMode.LIGHT -> "浅色"
@@ -565,7 +572,7 @@ fun MineScreen(
                         icon = Icons.Filled.SystemUpdate,
                         iconTint = pal.accent,
                         label = "检查更新",
-                        trailing = "当前 " + BuildConfig.VERSION_NAME,
+                        trailing = verNameText,
                         pal = pal,
                         onClick = { checkUpdate() }
                     )
