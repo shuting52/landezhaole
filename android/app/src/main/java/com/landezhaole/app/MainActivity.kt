@@ -80,6 +80,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.landezhaole.app.ui.RemoteVersion
@@ -94,7 +95,9 @@ import com.landezhaole.app.ui.fetchRemoteVersion
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -186,7 +189,8 @@ val ENGINES = listOf(
     Engine("baidupan", "百度网盘", "https://wangpan.xin/search?keyword=%s"),
     Engine("alipan", "阿里云盘", "https://v2pan.com/search?q=%s"),
     Engine("quarkpan", "夸克网盘", "https://www.kkso.cc/search?kw=%s"),
-    Engine("google", "谷歌", "https://www.google.com/search?q=%s")
+    Engine("google", "谷歌", "https://www.google.com/search?q=%s"),
+    Engine("appdl", "应用下载", null)
 )
 
 // 网站 AV_COLORS 原样
@@ -284,7 +288,7 @@ fun fetchBitmap(urlStr: String): Bitmap? {
 }
 
 @Composable
-fun SiteIcon(card: SiteCard) {
+fun SiteIcon(card: SiteCard, size: Dp = 44.dp) {
     var bitmap by remember(card.u) { mutableStateOf<Bitmap?>(null) }
     var tried by remember(card.u) { mutableStateOf(false) }
     LaunchedEffect(card.u) {
@@ -313,16 +317,16 @@ fun SiteIcon(card: SiteCard) {
         bitmap = found
     }
     Box(
-        modifier = Modifier.size(44.dp).clip(RoundedCornerShape(11.dp))
+        modifier = Modifier.size(size).clip(RoundedCornerShape(11.dp))
             .background(if (bitmap != null) Color.White else avatarColor(card.t)),
         contentAlignment = Alignment.Center
     ) {
         if (bitmap != null) {
             Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = null,
-                modifier = Modifier.fillMaxSize().padding(4.dp), contentScale = ContentScale.Fit)
+                modifier = Modifier.fillMaxSize().padding(if (size < 40.dp) 2.dp else 4.dp), contentScale = ContentScale.Fit)
         } else {
             val initials = (if (card.f.isNotBlank()) card.f else card.t).take(2)
-            Text(initials, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(initials, color = Color.White, fontSize = if (size < 40.dp) 10.sp else 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -378,6 +382,14 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
     var categories by remember { mutableStateOf(loadCategories(ctx)) }
     var query by remember { mutableStateOf("") }
     var engineIdx by remember { mutableStateOf(0) }
+    // 应用下载引擎状态：切到“应用下载”后点搜索走代理搜应用，结果在 App 内直接下、直接装
+    var appResults by remember { mutableStateOf<List<AppEntry>?>(null) }
+    var appTotal by remember { mutableStateOf(0) }
+    var appLoading by remember { mutableStateOf(false) }
+    var appError by remember { mutableStateOf<String?>(null) }
+    var appQuery by remember { mutableStateOf("") }
+    val appDlStates = remember { mutableStateMapOf<String, DlState>() }
+    val appDlJobs = remember { mutableMapOf<String, Job>() }
     var toastMsg by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
     var showTheme by remember { mutableStateOf(false) }
@@ -487,6 +499,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
         val idx = categories.indexOfFirst { it.id == catId }
         if (idx < 0) return
         query = ""
+        appResults = null
         scope.launch { listState.animateScrollToItem(idx + 1) }
     }
     fun manualCheckUpdate() {
@@ -499,6 +512,58 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
             }
         }
     }
+    fun searchAppsNow(q: String) {
+        appQuery = q
+        appLoading = true
+        appError = null
+        scope.launch {
+            try {
+                val (total, list) = searchApps(q, 0)
+                appResults = list
+                appTotal = total
+            } catch (e: Exception) {
+                appError = "搜索失败：" + (e.message ?: "网络异常")
+                appResults = emptyList()
+            }
+            appLoading = false
+        }
+    }
+    fun loadMoreApps() {
+        val current = appResults ?: return
+        if (appLoading || current.size >= appTotal) return
+        appLoading = true
+        scope.launch {
+            try {
+                val (_, list) = searchApps(appQuery, current.size)
+                appResults = current + list
+            } catch (e: Exception) {
+                appError = "加载更多失败：" + (e.message ?: "网络异常")
+            }
+            appLoading = false
+        }
+    }
+    fun startAppDownload(entry: AppEntry) {
+        if (appDlJobs[entry.appId]?.isActive == true) return
+        appDlJobs[entry.appId] = scope.launch {
+            appDlStates[entry.appId] = DlState.Downloading(0f, 0, entry.size)
+            try {
+                val file = downloadAppApk(ctx, entry) { w, t ->
+                    appDlStates[entry.appId] =
+                        DlState.Downloading(if (t > 0) w.toFloat() / t else 0f, w, t)
+                }
+                appDlStates[entry.appId] = DlState.Done(file)
+            } catch (e: CancellationException) {
+                appDlStates[entry.appId] = DlState.Idle
+                try {
+                    appdlFile(ctx, entry, true).delete()
+                } catch (_: Exception) {
+                }
+            } catch (e: Exception) {
+                appDlStates[entry.appId] = DlState.Failed(e.message ?: "下载失败")
+            }
+        }
+    }
+    val showAppResults = ENGINES[engineIdx].id == "appdl" && appResults != null
 
     Box(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
         WebBlobs(pal = pal, modifier = Modifier.fillMaxSize())
@@ -610,7 +675,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                                     )
                                 }
                                 if (query.isNotEmpty()) {
-                                    IconButton(onClick = { query = "" }, modifier = Modifier.size(36.dp)) {
+                                    IconButton(onClick = { query = ""; appResults = null }, modifier = Modifier.size(36.dp)) {
                                         Icon(Icons.Filled.Clear, contentDescription = "清空", tint = pal.secondary, modifier = Modifier.size(18.dp))
                                     }
                                 }
@@ -619,7 +684,9 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                                         val q = query.trim()
                                         if (q.isEmpty()) return@Button
                                         val engine = ENGINES[engineIdx]
-                                        if (engine.url != null) {
+                                        if (engine.id == "appdl") {
+                                            searchAppsNow(q)
+                                        } else if (engine.url != null) {
                                             val target = String.format(engine.url, URLEncoder.encode(q, "UTF-8"))
                                             openUrl(ctx, target)
                                         }
@@ -631,7 +698,8 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                             }
                         }
                         Text(
-                            "站内搜索：标题 / 简介 / 标签匹配，NEW 置顶",
+                            if (ENGINES[engineIdx].id == "appdl") "应用下载：搜应用名，点下载直接装（不跳浏览器）"
+                            else "站内搜索：标题 / 简介 / 标签匹配，NEW 置顶",
                             fontSize = 12.sp, color = pal.secondary,
                             modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
                             textAlign = TextAlign.Center
@@ -688,6 +756,19 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
+                    }
+                } else if (showAppResults) {
+                    item {
+                        AppResultsSection(
+                            results = appResults!!, total = appTotal, loading = appLoading,
+                            error = appError, hasMore = appResults!!.size < appTotal,
+                            onLoadMore = { loadMoreApps() },
+                            onClear = { query = ""; appResults = null },
+                            pal = pal, dlStates = appDlStates,
+                            onDownload = { startAppDownload(it) },
+                            onCancel = { appDlJobs[it.appId]?.cancel() },
+                            onInstall = { _, file -> installAppApk(ctx, file) }
+                        )
                     }
                 } else {
                     items(categories, key = { it.id }) { cat ->
