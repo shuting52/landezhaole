@@ -78,29 +78,36 @@ fun currentVersionCode(ctx: Context): Long {
 
 suspend fun fetchRemoteVersion(): RemoteVersion? {
     return withContext(Dispatchers.IO) {
-        try {
-            val conn = (URL(UPDATE_VERSION_URL).openConnection() as HttpURLConnection).apply {
-                connectTimeout = 8000
-                readTimeout = 8000
-                setRequestProperty("User-Agent", "Mozilla/5.0")
+        // 双源：raw 在部分手机上慢或不通时走 jsdelivr 镜像；1.1.3 只走 raw 且失败悄悄不弹，是旧版收不到提醒的根因
+        val urls = listOf(
+            UPDATE_VERSION_URL,
+            "https://cdn.jsdelivr.net/gh/shuting52/landezhaole@main/dist/app-version.json"
+        )
+        for (url in urls) {
+            try {
+                val conn = (URL(url).openConnection() as HttpURLConnection).apply {
+                    connectTimeout = 8000
+                    readTimeout = 8000
+                    setRequestProperty("User-Agent", "Mozilla/5.0")
+                }
+                if (conn.responseCode != 200) continue
+                val text = conn.inputStream.bufferedReader().readText()
+                val obj = JSONObject(text)
+                val notes = mutableListOf<String>()
+                val arr = obj.optJSONArray("notes")
+                if (arr != null) for (i in 0 until arr.length()) notes.add(arr.optString(i))
+                return@withContext RemoteVersion(
+                    versionCode = obj.optLong("versionCode"),
+                    versionName = obj.optString("versionName"),
+                    apkUrl = obj.optString("apkUrl"),
+                    sha256 = obj.optString("sha256"),
+                    notes = notes
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "查云端版本失败($url): $e")
             }
-            if (conn.responseCode != 200) return@withContext null
-            val text = conn.inputStream.bufferedReader().readText()
-            val obj = JSONObject(text)
-            val notes = mutableListOf<String>()
-            val arr = obj.optJSONArray("notes")
-            if (arr != null) for (i in 0 until arr.length()) notes.add(arr.optString(i))
-            RemoteVersion(
-                versionCode = obj.optLong("versionCode"),
-                versionName = obj.optString("versionName"),
-                apkUrl = obj.optString("apkUrl"),
-                sha256 = obj.optString("sha256"),
-                notes = notes
-            )
-        } catch (e: Exception) {
-            Log.w(TAG, "查云端版本失败: $e")
-            null
         }
+        null
     }
 }
 

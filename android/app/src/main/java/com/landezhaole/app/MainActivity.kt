@@ -94,6 +94,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -442,9 +443,10 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
         all.sortedByDescending { rank(it) }
     } else emptyList()
 
-    // 启动：清更新残留 → 拉云端数据（双源，失败用包内）→ 新站提醒 → 查云端版本
+    // 启动：清更新残留；版本检查与数据拉取并行（1.1.3 是数据拉完才查版本，raw 慢就收不到提醒）
     LaunchedEffect(Unit) {
         cleanupUpdateLeftovers(ctx)
+        val versionJob = async { fetchRemoteVersion() }
         fetchCloudCategories()?.let { categories = it }
         if (!newToastChecked) {
             newToastChecked = true
@@ -453,7 +455,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                 .filter { it.b.contains("NEW", ignoreCase = true) && it.u !in seen }
             if (news.isNotEmpty()) newToast = news
         }
-        val remote = fetchRemoteVersion()
+        val remote = versionJob.await()
         if (remote != null && remote.versionCode > currentVersionCode(ctx)) {
             pendingUpdate = remote
         }
