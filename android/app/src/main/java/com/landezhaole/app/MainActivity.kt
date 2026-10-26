@@ -151,6 +151,80 @@ val DarkPalette = AppPalette(
     subtleFill = Color(0x1F7F7F7F),
     line = Color(0xFF374151)
 )
+// 003 NEU 柔影（app-gallery）
+val NeuPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF5F9DE7),
+    accentSoft = Color(0x145F9DE7),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFE0E8EF),
+    foreground = Color(0xFF516D91),
+    secondary = Color(0xFF7E97B8),
+    barBackground = Color(0xFFE0E8EF),
+    pageBackground = Color(0xFFE0E8EF),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFC3CFDB)
+)
+
+// 004 GLASS 雾面（app-gallery）
+val GlassPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF2879F3),
+    accentSoft = Color(0x142879F3),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFEDF1F6),
+    foreground = Color(0xFF22303F),
+    secondary = Color(0xFF64748B),
+    barBackground = Color(0x8CFFFFFF),
+    pageBackground = Color(0xFFEDF1F6),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFD3E3F8)
+)
+
+// 006 DOODLE 手绘（app-gallery）
+val DoodlePalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF5B8DD9),
+    accentSoft = Color(0x145B8DD9),
+    danger = Color(0xFFE2605C),
+    surface = Color(0xFFF6F1E5),
+    foreground = Color(0xFF444433),
+    secondary = Color(0xFF8A8471),
+    barBackground = Color(0xFFFFFDF7),
+    pageBackground = Color(0xFFF6F1E5),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFF444433)
+)
+
+// 009 LEVER 拨杆（app-gallery）
+val LeverPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF1269EF),
+    accentSoft = Color(0x141269EF),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFDCEBF9),
+    foreground = Color(0xFF085991),
+    secondary = Color(0xFF3D7CA8),
+    barBackground = Color(0xFFB7DFFB),
+    pageBackground = Color(0xFFDCEBF9),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFC2DDF2)
+)
+
+// 032 S11 千禧复兴（app-gallery）
+val Y2kPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF00A8E8),
+    accentSoft = Color(0x1A00A8E8),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFDFF3FE),
+    foreground = Color(0xFF0A2540),
+    secondary = Color(0xFF4A6B8A),
+    barBackground = Color(0xFFFFFFFF),
+    pageBackground = Color(0xFFDFF3FE),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFBFE2F7)
+)
 
 @Composable
 fun GlassPanel(modifier: Modifier = Modifier, pal: AppPalette, content: @Composable () -> Unit) {
@@ -339,13 +413,21 @@ class MainActivity : ComponentActivity() {
             val themeCtx = LocalContext.current
             val themePrefs = remember { themeCtx.getSharedPreferences("landezhaole-theme", Context.MODE_PRIVATE) }
             var themeMode by remember { mutableStateOf(runCatching { ThemeMode.valueOf(themePrefs.getString("mode", "SYSTEM") ?: "SYSTEM") }.getOrDefault(ThemeMode.SYSTEM)) }
+            var themeScheme by remember { mutableStateOf(themePrefs.getString("scheme", "default") ?: "default") }
             var uiScale by remember { mutableStateOf(themePrefs.getFloat("scale", 1f)) }
-            val dark = when (themeMode) {
+            val dark = if (themeScheme != "default") false else when (themeMode) {
                 ThemeMode.SYSTEM -> isSystemInDarkTheme()
                 ThemeMode.LIGHT -> false
                 ThemeMode.DARK -> true
             }
-            val pal = if (dark) DarkPalette else LightPalette
+            val pal = when (themeScheme) {
+                "neu003" -> NeuPalette
+                "glass004" -> GlassPalette
+                "doodle006" -> DoodlePalette
+                "lever009" -> LeverPalette
+                "y2k032" -> Y2kPalette
+                else -> if (dark) DarkPalette else LightPalette
+            }
             MaterialTheme(
                 colorScheme = if (dark) darkColorScheme(
                     primary = pal.accent, background = pal.pageBackground,
@@ -366,6 +448,8 @@ class MainActivity : ComponentActivity() {
                         },
                         themeMode = themeMode,
                         onThemeModeChange = { themeMode = it; themePrefs.edit().putString("mode", it.name).apply() },
+                        themeScheme = themeScheme,
+                        onThemeSchemeChange = { themeScheme = it; themePrefs.edit().putString("scheme", it).apply() },
                         uiScale = uiScale,
                         onUiScaleChange = { uiScale = it; themePrefs.edit().putFloat("scale", it).apply() }
                     )

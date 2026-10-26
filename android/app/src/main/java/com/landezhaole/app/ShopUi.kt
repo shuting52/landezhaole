@@ -110,6 +110,13 @@ import kotlinx.coroutines.launch
 val SHOP_RED = Color(0xFFF53D2D)
 val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xFFFF7733)))
 
+// 画廊主题生效时顶栏与品牌红跟主题主色走；默认主题保持电商红
+fun isGallerySchemePal(pal: AppPalette): Boolean =
+    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette
+fun shopBrand(pal: AppPalette): Color = if (isGallerySchemePal(pal)) pal.accent else SHOP_RED
+fun shopBrandGradient(pal: AppPalette): Brush =
+    if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else SHOP_GRADIENT
+
 val CAT_ICONS = mapOf(
     "cloud_browser" to Icons.Filled.Language, "ai_api" to Icons.Filled.Api,
     "ai_models" to Icons.Filled.SmartToy, "ai_canvas" to Icons.Filled.Brush,
@@ -192,7 +199,7 @@ fun ShopCard(
                                 .border(1.dp, Color(0xFFFFC7BF), RoundedCornerShape(3.dp))
                                 .padding(horizontal = 5.dp, vertical = 1.dp)
                         ) {
-                            Text(card.b, fontSize = 10.sp, color = SHOP_RED)
+                            Text(card.b, fontSize = 10.sp, color = shopBrand(pal))
                         }
                     }
                     Box(
@@ -201,7 +208,7 @@ fun ShopCard(
                             .border(1.dp, Color(0xFFFFC7BF), RoundedCornerShape(3.dp))
                             .padding(horizontal = 5.dp, vertical = 1.dp)
                     ) {
-                        Text("免费", fontSize = 10.sp, color = SHOP_RED)
+                        Text("免费", fontSize = 10.sp, color = shopBrand(pal))
                     }
                 }
                 Spacer(modifier = Modifier.height(6.dp))
@@ -210,7 +217,7 @@ fun ShopCard(
                 Box(
                     modifier = Modifier.fillMaxWidth().height(32.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(SHOP_RED)
+                        .background(shopBrand(pal))
                         .clickable { onOpen() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -240,7 +247,7 @@ fun ShopSectionTitle(title: String, small: String?, pal: AppPalette, onSmallClic
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShopBanner(categories: List<Category>, onOpenCategory: (String) -> Unit) {
+fun ShopBanner(pal: AppPalette, categories: List<Category>, onOpenCategory: (String) -> Unit) {
     val slides = categories.take(10)
     if (slides.isEmpty()) return
     val pagerState = rememberPagerState(pageCount = { slides.size })
@@ -284,7 +291,7 @@ fun ShopBanner(categories: List<Category>, onOpenCategory: (String) -> Unit) {
                         modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(Color.White)
                             .padding(horizontal = 14.dp, vertical = 5.dp)
                     ) {
-                        Text("查看全部", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = SHOP_RED)
+                        Text("查看全部", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = shopBrand(pal))
                     }
                 }
             }
@@ -431,7 +438,7 @@ fun ShopHome(
             modifier = Modifier.fillMaxWidth()
                 .shadow(10.dp, RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
                 .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-                .background(if (dark) Brush.horizontalGradient(listOf(Color(0xFF7F1D1D), Color(0xFF450A0A))) else SHOP_GRADIENT)
+                .background(if (isGallerySchemePal(pal)) shopBrandGradient(pal) else if (dark) Brush.horizontalGradient(listOf(Color(0xFF7F1D1D), Color(0xFF450A0A))) else SHOP_GRADIENT)
                 .padding(horizontal = 12.dp, vertical = 10.dp)
         ) {
             Column {
@@ -468,7 +475,7 @@ fun ShopHome(
                             }
                             if (query.isNotEmpty()) {
                                 Text(
-                                    "搜索", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = SHOP_RED,
+                                    "搜索", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = shopBrand(pal),
                                     modifier = Modifier.clickable { doSearch() }.padding(start = 6.dp)
                                 )
                             }
@@ -492,7 +499,7 @@ fun ShopHome(
                             Text(
                                 e.name, fontSize = 12.sp,
                                 fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal,
-                                color = if (sel) SHOP_RED else Color.White
+                                color = if (sel) shopBrand(pal) else Color.White
                             )
                         }
                     }
@@ -569,7 +576,7 @@ fun ShopHome(
         } else {
             LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 item {
-                    ShopBanner(categories) { id -> onOpenCategory(id) }
+                    ShopBanner(pal, categories) { id -> onOpenCategory(id) }
                 }
                 item {
                     Column {
@@ -649,7 +656,7 @@ fun ShopHome(
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text("免费", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = SHOP_RED)
+                                        Text("免费", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = shopBrand(pal))
                                         if (card.b.equals("HOT", ignoreCase = true) || card.b.equals("NEW", ignoreCase = true)) {
                                             Spacer(modifier = Modifier.width(4.dp))
                                             Box(
@@ -658,7 +665,7 @@ fun ShopHome(
                                                     .border(1.dp, Color(0xFFFFC7BF), RoundedCornerShape(3.dp))
                                                     .padding(horizontal = 4.dp, vertical = 1.dp)
                                             ) {
-                                                Text(card.b, fontSize = 10.sp, color = SHOP_RED)
+                                                Text(card.b, fontSize = 10.sp, color = shopBrand(pal))
                                             }
                                         }
                                     }
@@ -719,7 +726,7 @@ fun ShopCategory(
     }
     Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
         Box(
-            modifier = Modifier.fillMaxWidth().background(SHOP_GRADIENT)
+            modifier = Modifier.fillMaxWidth().background(shopBrandGradient(pal))
                 .padding(horizontal = 12.dp, vertical = 10.dp)
         ) {
             Text("站点分类", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -785,8 +792,8 @@ fun ShopCategoryDetail(
                 val sel = selSub == s.id
                 Box(
                     modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                        .background(if (sel) SHOP_RED else pal.barBackground)
-                        .border(1.dp, if (sel) SHOP_RED else pal.line, RoundedCornerShape(16.dp))
+                        .background(if (sel) shopBrand(pal) else pal.barBackground)
+                        .border(1.dp, if (sel) shopBrand(pal) else pal.line, RoundedCornerShape(16.dp))
                         .clickable { selSub = s.id }
                         .padding(horizontal = 12.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
@@ -894,7 +901,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.4" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.5" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -940,13 +947,13 @@ fun ShopMessages(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             name, fontSize = 14.sp,
-                            color = if (sel) SHOP_RED else Color(0xFF888888),
+                            color = if (sel) shopBrand(pal) else Color(0xFF888888),
                             fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Box(
                             modifier = Modifier.width(24.dp).height(2.dp)
-                                .background(if (sel) SHOP_RED else Color.Transparent)
+                                .background(if (sel) shopBrand(pal) else Color.Transparent)
                         )
                     }
                 }
@@ -1015,6 +1022,8 @@ fun ShopMine(
     onToggleDark: () -> Unit,
     themeMode: ThemeMode,
     onThemeModeChange: (ThemeMode) -> Unit,
+    themeScheme: String,
+    onThemeSchemeChange: (String) -> Unit,
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit,
     todayClicks: Int,
@@ -1036,6 +1045,7 @@ fun ShopMine(
     if (showTheme) {
         ThemeAppearanceScreen(
             pal = pal, mode = themeMode, onModeChange = onThemeModeChange,
+            scheme = themeScheme, onSchemeChange = onThemeSchemeChange,
             uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false }
         )
         return
@@ -1047,7 +1057,7 @@ fun ShopMine(
         Box(
             modifier = Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
-                .background(SHOP_GRADIENT)
+                .background(shopBrandGradient(pal))
                 .padding(horizontal = 16.dp, vertical = 22.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1187,7 +1197,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.4" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.5" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center

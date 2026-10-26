@@ -47,6 +47,15 @@ fun themeModeLabel(mode: ThemeMode): String = when (mode) {
     ThemeMode.DARK -> "深色"
 }
 
+fun themeSchemeLabel(scheme: String): String = when (scheme) {
+    "neu003" -> "NEU 柔影"
+    "glass004" -> "GLASS 雾面"
+    "doodle006" -> "DOODLE 手绘"
+    "lever009" -> "LEVER 拨杆"
+    "y2k032" -> "S11 千禧复兴"
+    else -> "默认（跟随深浅）"
+}
+
 // UiZoom mirrors the Flutter UiZoom: lay the content out at virtual size
 // (real size / scale) and draw it scaled, so padding, text and spacing all
 // scale together instead of only the font size changing.
@@ -130,6 +139,8 @@ fun ThemeAppearanceScreen(
     pal: AppPalette,
     mode: ThemeMode,
     onModeChange: (ThemeMode) -> Unit,
+    scheme: String,
+    onSchemeChange: (String) -> Unit,
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit,
     onBack: () -> Unit
@@ -150,6 +161,12 @@ fun ThemeAppearanceScreen(
             ExpandableThemeCard(pal = pal, title = "系统主题", currentValue = themeModeLabel(mode)) {
                 ThemeMode.values().forEach { m ->
                     ThemeChoiceRow(pal = pal, label = themeModeLabel(m), selected = mode == m, onClick = { onModeChange(m) })
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            ExpandableThemeCard(pal = pal, title = "主题风格", currentValue = themeSchemeLabel(scheme)) {
+                listOf("default", "neu003", "glass004", "doodle006", "lever009", "y2k032").forEach { s ->
+                    ThemeChoiceRow(pal = pal, label = themeSchemeLabel(s), selected = scheme == s, onClick = { onSchemeChange(s) })
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))

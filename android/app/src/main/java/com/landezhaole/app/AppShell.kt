@@ -94,7 +94,8 @@ val VIDEO_URLS: List<String> = listOf(
     "https://video.twimg.com/amplify_video/2114557244889235456/vid/avc1/720x1280/YZ8SJq1_-nouPp46.mp4?tag=29",
     "https://video.twimg.com/amplify_video/2114556951015383040/vid/avc1/720x1280/gieHyC-AKUrUU_Du.mp4?tag=29",
     "https://video.twimg.com/amplify_video/2114558765202821120/vid/avc1/720x1264/OYeN6NhsiVtpZShw.mp4?tag=29",
-    "https://video.twimg.com/amplify_video/2114555877198016512/vid/avc1/720x1280/HovltJoJN3VwiqFo.mp4?tag=29"
+    "https://video.twimg.com/amplify_video/2114555877198016512/vid/avc1/720x1280/HovltJoJN3VwiqFo.mp4?tag=29",
+    "https://video.twimg.com/amplify_video/2114165275474173952/vid/avc1/1080x1920/t2xwz2Us7rvGfWbS.mp4?tag=29"
 )
 
 // 省钱小助手已为底部 Tab；美女视频仍为独立页
@@ -169,6 +170,7 @@ fun SubPageWrapper(
 
 @Composable
 fun RowScope.ShopNavItem(
+    pal: AppPalette,
     emoji: String,
     label: String,
     selected: Boolean,
@@ -184,7 +186,7 @@ fun RowScope.ShopNavItem(
                 if (badge != null) {
                     Box(
                         modifier = Modifier.align(Alignment.TopEnd).offset(x = 10.dp, y = (-6).dp)
-                            .size(16.dp).clip(CircleShape).background(SHOP_RED),
+                            .size(16.dp).clip(CircleShape).background(shopBrand(pal)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -197,9 +199,9 @@ fun RowScope.ShopNavItem(
         },
         label = { Text(label) },
         colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = SHOP_RED,
-            selectedTextColor = SHOP_RED,
-            indicatorColor = SHOP_RED.copy(alpha = 0.12f)
+            selectedIconColor = shopBrand(pal),
+            selectedTextColor = shopBrand(pal),
+            indicatorColor = shopBrand(pal).copy(alpha = 0.12f)
         )
     )
 }
@@ -211,6 +213,8 @@ fun AppShell(
     onToggleDark: () -> Unit,
     themeMode: ThemeMode,
     onThemeModeChange: (ThemeMode) -> Unit,
+    themeScheme: String,
+    onThemeSchemeChange: (String) -> Unit,
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit
 ) {
@@ -406,6 +410,7 @@ fun AppShell(
                         else -> ShopMine(
                             pal = pal, dark = dark, onToggleDark = onToggleDark,
                             themeMode = themeMode, onThemeModeChange = onThemeModeChange,
+                            themeScheme = themeScheme, onThemeSchemeChange = onThemeSchemeChange,
                             uiScale = uiScale, onUiScaleChange = onUiScaleChange,
                             todayClicks = todayClicks,
                             totalSites = total, catCount = categories.size,
@@ -422,10 +427,10 @@ fun AppShell(
                 containerColor = pal.barBackground,
                 contentColor = pal.foreground
             ) {
-                ShopNavItem("🏠", "首页", tab == 0, null) { goTab(0) }
-                ShopNavItem("🗂️", "分类", tab == 1, null) { goTab(1) }
-                ShopNavItem("💰", "省钱小助手", tab == 2, null) { goTab(2) }
-                ShopNavItem("👤", "我的", tab == 3, null) { goTab(3) }
+                ShopNavItem(pal, "🏠", "首页", tab == 0, null) { goTab(0) }
+                ShopNavItem(pal, "🗂️", "分类", tab == 1, null) { goTab(1) }
+                ShopNavItem(pal, "💰", "省钱小助手", tab == 2, null) { goTab(2) }
+                ShopNavItem(pal, "👤", "我的", tab == 3, null) { goTab(3) }
             }
         }
         if (pendingUpdate != null) {
