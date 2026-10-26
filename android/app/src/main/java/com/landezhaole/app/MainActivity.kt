@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -655,14 +656,14 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                                 if (searchResults.isEmpty()) {
                                     Text("没找到相关资源，换个关键词试试", fontSize = 14.sp, color = pal.secondary)
                                 } else {
-                                    for (row in searchResults.chunked(2)) {
-                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    for (row in searchResults.chunked(4)) {
+                                        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                             for (card in row) {
-                                                Box(modifier = Modifier.weight(1f)) {
+                                                Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                                                     WebCard(card, clicks[card.u] ?: 0, pal, onClick = { recordClick(card.u); openUrl(ctx, card.u) })
                                                 }
                                             }
-                                            if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
+                                            repeat(4 - row.size) { Spacer(modifier = Modifier.weight(1f)) }
                                         }
                                         Spacer(modifier = Modifier.height(12.dp))
                                     }
@@ -702,14 +703,14 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
-                                for (row in shown.chunked(2)) {
-                                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                for (row in shown.chunked(4)) {
+                                    Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                         for (card in row) {
-                                            Box(modifier = Modifier.weight(1f)) {
+                                            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                                                 WebCard(card, clicks[card.u] ?: 0, pal, onClick = { recordClick(card.u); openUrl(ctx, card.u) })
                                             }
                                         }
-                                        if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
+                                        repeat(4 - row.size) { Spacer(modifier = Modifier.weight(1f)) }
                                     }
                                     Spacer(modifier = Modifier.height(12.dp))
                                 }

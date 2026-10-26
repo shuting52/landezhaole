@@ -330,8 +330,8 @@ fun ParticleLogo(modifier: Modifier = Modifier) {
     }
 }
 
-// ---- 网站卡片：灰底白边圆角 14，左上角标改贴卡片上沿（网站 .corner-tag，top -8 right 8），
-// 按压时上抬 2dp + 绿边 + 阴影（网站 hover 效果的触屏版）；手机端网站不显示简介，App 跟着不显示 ----
+// ---- 网站卡片（4 列竖版）：图标居中在上、标题居中在下（最多 2 行），
+// 角标贴卡片上沿（网站 .corner-tag）；按压时上抬 2dp + 绿边 + 阴影 ----
 @Composable
 fun WebCard(
     card: SiteCard,
@@ -342,10 +342,10 @@ fun WebCard(
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val label = if (card.b.isNotBlank()) card.b else "精选"
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .shadow(if (pressed) 6.dp else 0.dp, RoundedCornerShape(14.dp))
                 .offset(y = if (pressed) (-2).dp else 0.dp)
                 .clip(RoundedCornerShape(14.dp))
@@ -353,20 +353,21 @@ fun WebCard(
                 .border(1.dp, if (pressed) pal.accent else pal.line, RoundedCornerShape(14.dp))
                 .clickable(interactionSource = interaction, indication = null) { onClick() }
         ) {
-            Row(
-                modifier = Modifier.padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp, vertical = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SiteIcon(card)
-                Spacer(modifier = Modifier.width(10.dp))
-                Column(modifier = Modifier.weight(1f)) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Box(modifier = Modifier.height(32.dp), contentAlignment = Alignment.TopCenter) {
                     Text(
-                        card.t, fontSize = 14.sp, fontWeight = FontWeight.Bold,
-                        color = pal.foreground, maxLines = 1, overflow = TextOverflow.Ellipsis
+                        card.t, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                        color = pal.foreground, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                        lineHeight = 16.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
-                    if (todayClicks > 0) {
-                        Text("今日点击 $todayClicks 次", fontSize = 10.sp, color = pal.danger)
-                    }
+                }
+                if (todayClicks > 0) {
+                    Text("今日点击 $todayClicks 次", fontSize = 10.sp, color = pal.danger)
                 }
             }
         }
