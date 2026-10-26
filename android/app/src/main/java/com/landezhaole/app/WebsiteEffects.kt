@@ -46,7 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.awaitPointerEvent
+import androidx.compose.ui.input.pointer.awaitPointerEventScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -407,22 +407,24 @@ fun DockFishEye(cats: List<Category>, pal: AppPalette, onJump: (String) -> Unit)
         }
         Box(
             modifier = Modifier.pointerInput(Unit) {
-                while (true) {
-                    val event = awaitPointerEvent(PointerEventPass.Initial)
-                    val pos = event.changes.firstOrNull()?.position
-                    if (pos != null && event.changes.any { it.pressed }) {
-                        touchX = pos.x
-                        val touchDp = pos.x / density.density + dockScroll.value / density.density
-                        var nearest = 0
-                        var best = Float.MAX_VALUE
-                        for (i in cats.indices) {
-                            val d = kotlin.math.abs(touchDp - (i * 50f + 20f))
-                            if (d < best) { best = d; nearest = i }
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent(PointerEventPass.Initial)
+                        val pos = event.changes.firstOrNull()?.position
+                        if (pos != null && event.changes.any { it.pressed }) {
+                            touchX = pos.x
+                            val touchDp = pos.x / density.density + dockScroll.value / density.density
+                            var nearest = 0
+                            var best = Float.MAX_VALUE
+                            for (i in cats.indices) {
+                                val d = kotlin.math.abs(touchDp - (i * 50f + 20f))
+                                if (d < best) { best = d; nearest = i }
+                            }
+                            tipIndex = if (best < 60f) nearest else null
+                        } else {
+                            touchX = null
+                            tipIndex = null
                         }
-                        tipIndex = if (best < 60f) nearest else null
-                    } else {
-                        touchX = null
-                        tipIndex = null
                     }
                 }
             }
