@@ -358,7 +358,7 @@ class MainActivity : ComponentActivity() {
                 )
             ) {
                 Surface(modifier = Modifier.fillMaxSize(), color = pal.pageBackground) {
-                    HomeScreen(
+                    AppShell(
                         pal = pal, dark = dark,
                         onToggleDark = {
                             themeMode = if (dark) ThemeMode.LIGHT else ThemeMode.DARK
@@ -881,7 +881,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMo
         if (showTop) {
             FloatingActionButton(
                 onClick = { scope.launch { listState.animateScrollToItem(0) } },
-                modifier = Modifier.align(Alignment.BottomEnd).padding(end = 22.dp, bottom = 26.dp).size(48.dp),
+                modifier = Modifier.align(Alignment.BottomEnd).padding(end = 22.dp, bottom = 106.dp).size(48.dp),
                 containerColor = pal.accent, contentColor = Color.White
             ) { Icon(Icons.Filled.ArrowUpward, contentDescription = "回到顶部") }
         }
