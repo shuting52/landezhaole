@@ -1,9 +1,9 @@
 package com.landezhaole.app
 
-import android.content.Intent
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.widget.Toast
 import android.widget.VideoView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -16,18 +16,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -36,48 +37,34 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Savings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.SystemUpdate
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Payment
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.Switch
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.PathEffect
-import android.widget.Toast
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -85,17 +72,139 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.landezhaole.app.ui.RemoteVersion
-import com.landezhaole.app.ui.ThemeAppearanceScreen
 import com.landezhaole.app.ui.ThemeMode
+import com.landezhaole.app.ui.UiZoom
 import com.landezhaole.app.ui.UpdateDialog
+import com.landezhaole.app.ui.cleanupUpdateLeftovers
 import com.landezhaole.app.ui.currentVersionCode
+import com.landezhaole.app.ui.fetchCloudCategories
 import com.landezhaole.app.ui.fetchRemoteVersion
+import org.json.JSONArray
 import org.json.JSONObject
 
-// 美女栏视频源：待接入。把 mp4 直链填进来即可播放（连续开关控制循环，切换视频切下一个）。
+// 美女视频源：待接入。把 mp4 直链填进来即可播放（连续开关控制循环，切换视频切下一个）。
 val VIDEO_URLS: List<String> = emptyList()
+
+// 独立页（不占 Tab）：省钱小助手 / 美女视频
+enum class ShopSubPage { None, Save, Video }
+
+// 应用下载记录：本次重做之后完成的才记，之前没有的不编造
+data class DownloadRecord(val label: String, val time: Long)
+
+fun loadFavUrls(ctx: Context): Set<String> {
+    return try {
+        ctx.getSharedPreferences("landezhaole-favs", Context.MODE_PRIVATE)
+            .getString("urls", "")?.split("\n")?.filter { it.isNotBlank() }?.toSet() ?: emptySet()
+    } catch (e: Exception) {
+        emptySet()
+    }
+}
+
+fun saveFavUrls(ctx: Context, urls: Set<String>) {
+    try {
+        ctx.getSharedPreferences("landezhaole-favs", Context.MODE_PRIVATE)
+            .edit().putString("urls", urls.joinToString("\n")).apply()
+    } catch (e: Exception) {
+    }
+}
+
+fun loadDownloadRecords(ctx: Context): List<DownloadRecord> {
+    return try {
+        val raw = ctx.getSharedPreferences("landezhaole-downloads", Context.MODE_PRIVATE)
+            .getString("records", "") ?: ""
+        if (raw.isBlank()) return emptyList()
+        val arr = JSONArray(raw)
+        val out = mutableListOf<DownloadRecord>()
+        for (i in 0 until arr.length()) {
+            val o = arr.getJSONObject(i)
+            out.add(DownloadRecord(o.optString("n"), o.optLong("t")))
+        }
+        out.sortedByDescending { it.time }
+    } catch (e: Exception) {
+        emptyList()
+    }
+}
+
+fun saveDownloadRecords(ctx: Context, list: List<DownloadRecord>) {
+    try {
+        val arr = JSONArray()
+        for (r in list) {
+            val o = JSONObject()
+            o.put("n", r.label)
+            o.put("t", r.time)
+            arr.put(o)
+        }
+        ctx.getSharedPreferences("landezhaole-downloads", Context.MODE_PRIVATE)
+            .edit().putString("records", arr.toString()).apply()
+    } catch (e: Exception) {
+    }
+}
+
+@Composable
+fun SubPageWrapper(
+    pal: AppPalette,
+    title: String,
+    onBack: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier.clickable { onBack() }.padding(horizontal = 12.dp, vertical = 8.dp)
+            ) {
+                Text("‹ 返回", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
+            }
+            Text(title, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
+        }
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun RowScope.ShopNavItem(
+    emoji: String,
+    label: String,
+    selected: Boolean,
+    badge: Int?,
+    onClick: () -> Unit
+) {
+    NavigationBarItem(
+        selected = selected,
+        onClick = onClick,
+        icon = {
+            Box(contentAlignment = Alignment.Center) {
+                Text(emoji, fontSize = 22.sp)
+                if (badge != null) {
+                    Box(
+                        modifier = Modifier.align(Alignment.TopEnd).offset(x = 10.dp, y = (-6).dp)
+                            .size(16.dp).clip(CircleShape).background(SHOP_RED),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            if (badge > 99) "99+" else badge.toString(),
+                            color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        },
+        label = { Text(label) },
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = SHOP_RED,
+            selectedTextColor = SHOP_RED,
+            indicatorColor = SHOP_RED.copy(alpha = 0.12f)
+        )
+    )
+}
 
 @Composable
 fun AppShell(
@@ -107,68 +216,255 @@ fun AppShell(
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit
 ) {
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
     var tab by remember { mutableStateOf(0) }
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
-        Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars)) {
-            when (tab) {
-                0 -> HomeScreen(pal = pal, uiScale = uiScale)
-                1 -> SaveScreen(pal = pal)
-                2 -> VideoScreen(pal = pal, onBackHome = { tab = 0 })
-                3 -> MineScreen(
-                    pal = pal, dark = dark, onToggleDark = onToggleDark,
-                    themeMode = themeMode, onThemeModeChange = onThemeModeChange,
-                    uiScale = uiScale, onUiScaleChange = onUiScaleChange
-                )
+    var subPage by remember { mutableStateOf(ShopSubPage.None) }
+    var catJump by remember { mutableStateOf<String?>(null) }
+    var homeEngineJump by remember { mutableStateOf<String?>(null) }
+    var categories by remember { mutableStateOf(loadCategories(ctx)) }
+    // 今日点击（landezhaole-clicks + todayKey，与旧版一致）
+    val clicks = remember { mutableStateMapOf<String, Int>() }
+    val clicksPrefs = remember { ctx.getSharedPreferences("landezhaole-clicks", Context.MODE_PRIVATE) }
+    remember {
+        try {
+            val raw = clicksPrefs.getString(todayKey(), "") ?: ""
+            if (raw.isNotEmpty()) {
+                val obj = JSONObject(raw)
+                val keys = obj.keys()
+                while (keys.hasNext()) {
+                    val k = keys.next()
+                    clicks[k] = obj.optInt(k)
+                }
+            }
+        } catch (e: Exception) {
+        }
+        true
+    }
+    fun recordClick(url: String) {
+        val n = (clicks[url] ?: 0) + 1
+        clicks[url] = n
+        try {
+            val obj = JSONObject()
+            for ((k, v) in clicks) obj.put(k, v)
+            clicksPrefs.edit().putString(todayKey(), obj.toString()).apply()
+        } catch (e: Exception) {
+        }
+    }
+    // 收藏（新键 landezhaole-favs，存 URL 集合）
+    var favs by remember { mutableStateOf(loadFavUrls(ctx)) }
+    val toggleFav: (String) -> Boolean = { url ->
+        val next = if (url in favs) favs - url else favs + url
+        favs = next
+        saveFavUrls(ctx, next)
+        url in next
+    }
+    // 应用下载记录（本次重做之后完成才记）
+    var downloads by remember { mutableStateOf(loadDownloadRecords(ctx)) }
+    val recordDownload: (String) -> Unit = { label ->
+        val next = listOf(DownloadRecord(label, System.currentTimeMillis())) + downloads
+        downloads = next
+        saveDownloadRecords(ctx, next)
+    }
+    // toast
+    var toastMsg by remember { mutableStateOf("") }
+    var showToast by remember { mutableStateOf(false) }
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(1800)
+            showToast = false
+        }
+    }
+    val showToastMsg: (String) -> Unit = { m ->
+        toastMsg = m
+        showToast = true
+    }
+    // NEW 提示
+    var newToast by remember { mutableStateOf<List<SiteCard>?>(null) }
+    var newToastChecked by remember { mutableStateOf(false) }
+    fun seenNewUrls(): Set<String> {
+        val raw = ctx.getSharedPreferences("landezhaole-seen-new", Context.MODE_PRIVATE)
+            .getString("seen", "") ?: ""
+        return raw.split("\n").filter { it.isNotBlank() }.toSet()
+    }
+    fun markNewSeen(urls: List<String>) {
+        val merged = (seenNewUrls() + urls).joinToString("\n")
+        ctx.getSharedPreferences("landezhaole-seen-new", Context.MODE_PRIVATE)
+            .edit().putString("seen", merged).apply()
+    }
+    fun dismissNewToast() {
+        newToast?.let { markNewSeen(it.map { c -> c.u }) }
+        newToast = null
+    }
+    // 更新检查
+    var pendingUpdate by remember { mutableStateOf<RemoteVersion?>(null) }
+    val checkUpdate: () -> Unit = {
+        scope.launch {
+            val remote = fetchRemoteVersion()
+            when {
+                remote == null -> Toast.makeText(ctx, "检查失败，请稍后再试", Toast.LENGTH_SHORT).show()
+                remote.versionCode > currentVersionCode(ctx) -> pendingUpdate = remote
+                else -> Toast.makeText(ctx, "已是最新版本", Toast.LENGTH_SHORT).show()
             }
         }
-        NavigationBar(
-            containerColor = pal.barBackground,
-            contentColor = pal.foreground
-        ) {
-            NavigationBarItem(
-                selected = tab == 0,
-                onClick = { tab = 0 },
-                icon = { Icon(Icons.Filled.Home, contentDescription = "首页") },
-                label = { Text("首页") },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = pal.accent,
-                    selectedTextColor = pal.accent,
-                    indicatorColor = pal.accentSoft
-                )
-            )
-            NavigationBarItem(
-                selected = tab == 1,
-                onClick = { tab = 1 },
-                icon = { Icon(Icons.Filled.Savings, contentDescription = "省钱") },
-                label = { Text("省钱") },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = pal.accent,
-                    selectedTextColor = pal.accent,
-                    indicatorColor = pal.accentSoft
-                )
-            )
-            NavigationBarItem(
-                selected = tab == 2,
-                onClick = { tab = 2 },
-                icon = { Icon(Icons.Filled.Movie, contentDescription = "美女") },
-                label = { Text("美女") },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = pal.accent,
-                    selectedTextColor = pal.accent,
-                    indicatorColor = pal.accentSoft
-                )
-            )
-            NavigationBarItem(
-                selected = tab == 3,
-                onClick = { tab = 3 },
-                icon = { Icon(Icons.Filled.Person, contentDescription = "我的") },
-                label = { Text("我的") },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = pal.accent,
-                    selectedTextColor = pal.accent,
-                    indicatorColor = pal.accentSoft
-                )
-            )
+    }
+    // 启动：清更新残留；版本检查与数据拉取并行
+    LaunchedEffect(Unit) {
+        cleanupUpdateLeftovers(ctx)
+        val versionJob = async { fetchRemoteVersion() }
+        fetchCloudCategories()?.let { categories = it }
+        if (!newToastChecked) {
+            newToastChecked = true
+            val seen = seenNewUrls()
+            val news = categories.flatMap { it.cards }
+                .filter { it.b.contains("NEW", ignoreCase = true) && it.u !in seen }
+            if (news.isNotEmpty()) newToast = news
+        }
+        val remote = versionJob.await()
+        if (remote != null && remote.versionCode > currentVersionCode(ctx)) {
+            pendingUpdate = remote
+        }
+    }
+    val total = categories.sumOf { it.cards.size }
+    val todayClicks = clicks.values.sum()
+    val versionName = try {
+        ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: ""
+    } catch (e: Exception) {
+        ""
+    }
+    val onOpenCard: (SiteCard) -> Unit = { c ->
+        recordClick(c.u)
+        openUrl(ctx, c.u)
+    }
+    val goTab: (Int) -> Unit = { t ->
+        tab = t
+        subPage = ShopSubPage.None
+    }
+
+    Box(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars)) {
+                UiZoom(scale = uiScale) {
+                    when {
+                        subPage == ShopSubPage.Save -> SubPageWrapper(pal, "省钱小助手", { subPage = ShopSubPage.None }) {
+                            SaveScreen(pal = pal)
+                        }
+                        subPage == ShopSubPage.Video -> SubPageWrapper(pal, "美女视频", { subPage = ShopSubPage.None }) {
+                            VideoScreen(pal = pal, onBackHome = { subPage = ShopSubPage.None })
+                        }
+                        tab == 0 -> ShopHome(
+                            pal = pal, categories = categories, favs = favs,
+                            onToggleFav = toggleFav, onOpenCard = onOpenCard,
+                            onOpenCategory = { id ->
+                                if (id == null) {
+                                    tab = 1
+                                } else {
+                                    catJump = id
+                                    tab = 1
+                                }
+                            },
+                            onOpenSave = { subPage = ShopSubPage.Save },
+                            engineJump = homeEngineJump,
+                            onEngineJumpConsumed = { homeEngineJump = null },
+                            onRecordDownload = recordDownload,
+                            showToast = showToastMsg
+                        )
+                        tab == 1 -> ShopCategory(
+                            pal = pal, categories = categories, favs = favs,
+                            onToggleFav = toggleFav, onOpenCard = onOpenCard,
+                            catJump = catJump, onCatJumpConsumed = { catJump = null },
+                            showToast = showToastMsg
+                        )
+                        tab == 2 -> ShopFavorites(
+                            pal = pal, categories = categories, favs = favs,
+                            onToggleFav = toggleFav, onOpenCard = onOpenCard,
+                            showToast = showToastMsg
+                        )
+                        tab == 3 -> ShopMessages(
+                            pal = pal, categories = categories, downloads = downloads,
+                            versionName = versionName, onCheckUpdate = checkUpdate,
+                            showToast = showToastMsg
+                        )
+                        else -> ShopMine(
+                            pal = pal, dark = dark, onToggleDark = onToggleDark,
+                            themeMode = themeMode, onThemeModeChange = onThemeModeChange,
+                            uiScale = uiScale, onUiScaleChange = onUiScaleChange,
+                            todayClicks = todayClicks, favCount = favs.size,
+                            totalSites = total, catCount = categories.size,
+                            onOpenSave = { subPage = ShopSubPage.Save },
+                            onOpenVideo = { subPage = ShopSubPage.Video },
+                            onHomeAppDownload = { homeEngineJump = "appdl"; tab = 0 },
+                            onCheckUpdate = checkUpdate, versionName = versionName,
+                            showToast = showToastMsg
+                        )
+                    }
+                }
+            }
+            NavigationBar(
+                containerColor = pal.barBackground,
+                contentColor = pal.foreground
+            ) {
+                ShopNavItem("🏠", "首页", tab == 0, null) { goTab(0) }
+                ShopNavItem("🗂️", "分类", tab == 1, null) { goTab(1) }
+                ShopNavItem("🛒", "我的收藏", tab == 2, if (favs.isNotEmpty()) favs.size else null) { goTab(2) }
+                ShopNavItem("💬", "消息", tab == 3, null) { goTab(3) }
+                ShopNavItem("👤", "我的", tab == 4, null) { goTab(4) }
+            }
+        }
+        if (pendingUpdate != null) {
+            UpdateDialog(version = pendingUpdate!!, pal = pal, onDismiss = { pendingUpdate = null })
+        }
+        if (newToast != null) {
+            val news = newToast!!
+            Box(
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                    .shadow(6.dp, RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(pal.barBackground)
+                    .border(1.dp, Color(0xFF5EEAD4), RoundedCornerShape(12.dp))
+                    .clickable {
+                        openUrl(ctx, news[0].u)
+                        dismissNewToast()
+                    }
+            ) {
+                Row {
+                    Box(modifier = Modifier.width(4.dp).fillMaxHeight().background(Color(0xFF5EEAD4)))
+                    Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                        listOf(Color(0xFF14B8A6), Color(0xFF0EA5E9))
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) { Text("新", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("发现 ${news.size} 个新站点", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
+                            Text(
+                                news.joinToString("、") { it.t }, fontSize = 12.sp, color = pal.secondary,
+                                maxLines = 2, overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Box(
+                            modifier = Modifier.size(28.dp).clickable { dismissNewToast() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("×", fontSize = 16.sp, color = pal.secondary)
+                        }
+                    }
+                }
+            }
+        }
+        if (showToast) {
+            Box(
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp)
+                    .clip(RoundedCornerShape(16.dp)).background(Color(0xFF2B2B2B))
+                    .padding(horizontal = 22.dp, vertical = 10.dp)
+            ) {
+                Text(toastMsg, color = Color(0xFFFFFDF8), fontSize = 14.sp)
+            }
         }
     }
 }
@@ -211,7 +507,6 @@ fun SaveScreen(pal: AppPalette) {
                             color = if (selected) Color(0xFF283593) else pal.foreground
                         )
                     }
-                    // 网站 .tab-line：选中 tab 下方一条同宽白带，把 tab 和筛选卡连成一个文件夹形
                     Box(
                         modifier = Modifier.fillMaxWidth().height(12.dp)
                             .background(if (selected) pal.barBackground else Color.Transparent)
@@ -481,193 +776,6 @@ fun VideoButton(
     }
 }
 
-@Composable
-fun MineScreen(
-    pal: AppPalette,
-    dark: Boolean,
-    onToggleDark: () -> Unit,
-    themeMode: ThemeMode,
-    onThemeModeChange: (ThemeMode) -> Unit,
-    uiScale: Float,
-    onUiScaleChange: (Float) -> Unit
-) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var showTheme by remember { mutableStateOf(false) }
-    var pendingUpdate by remember { mutableStateOf<RemoteVersion?>(null) }
-    var qrTitle by remember { mutableStateOf<String?>(null) }
-    var qrAsset by remember { mutableStateOf("") }
-    var qrHint by remember { mutableStateOf("") }
-    var showAbout by remember { mutableStateOf(false) }
-    if (showTheme) {
-        ThemeAppearanceScreen(pal = pal, mode = themeMode, onModeChange = onThemeModeChange, uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false })
-        return
-    }
-    fun checkUpdate() {
-        scope.launch {
-            val remote = fetchRemoteVersion()
-            when {
-                remote == null -> Toast.makeText(ctx, "检查失败，请稍后再试", Toast.LENGTH_SHORT).show()
-                remote.versionCode > currentVersionCode(ctx) -> pendingUpdate = remote
-                else -> Toast.makeText(ctx, "已是最新版本", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-    val verNameText = try {
-        val v = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName
-        if (v.isNullOrEmpty()) null else "当前 $v"
-    } catch (e: Exception) {
-        null
-    }
-    val modeName = when (themeMode) {
-        ThemeMode.SYSTEM -> "跟随系统"
-        ThemeMode.LIGHT -> "浅色"
-        ThemeMode.DARK -> "深色"
-    }
-    Column(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
-        Box(
-            modifier = Modifier.fillMaxWidth().height(180.dp)
-                .background(Color(0xFF5B67A6)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("我的", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        }
-        Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp)) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(pal.barBackground)
-                    .border(1.dp, pal.line, RoundedCornerShape(12.dp))
-            ) {
-                Column {
-                    MineRow(
-                        icon = Icons.Filled.Person,
-                        iconTint = Color(0xFF7C6CF0),
-                        label = "关注我们",
-                        pal = pal,
-                        onClick = { openUrl(ctx, "https://landezhaole.pages.dev/") }
-                    )
-                    Divider(color = pal.line)
-                    MineRow(
-                        icon = Icons.Filled.Share,
-                        iconTint = Color(0xFFF5A623),
-                        label = "分享给朋友",
-                        pal = pal,
-                        onClick = {
-                            try {
-                                val intent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, "懒得找了 · 免费资源导航 https://landezhaole.pages.dev/")
-                                }
-                                ctx.startActivity(Intent.createChooser(intent, "分享给朋友"))
-                            } catch (e: Exception) {
-                            }
-                        }
-                    )
-                    Divider(color = pal.line)
-                    MineRow(
-                        icon = Icons.Filled.Group,
-                        iconTint = Color(0xFF5B67F0),
-                        label = "添加粉丝群",
-                        pal = pal,
-                        onClick = { openUrl(ctx, "https://qm.qq.com/q/vsaFRiPuO4") }
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("支持与关于", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.secondary)
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(pal.barBackground)
-                    .border(1.dp, pal.line, RoundedCornerShape(12.dp))
-            ) {
-                Column {
-                    MineRow(
-                        icon = Icons.Filled.Chat,
-                        iconTint = Color(0xFF07C160),
-                        label = "微信打赏",
-                        pal = pal,
-                        onClick = { qrTitle = "微信打赏"; qrAsset = "qr-wechat.jpg"; qrHint = "微信扫一扫，支持一下" }
-                    )
-                    Divider(color = pal.line)
-                    MineRow(
-                        icon = Icons.Filled.AccountCircle,
-                        iconTint = Color(0xFF12B7F5),
-                        label = "QQ好友",
-                        pal = pal,
-                        onClick = { qrTitle = "QQ好友"; qrAsset = "qr-qq.jpg"; qrHint = "QQ扫一扫，加我好友" }
-                    )
-                    Divider(color = pal.line)
-                    MineRow(
-                        icon = Icons.Filled.Payment,
-                        iconTint = Color(0xFF1677FF),
-                        label = "支付宝打赏",
-                        pal = pal,
-                        onClick = { qrTitle = "支付宝打赏"; qrAsset = "qr-alipay.jpg"; qrHint = "支付宝扫一扫，支持一下" }
-                    )
-                    Divider(color = pal.line)
-                    MineRow(
-                        icon = Icons.Filled.Info,
-                        iconTint = pal.secondary,
-                        label = "关于网站",
-                        pal = pal,
-                        onClick = { showAbout = true }
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("设置", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.secondary)
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(pal.barBackground)
-                    .border(1.dp, pal.line, RoundedCornerShape(12.dp))
-            ) {
-                Column {
-                    MineRow(
-                        icon = Icons.Filled.SystemUpdate,
-                        iconTint = pal.accent,
-                        label = "检查更新",
-                        trailing = verNameText,
-                        pal = pal,
-                        onClick = { checkUpdate() }
-                    )
-                    Divider(color = pal.line)
-                    MineSwitchRow(
-                        icon = if (dark) Icons.Filled.LightMode else Icons.Filled.DarkMode,
-                        iconTint = Color(0xFF5B67A6),
-                        label = "深色模式",
-                        checked = dark,
-                        pal = pal,
-                        onCheckedChange = { onToggleDark() }
-                    )
-                    Divider(color = pal.line)
-                    MineRow(
-                        icon = Icons.Filled.Palette,
-                        iconTint = Color(0xFFEC4899),
-                        label = "主题",
-                        trailing = modeName,
-                        pal = pal,
-                        onClick = { showTheme = true }
-                    )
-                }
-            }
-        }
-    }
-    if (pendingUpdate != null) {
-        UpdateDialog(version = pendingUpdate!!, pal = pal, onDismiss = { pendingUpdate = null })
-    }
-    if (qrTitle != null) {
-        QrDialog(title = qrTitle!!, asset = qrAsset, hint = qrHint, onDismiss = { qrTitle = null })
-    }
-    if (showAbout) {
-        AboutDialog(onDismiss = { showAbout = false })
-    }
-}
-
 fun loadAssetImageBitmap(ctx: Context, name: String): ImageBitmap? {
     return try {
         ctx.assets.open(name).use { BitmapFactory.decodeStream(it)?.asImageBitmap() }
@@ -743,26 +851,5 @@ fun MineRow(
             Spacer(modifier = Modifier.width(8.dp))
         }
         Text(">", fontSize = 18.sp, color = pal.secondary)
-    }
-}
-
-@Composable
-fun MineSwitchRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    iconTint: Color,
-    label: String,
-    checked: Boolean,
-    pal: AppPalette,
-    onCheckedChange: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().clickable { onCheckedChange() }
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(26.dp))
-        Spacer(modifier = Modifier.width(14.dp))
-        Text(label, fontSize = 16.sp, color = pal.foreground, modifier = Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = { onCheckedChange() })
     }
 }
