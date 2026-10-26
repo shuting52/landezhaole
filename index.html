@@ -248,19 +248,34 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .topbar .optic-switch{font-size:4px;vertical-align:middle;flex:none}
 
 #topUtils .u-hint{display:none}
-@media(min-width:1361px) and (hover:hover){
-#topUtils{width:56px;overflow:visible}
-#topUtils a{width:56px;overflow:hidden;border-radius:12px;transition:width .45s cubic-bezier(.85,0,.15,1),background .3s,box-shadow .3s}
-#topUtils a:hover{width:216px;background:var(--card);box-shadow:0 8px 24px rgba(0,0,0,.18);transform:none;color:var(--text);z-index:2;flex-direction:row;align-items:center;gap:10px;padding:8px 10px}
-#topUtils a:hover .uicon{transform:scale(1.08)}
-#topUtils .uicon{transition:transform .3s}
-#topUtils .u-texts{display:contents}
-#topUtils .u-label{display:block}
-#topUtils .u-hint{display:none}
-#topUtils a:hover .u-texts{display:flex;flex-direction:column;gap:2px;min-width:0}
-#topUtils a:hover .u-label{font-size:13px;font-weight:800;white-space:nowrap}
-#topUtils a:hover .u-hint{display:block;font-size:11px;color:var(--muted);white-space:nowrap;opacity:0;animation:uHintIn .3s ease .15s forwards}
-@keyframes uHintIn{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:translateX(0)}}
+
+#topUtils.fan{display:block;width:56px;height:56px;overflow:visible}
+#topUtils .fan-main{position:relative;z-index:100;width:56px;height:56px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:0 6px 16px rgba(0,0,0,.20);cursor:pointer;display:flex;align-items:center;justify-content:center}
+#topUtils .fan-plus{font-size:30px;font-weight:800;line-height:1;color:var(--green);transition:transform .3s}
+#topUtils.fan:hover .fan-plus,#topUtils.fan.fan-open .fan-plus{transform:rotate(45deg)}
+#topUtils .fan-items{position:absolute;left:0;top:0;width:56px;height:56px;pointer-events:none}
+#topUtils.fan .u-texts{display:none}
+#topUtils.fan a{position:absolute;left:4px;top:4px;width:48px;height:48px;border-radius:50%;background:var(--card);border:1px solid var(--line);box-shadow:0 6px 16px rgba(0,0,0,.20);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.5);pointer-events:none;transition:transform .3s,opacity .3s,box-shadow .3s}
+#topUtils.fan a .uicon{width:36px;height:36px}
+#topUtils.fan:hover a,#topUtils.fan.fan-open a{opacity:1;transform:scale(1);pointer-events:auto;box-shadow:5px 5px 12px #cacaca,-5px -5px 12px #ffffff}
+#topUtils.fan a:nth-child(1){transition-delay:0s}
+#topUtils.fan a:nth-child(2){transition-delay:.05s}
+#topUtils.fan a:nth-child(3){transition-delay:.1s}
+#topUtils.fan a:nth-child(4){transition-delay:.15s}
+#topUtils.fan a:nth-child(5){transition-delay:.2s}
+#topUtils.fan:hover a:nth-child(1),#topUtils.fan.fan-open a:nth-child(1){transform:translate(60px,-112px)}
+#topUtils.fan:hover a:nth-child(2),#topUtils.fan.fan-open a:nth-child(2){transform:translate(92px,-56px)}
+#topUtils.fan:hover a:nth-child(3),#topUtils.fan.fan-open a:nth-child(3){transform:translate(100px,0px)}
+#topUtils.fan:hover a:nth-child(4),#topUtils.fan.fan-open a:nth-child(4){transform:translate(92px,56px)}
+#topUtils.fan:hover a:nth-child(5),#topUtils.fan.fan-open a:nth-child(5){transform:translate(60px,112px)}
+#topUtils.fan a::after{content:attr(data-label);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);background:#1f2937;color:#fff;font-size:12px;padding:4px 10px;border-radius:999px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;z-index:5}
+#topUtils.fan a:hover::after{opacity:1}
+@media(max-width:1360px){
+#topUtils.fan:hover a:nth-child(1),#topUtils.fan.fan-open a:nth-child(1){transform:translate(64px,-56px)}
+#topUtils.fan:hover a:nth-child(2),#topUtils.fan.fan-open a:nth-child(2){transform:translate(96px,-112px)}
+#topUtils.fan:hover a:nth-child(3),#topUtils.fan.fan-open a:nth-child(3){transform:translate(104px,-168px)}
+#topUtils.fan:hover a:nth-child(4),#topUtils.fan.fan-open a:nth-child(4){transform:translate(96px,-224px)}
+#topUtils.fan:hover a:nth-child(5),#topUtils.fan.fan-open a:nth-child(5){transform:translate(64px,-280px)}
 }
 </style>
 </head>
@@ -291,7 +306,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div>本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈</div>
 <div style="margin-top:6px">© 2026 懒得找了 · <a href="javascript:void(0)" onclick="if(window.siteVersionData)showUpdateModal(window.siteVersionData,false)" style="color:var(--green)">查看更新日志</a></div>
 </div></footer>
-<nav class="top-utils" id="topUtils"><div class="util-items"><a style="animation-delay:240ms" style="animation-delay:180ms" style="animation-delay:120ms" style="animation-delay:60ms" style="animation-delay:0ms" onclick="showUtilAbout()"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 2.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5L12 3z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="u-texts"><span class="u-label">关于网站</span><span class="u-hint">了解本站收录与更新</span></span></a><a onclick="showUtilQR('微信打赏','qr-wechat.jpg','微信扫一扫，支持一下')"><span class="uicon brand-wechat"><img src="icons/wechat-logo.png" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10" cy="9" rx="7" ry="5" fill="#07C160"/><polygon points="6,12.5 4,16.5 8.5,13.5" fill="#07C160"/><circle cx="8" cy="8.5" r="1.2" fill="#fff"/><circle cx="12" cy="8.5" r="1.2" fill="#fff"/><ellipse cx="17" cy="15" rx="4.5" ry="3.2" fill="#07C160"/><polygon points="15,17 14,20 17.5,17.5" fill="#07C160"/></svg></span><span class="u-texts"><span class="u-label">微信打赏</span><span class="u-hint">微信扫码，支持一下</span></span></a><a onclick="showUtilQR('QQ好友','qr-qq.jpg','QQ扫一扫，加我好友')"><span class="uicon brand-qq"><img src="icons/qq-penguin.svg" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="7" fill="#12B7F5"/><ellipse cx="12" cy="15" rx="3.5" ry="4.5" fill="#fff"/><circle cx="10" cy="9" r="1.1" fill="#111"/><circle cx="14" cy="9" r="1.1" fill="#111"/><polygon points="11,10.5 13,10.5 12,12" fill="#FF9F1C"/><ellipse cx="9" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/><ellipse cx="15" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/></svg></span><span class="u-texts"><span class="u-label">QQ好友</span><span class="u-hint">QQ扫码，加我好友</span></span></a><a onclick="showUtilQR('支付宝打赏','qr-alipay.jpg','支付宝扫一扫，支持一下')"><span class="uicon brand-alipay"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1677FF"/><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" stroke="none" font-family="PingFang SC, Microsoft YaHei, sans-serif">支</text></svg></span><span class="u-texts"><span class="u-label">支付宝打赏</span><span class="u-hint">支付宝扫码，支持一下</span></span></a><a href="https://qm.qq.com/q/vsaFRiPuO4" target="_blank" rel="noopener" title="QQ群 836869262，点此直接跳转加群"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 19.5c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.8"/><path d="M15.8 14.8c2.6.4 4.2 1.9 4.7 4.7"/></svg></span><span class="u-texts"><span class="u-label">最新Q群</span><span class="u-hint">QQ群 836869262，点此加群</span></span></a></div></nav>
+<nav class="top-utils fan" id="topUtils"><button class="fan-main" id="fanMain" title="工具菜单" aria-label="工具菜单"><span class="fan-plus">＋</span></button><div class="fan-items"><a style="animation-delay:240ms" style="animation-delay:180ms" style="animation-delay:120ms" style="animation-delay:60ms" style="animation-delay:0ms" onclick="showUtilAbout()" data-label="关于网站"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 2.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5L12 3z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="u-texts"><span class="u-label">关于网站</span><span class="u-hint">了解本站收录与更新</span></span></a><a onclick="showUtilQR('微信打赏','qr-wechat.jpg','微信扫一扫，支持一下')" data-label="微信打赏"><span class="uicon brand-wechat"><img src="icons/wechat-logo.png" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10" cy="9" rx="7" ry="5" fill="#07C160"/><polygon points="6,12.5 4,16.5 8.5,13.5" fill="#07C160"/><circle cx="8" cy="8.5" r="1.2" fill="#fff"/><circle cx="12" cy="8.5" r="1.2" fill="#fff"/><ellipse cx="17" cy="15" rx="4.5" ry="3.2" fill="#07C160"/><polygon points="15,17 14,20 17.5,17.5" fill="#07C160"/></svg></span><span class="u-texts"><span class="u-label">微信打赏</span><span class="u-hint">微信扫码，支持一下</span></span></a><a onclick="showUtilQR('QQ好友','qr-qq.jpg','QQ扫一扫，加我好友')" data-label="QQ好友"><span class="uicon brand-qq"><img src="icons/qq-penguin.svg" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="7" fill="#12B7F5"/><ellipse cx="12" cy="15" rx="3.5" ry="4.5" fill="#fff"/><circle cx="10" cy="9" r="1.1" fill="#111"/><circle cx="14" cy="9" r="1.1" fill="#111"/><polygon points="11,10.5 13,10.5 12,12" fill="#FF9F1C"/><ellipse cx="9" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/><ellipse cx="15" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/></svg></span><span class="u-texts"><span class="u-label">QQ好友</span><span class="u-hint">QQ扫码，加我好友</span></span></a><a onclick="showUtilQR('支付宝打赏','qr-alipay.jpg','支付宝扫一扫，支持一下')" data-label="支付宝打赏"><span class="uicon brand-alipay"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1677FF"/><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" stroke="none" font-family="PingFang SC, Microsoft YaHei, sans-serif">支</text></svg></span><span class="u-texts"><span class="u-label">支付宝打赏</span><span class="u-hint">支付宝扫码，支持一下</span></span></a><a href="https://qm.qq.com/q/vsaFRiPuO4" target="_blank" data-label="最新Q群" rel="noopener" title="QQ群 836869262，点此直接跳转加群"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 19.5c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.8"/><path d="M15.8 14.8c2.6.4 4.2 1.9 4.7 4.7"/></svg></span><span class="u-texts"><span class="u-label">最新Q群</span><span class="u-hint">QQ群 836869262，点此加群</span></span></a></div></nav>
 <div id="sideTools">
 <button type="button" id="sideTopBtn" title="回到顶部">↑</button>
 <button type="button" id="sideShareBtn" title="分享本站"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
@@ -659,6 +674,10 @@ const sw=document.getElementById('opticTheme');
 const saved=localStorage.getItem('landezhaole-theme');
 if(saved){document.documentElement.dataset.theme=saved;sw.checked=saved==='dark';}
 sw.onchange=()=>{const dark=sw.checked;document.documentElement.dataset.theme=dark?'dark':'light';localStorage.setItem('landezhaole-theme',document.documentElement.dataset.theme);};
+const fanBar=document.getElementById('topUtils'),fanMain=document.getElementById('fanMain');
+if(fanBar&&fanMain){fanMain.onclick=(e)=>{e.stopPropagation();fanBar.classList.toggle('fan-open');};
+fanBar.querySelectorAll('.fan-items a').forEach(a=>a.addEventListener('click',()=>fanBar.classList.remove('fan-open')));
+document.addEventListener('click',()=>fanBar.classList.remove('fan-open'));}
 function showSideToast(msg){
  const toast=document.getElementById('toastNotify');if(!toast)return;
  toast.onclick=function(){};
