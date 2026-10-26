@@ -232,8 +232,10 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div style="margin-top:6px">© 2026 懒得找了 · <a href="javascript:void(0)" onclick="if(window.siteVersionData)showUpdateModal(window.siteVersionData,false)" style="color:var(--green)">查看更新日志</a></div>
 </div></footer>
 <div id="sideTools">
+<button type="button" id="sideTopBtn" title="回到顶部">↑</button>
 <button type="button" id="sideShareBtn" title="分享本站"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
 <a id="sideJumpBtn" href="sq.html" title="省钱小助手" style="font-size:20px;font-weight:800;color:var(--green)">省</a>
+<button type="button" id="sideBottomBtn" title="直达底部">↓</button>
 </div>
 
 <div class="share-overlay" id="shareOverlay"><div class="share-dialog"><div class="share-title">耶！复制成功~</div><div class="share-body">你可以分享给好友，或发布到小红书、豆瓣、微博等平台，让他们与你一起踏上「不找了」。</div><div class="share-dots"><span style="background:#ef4444"></span><span style="background:#1f2937"></span><span style="background:#ec4899"></span><span style="background:#22c55e"></span><span style="background:#14b8a6"></span></div><div class="actions"><button id="shareCloseBtn">知道了</button></div></div></div>
@@ -589,6 +591,8 @@ document.getElementById('sideShareBtn').onclick=async()=>{
  if(ok){ document.getElementById('shareOverlay').classList.add('show'); }
  else{ showSideToast('复制失败，请手动复制地址栏链接'); }
 };
+document.getElementById('sideTopBtn').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+document.getElementById('sideBottomBtn').onclick=()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'});
 document.getElementById('shareCloseBtn').onclick=()=>document.getElementById('shareOverlay').classList.remove('show');
 document.getElementById('shareOverlay').onclick=(e)=>{ if(e.target.id==='shareOverlay')e.target.classList.remove('show'); };
 function todayClickKey(){return 'landezhaole-clicks-'+new Date().toLocaleDateString('en-CA');}
