@@ -73,6 +73,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.landezhaole.app.ui.DoodleUpdateDialog
+import com.landezhaole.app.ui.ThemeAppearanceScreen
+import com.landezhaole.app.ui.ThemeMode
+import com.landezhaole.app.ui.UiZoom
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -282,7 +285,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var dark by remember { mutableStateOf(isSystemInDarkTheme()) }
+            val themeCtx = LocalContext.current
+            val themePrefs = remember { themeCtx.getSharedPreferences("landezhaole-theme", Context.MODE_PRIVATE) }
+            var themeMode by remember { mutableStateOf(runCatching { ThemeMode.valueOf(themePrefs.getString("mode", "SYSTEM") ?: "SYSTEM") }.getOrDefault(ThemeMode.SYSTEM)) }
+            var uiScale by remember { mutableStateOf(themePrefs.getFloat("scale", 1f)) }
+            val dark = when (themeMode) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+            }
             val pal = if (dark) DarkPalette else LightPalette
             MaterialTheme(
                 colorScheme = if (dark) darkColorScheme(
@@ -296,7 +307,17 @@ class MainActivity : ComponentActivity() {
                 )
             ) {
                 Surface(modifier = Modifier.fillMaxSize(), color = pal.pageBackground) {
-                    HomeScreen(pal = pal, dark = dark, onToggleDark = { dark = !dark })
+                    HomeScreen(
+                        pal = pal, dark = dark,
+                        onToggleDark = {
+                            themeMode = if (dark) ThemeMode.LIGHT else ThemeMode.DARK
+                            themePrefs.edit().putString("mode", themeMode.name).apply()
+                        },
+                        themeMode = themeMode,
+                        onThemeModeChange = { themeMode = it; themePrefs.edit().putString("mode", it.name).apply() },
+                        uiScale = uiScale,
+                        onUiScaleChange = { uiScale = it; themePrefs.edit().putFloat("scale", it).apply() }
+                    )
                 }
             }
         }
@@ -304,7 +325,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit) {
+fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit, themeMode: ThemeMode, onThemeModeChange: (ThemeMode) -> Unit, uiScale: Float, onUiScaleChange: (Float) -> Unit) {
     val ctx = LocalContext.current
     val categories = remember { loadCategories(ctx) }
     var query by remember { mutableStateOf("") }
@@ -313,6 +334,11 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit) {
     var showUpdate by remember { mutableStateOf(false) }
     var toastMsg by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
+    var showTheme by remember { mutableStateOf(false) }
+    if (showTheme) {
+        ThemeAppearanceScreen(pal = pal, mode = themeMode, onModeChange = onThemeModeChange, uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false })
+        return
+    }
     val clicks = remember { mutableStateMapOf<String, Int>() }
     val prefs = remember { ctx.getSharedPreferences("landezhaole-clicks", Context.MODE_PRIVATE) }
     remember {
@@ -364,6 +390,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit) {
         else -> categories
     }
     Box(modifier = Modifier.fillMaxSize().background(pal.pageBackground)) {
+        UiZoom(scale = uiScale) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -381,6 +408,11 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit) {
                     IconButton(onClick = onToggleDark) {
                         Icon(if (dark) Icons.Filled.LightMode else Icons.Filled.DarkMode, contentDescription = "夜间模式", tint = pal.foreground)
                     }
+                    Button(
+                        onClick = { showTheme = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = pal.subtleFill, contentColor = pal.foreground),
+                        shape = RoundedCornerShape(16.dp)
+                    ) { Text("主题", fontSize = 12.sp) }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -480,6 +512,7 @@ fun HomeScreen(pal: AppPalette, dark: Boolean, onToggleDark: () -> Unit) {
                 }
             }
             item { Spacer(modifier = Modifier.height(72.dp)) }
+        }
         }
         if (showUpdate) {
             DoodleUpdateDialog(onClose = { showUpdate = false }, onToast = { toastMsg = it; showToast = true })
