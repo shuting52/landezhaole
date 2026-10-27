@@ -75,10 +75,25 @@ button{font-family:inherit}
 .tagline{color:var(--muted);margin-top:6px}
 .stat{display:inline-block;margin-top:12px;background:var(--card);border:1px solid var(--line);color:var(--green-d);border-radius:20px;padding:4px 18px;font-size:12px;font-weight:700}
 .searchbox{max-width:680px;margin:10px auto 0;position:relative;text-align:center}
-.bulb{position:fixed;top:38px;right:0;z-index:98;display:block;text-decoration:none;cursor:pointer}
+.bulb{position:fixed;top:28px;right:14px;z-index:98;display:block;text-decoration:none;cursor:pointer}
 .bulb svg{display:block;height:120px;transform-origin:center top;animation:swing_31 1.3s ease-in-out infinite alternate;fill:#ef4444}
 @keyframes swing_31{0%{transform:rotate(18deg)}100%{transform:rotate(-18deg)}}
-@media(max-width:640px){.bulb{top:38px;right:0}.bulb svg{height:72px}}
+@media(max-width:640px){.bulb{top:28px;right:14px}.bulb svg{height:72px}}
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .5s;cursor:pointer}
+#splash.splash-hide{opacity:0;pointer-events:none}
+#splash .loader svg.inline-block{width:72px;height:72px}
+#splash .loader{margin:0}
+.splash-name{font-size:34px;font-weight:800;background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:640px){#splash .loader svg.inline-block{width:56px;height:56px}.splash-name{font-size:26px}}
+.absolute{position:absolute}
+.inline-block{display:inline-block}
+.loader{display:flex;margin:0.25em 0}
+.dash{animation:dashArray 2s ease-in-out infinite,dashOffset 2s linear infinite}
+.spin{animation:spinDashArray 2s ease-in-out infinite,spin 8s ease-in-out infinite,dashOffset 2s linear infinite;transform-origin:center}
+@keyframes dashArray{0%{stroke-dasharray:0 1 359 0}50%{stroke-dasharray:0 359 1 0}100%{stroke-dasharray:359 1 0 0}}
+@keyframes spinDashArray{0%{stroke-dasharray:270 90}50%{stroke-dasharray:0 360}100%{stroke-dasharray:250 90}}
+@keyframes dashOffset{0%{stroke-dashoffset:385}100%{stroke-dashoffset:5}}
+@keyframes spin{0%{rotate:0deg}12.5%,25%{rotate:270deg}37.5%,50%{rotate:540deg}62.5%,75%{rotate:810deg}87.5%,100%{rotate:1080deg}}
 .engines{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
 .engines button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 16px;font-size:12px;cursor:pointer}
 .engines button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
@@ -284,6 +299,39 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 </style>
 </head>
 <body>
+<script>(function(){try{var t=localStorage.getItem('landezhaole-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<div id="splash">
+<div class="loader">
+<svg height="0" width="0" viewBox="0 0 100 100" class="absolute">
+<defs xmlns="http://www.w3.org/2000/svg">
+<linearGradient gradientUnits="userSpaceOnUse" y2="2" x2="0" y1="62" x1="0" id="splashB">
+<stop stop-color="#0369a1"></stop>
+<stop stop-color="#67e8f9" offset="1.5"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" y2="0" x2="0" y1="64" x1="0" id="splashC">
+<stop stop-color="#0369a1"></stop>
+<stop stop-color="#22d3ee" offset="1"></stop>
+<animateTransform repeatCount="indefinite" keySplines=".42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1" keyTimes="0; 0.125; 0.25; 0.375; 0.5; 0.625; 0.75; 0.875; 1" dur="8s" values="0 32 32;-270 32 32;-270 32 32;-540 32 32;-540 32 32;-810 32 32;-810 32 32;-1080 32 32;-1080 32 32" type="rotate" attributeName="gradientTransform"></animateTransform>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" y2="2" x2="0" y1="62" x1="0" id="splashD">
+<stop stop-color="#38bdf8"></stop>
+<stop stop-color="#075985" offset="1.5"></stop>
+</linearGradient>
+</defs>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" width="100" height="100" class="inline-block">
+<path stroke-linejoin="round" stroke-linecap="round" stroke-width="8" stroke="url(#splashB)" d="M 20,20 L 80,20 L 80,27 L 27,27 L 27,50 L 70,50 L 70,57 L 25,57 L 25,80 L 80,80 L 80,87 L 20,87 Z" class="dash" id="E" pathLength="360"></path>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" style="--rotation-duration:0ms; --rotation-direction:normal;" viewBox="0 0 100 100" width="100" height="100" class="inline-block">
+<path stroke-linejoin="round" stroke-linecap="round" stroke-width="12" stroke="url(#splashD)" d="M 20,20 L 50,80 L 80,20" class="dash" id="v" pathLength="360"></path>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" width="100" height="100" class="inline-block">
+<path stroke-linejoin="round" stroke-linecap="round" stroke-width="11" stroke="url(#splashC)" d="M 50,15 A 35,35 0 0 1 85,50 A 35,35 0 0 1 50,85 A 35,35 0 0 1 15,50 A 35,35 0 0 1 50,15 Z" class="spin" id="o" pathLength="360"></path>
+</svg>
+</div>
+<div class="splash-name">懒得找了</div>
+</div>
+<script>(function(){var s=document.getElementById('splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;s.classList.add('splash-hide');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},600);}s.addEventListener('click',hide);if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){hide();return;}window.addEventListener('load',function(){setTimeout(hide,900);});setTimeout(hide,3000);})();</script>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 <div class="topbar"><div class="wrap">
 <span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
