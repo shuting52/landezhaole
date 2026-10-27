@@ -10,11 +10,18 @@
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#16a34a;--green-d:#15803d;--red:#dc2626;--blue:#2563eb;--orange:#f59e0b}
 [data-theme="dark"]{--bg:#0b1220;--card:#1f2937;--text:#f3f4f6;--muted:#9ca3af;--line:#374151;--green:#34d399;--green-d:#10b981;--red:#f87171;--blue:#60a5fa}
+[data-theme="neu"]{--bg:#E0E8EF;--card:#F2F6FA;--text:#1f2937;--muted:#6b7280;--line:#d5dce4;--green:#5F9DE7;--green-d:#4a86d6;--red:#dc2626;--blue:#5F9DE7}
+[data-theme="glass"]{--bg:#EDF1F6;--card:#FFFFFF;--text:#1f2937;--muted:#6b7280;--line:#dde3ec;--green:#2879F3;--green-d:#1d6ae0;--red:#dc2626;--blue:#2879F3}
+[data-theme="doodle"]{--bg:#F6F1E5;--card:#FFFDF7;--text:#1f2937;--muted:#6b7280;--line:#e8dfc9;--green:#5B8DD9;--green-d:#4a7cc4;--red:#dc2626;--blue:#5B8DD9}
+[data-theme="lever"]{--bg:#DCEBF9;--card:#FFFFFF;--text:#1f2937;--muted:#6b7280;--line:#c4d9f0;--green:#1269EF;--green-d:#0f5cd6;--red:#dc2626;--blue:#1269EF}
+[data-theme="y2k"]{--bg:#DFF3FE;--card:#FFFFFF;--text:#1f2937;--muted:#6b7280;--line:#c6e6f7;--green:#00A8E8;--green-d:#0095cf;--red:#dc2626;--blue:#00A8E8}
+[data-theme="crystal"]{--bg:#EAF2FE;--card:#FFFFFF;--text:#1f2937;--muted:#6b7280;--line:#d3e2f8;--green:#1668DC;--green-d:#1259bd;--red:#dc2626;--blue:#1668DC}
+[data-theme="glasschat"]{--bg:#100A16;--card:#241A30;--text:#FFFFFF;--muted:#B8AEC6;--line:#3A2E4A;--green:#60A5FA;--green-d:#3B82F6;--red:#f87171;--blue:#60A5FA}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
-.topbar{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.topbar{position:sticky;top:0;z-index:99;background:var(--card);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
 .topbar .wrap{display:flex;justify-content:space-between;align-items:center;height:38px;gap:12px}
 .topbar b{color:var(--green)}
 .topbar a.dl{color:var(--green);font-weight:700}
@@ -31,7 +38,7 @@ button{font-family:inherit}
 .b1{width:520px;height:520px;left:-140px;top:-120px;background:#a7f3d0}
 .b2{width:460px;height:460px;right:-120px;top:22%;background:#bfdbfe}
 .b3{width:420px;height:420px;left:30%;bottom:-160px;background:#fde68a}
-[data-theme="dark"] .b1{background:#064e3b}[data-theme="dark"] .b2{background:#1e3a8a}[data-theme="dark"] .b3{background:#78350f}
+[data-theme="dark"] .b1{background:#064e3b}[data-theme="dark"] .b2{background:#1e3a8a}[data-theme="dark"] .b3{background:#78350f}[data-theme="glasschat"] .b1{background:#064e3b}[data-theme="glasschat"] .b2{background:#1e3a8a}[data-theme="glasschat"] .b3{background:#78350f}
 .logo{font-size:46px;font-weight:900;letter-spacing:4px;display:flex;align-items:center;justify-content:flex-start;gap:14px}
 .logo-text{background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shineText 6s linear infinite}
 .wave-logo{position:relative;width:120px;height:120px;flex:none}
@@ -115,7 +122,7 @@ button{font-family:inherit}
 .quick-tip.show{opacity:1;transform:translateY(0)}
 .quick-dock{position:relative;display:flex;align-items:flex-end;gap:10px;padding:22px 16px 8px;max-width:100%;overflow:visible;scrollbar-width:none;background:transparent;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 .quick-dock::-webkit-scrollbar{display:none}
-[data-theme="dark"] .quick-dock{background:transparent;border:0;box-shadow:none}
+[data-theme="dark"] .quick-dock{background:transparent;border:0;box-shadow:none}[data-theme="glasschat"] .quick-dock{background:transparent;border:0;box-shadow:none}
 .qapp{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;cursor:pointer;transform-origin:bottom center;will-change:transform;flex:none;transition:transform .12s ease-out}
 .qicon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.25)}
 .pt{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle,#fff,#7dd3fc);pointer-events:none;animation:rise .9s ease-out forwards;z-index:3}
@@ -206,7 +213,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .top-utils .uicon svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .top-utils .uicon.brand-wechat svg{stroke:#07C160}
 .top-utils .uicon.brand-qq svg,.top-utils .uicon.brand-alipay svg{stroke:none}
-[data-theme="dark"] .top-utils{background:transparent;border:0;box-shadow:none}
+[data-theme="dark"] .top-utils{background:transparent;border:0;box-shadow:none}[data-theme="glasschat"] .top-utils{background:transparent;border:0;box-shadow:none}
 @media(max-width:640px){.top-utils{display:none}}
 .util-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
 .util-overlay.show{display:flex}
@@ -252,6 +259,22 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .optic-input:checked~.optic-track .optic-shuttle .optic-chassis .optic-aperture .optic-pupil{border-width:0.3em;background-color:#00d4ff;box-shadow:0px 0px 1.2em 0.3em rgba(0,212,255,0.6),inset 0px 0px 0.6em rgba(255,255,255,0.9)}
 .optic-lens{position:absolute;top:0px;left:0px;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,0.6) 0%,transparent 40%,rgba(0,0,0,0.08) 100%);z-index:3;pointer-events:none}
 .topbar .optic-switch{font-size:4px;vertical-align:middle;flex:none}
+.theme-pick-btn{position:relative;width:64px;height:26px;border:none;background:rgb(231,0,0);display:inline-flex;align-items:center;justify-content:center;overflow-y:hidden;border-radius:0;cursor:pointer;box-shadow:3px 3px 0 rgb(12,12,12);transition-duration:.3s;vertical-align:middle;flex:none}
+.theme-pick-btn .layer{width:36px;position:absolute;left:-18px;top:50%;transform:translateY(-50%);transition-duration:.3s;fill:#ffaf02}
+.theme-pick-btn:hover{transform:translateY(2px);box-shadow:1px 1px 0 rgb(0,0,0)}
+.theme-pick-btn:hover .layer{left:0;width:100%}
+.theme-pick-btn p{color:#fff;font-weight:600;font-size:13px;position:relative;z-index:2;transition-duration:.1s;margin:0}
+.theme-pick-btn:hover p{color:transparent;transition-duration:.3s}
+.theme-panel{position:fixed;top:44px;right:8px;z-index:120;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.25);padding:12px;display:none;grid-template-columns:repeat(3,84px);gap:10px}
+.theme-panel.open{display:grid}
+.theme-opt{position:relative;height:34px;border:none;display:flex;align-items:center;justify-content:center;overflow-y:hidden;border-radius:0;cursor:pointer;box-shadow:3px 3px 0 rgb(12,12,12);transition-duration:.3s;color:#fff;font-weight:700;font-size:13px}
+.theme-opt .layer{position:absolute;left:-14px;top:0;bottom:0;width:28px;background:#ffaf02;transition-duration:.3s}
+.theme-opt:hover{transform:translateY(2px);box-shadow:1px 1px 0 rgb(0,0,0)}
+.theme-opt:hover .layer{left:0;width:100%}
+.theme-opt span{position:relative;z-index:2;transition-duration:.1s}
+.theme-opt:hover span{color:transparent;transition-duration:.3s}
+.theme-opt.on{outline:2px solid var(--green);outline-offset:2px}
+@media(max-width:640px){.theme-pick-btn{width:54px;height:24px}.theme-pick-btn p{font-size:12px}.theme-panel{right:8px;left:8px;grid-template-columns:repeat(3,1fr)}}
 
 #topUtils .u-hint{display:none}
 
@@ -287,6 +310,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 </head>
 <body>
 <script>(function(){try{var t=localStorage.getItem('landezhaole-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<div id="themePanel" class="theme-panel" role="menu"></div>
 <div id="splash">
 <div class="loader">
 <svg height="0" width="0" viewBox="0 0 100 100" class="absolute">
@@ -322,7 +346,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 <div class="topbar"><div class="wrap">
 <span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
-<span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <label class="optic-switch" title="切换夜间模式"><input class="optic-input" type="checkbox" id="opticTheme" aria-label="切换夜间模式"><span class="optic-ambient"></span><span class="optic-track"><span class="optic-fiber"><span class="optic-fiber-fill"></span></span><span class="optic-node optic-node-left"><span class="optic-node-dot"></span></span><span class="optic-node optic-node-right"><span class="optic-node-dot"></span></span><span class="optic-shuttle"><span class="optic-chassis"><span class="optic-mark optic-mark-vertical optic-m1"></span><span class="optic-mark optic-mark-vertical optic-m2"></span><span class="optic-mark optic-mark-horizontal optic-m3"></span><span class="optic-mark optic-mark-horizontal optic-m4"></span><span class="optic-aperture"><span class="optic-pupil"></span><span class="optic-lens"></span></span></span></span><span class="optic-rim"></span></span></label></span>
+<span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <label class="optic-switch" title="切换夜间模式"><input class="optic-input" type="checkbox" id="opticTheme" aria-label="切换夜间模式"><span class="optic-ambient"></span><span class="optic-track"><span class="optic-fiber"><span class="optic-fiber-fill"></span></span><span class="optic-node optic-node-left"><span class="optic-node-dot"></span></span><span class="optic-node optic-node-right"><span class="optic-node-dot"></span></span><span class="optic-shuttle"><span class="optic-chassis"><span class="optic-mark optic-mark-vertical optic-m1"></span><span class="optic-mark optic-mark-vertical optic-m2"></span><span class="optic-mark optic-mark-horizontal optic-m3"></span><span class="optic-mark optic-mark-horizontal optic-m4"></span><span class="optic-aperture"><span class="optic-pupil"></span><span class="optic-lens"></span></span></span></span><span class="optic-rim"></span></span></label> &nbsp; <button id="themePickBtn" class="theme-pick-btn" title="选择主题" aria-haspopup="true" aria-expanded="false"><svg class="layer" viewBox="0 0 734.93 1135.91"><defs></defs><path class="cls-1" d="M1.25,0V1128.28c0,6.54,0,6.54,6.52,6.54H734.91c-.22.31.5,1-.5,1h-4q-362.83,0-725.67.09c-3.75,0-4.59-.84-4.59-4.59Q.32,567.92.37,4.52C.37,3-.83,1.11,1.25,0Z" transform="translate(-0.03)"></path><path class="cls-2" d="M574.37,543.4C572.14,538,570,533,568,527.89c-1.14-3-2.79-4-6.06-3.28Q496.49,538.92,431,553.08a54.57,54.57,0,0,1-11.8,1.44c-32.76,0-65.53-.14-98.29.08-11.5.08-22.34-3.17-33.35-5.51q-56.28-12-112.46-24.4c-3.3-.72-5.2-.1-6.33,3.41-1.38,4.25-3.45,8.28-5.11,12.45-.86,2.15-1.56,3.07-3.65.89-4.83-5-9.93-9.84-14.8-14.84-2.73-2.8-3.53-6-2.52-10.07,3.57-14.17,7.83-28.17,9.67-42.76,1.11-8.78-.19-17.35-1.64-25.8-8.61-50.48-8.6-101.37-7.77-152.31.1-6.66.05-13.31.16-20a20.72,20.72,0,0,1,6.95-15.86c12.77-11.66,24.95-24,37.83-35.52,18.35-16.44,41-24.25,64.27-30.4,6.74-1.78,13.58-3.22,20.26-5.19,3.54-1,4.65.08,5.18,3.44,3.27,20.68,6.3,41.41,10.13,62,5,27.12,7.13,54.74,13.88,81.56a148.51,148.51,0,0,0,7.12,21.25c3.17,7.55,8.37,12.17,17,12.18,25,0,49.89.19,74.84.27,3.32,0,6.65-.09,10-.14,9.11-.15,14.71-4.94,18-13.21a179.88,179.88,0,0,0,10.88-40.85c5.45-38,12.37-75.77,18.43-113.68.55-3.44,1-6.9,1.56-10.35.3-2,.65-3.52,3.42-2.79,25.52,6.72,51.55,11.89,74.15,26.77,10.09,6.64,18.41,15.26,27.17,23.4,7.8,7.25,15.4,14.71,23.25,21.89a17.4,17.4,0,0,1,6.09,13.16c.47,49.06,3.21,98.17-4.15,147-2,13.3-3.43,26.7-5,40.07-1.52,12.87,2.26,25.06,5.18,37.33q2.31,9.7,4.82,19.36c.72,2.77.58,5.46-1.39,7.49C587,531.05,580.82,537,574.37,543.4Z" transform="translate(-0.03)"></path><path class="cls-2" d="M278.88,806.78a13.6,13.6,0,0,0-9,9.92c-1.7,6.51-5.84,11.48-9.91,16.53-1,1.17-1.66,2-3.19.84C249.22,828.43,240.7,824,235,816c-3.43-4.85-6.24-10-6.45-16-1.18-33.61-15.46-62-34.05-89-19-27.67-37.83-55.51-54.92-84.45-6-10.12-10.47-20.73-12.25-32.42-.82-5.44.66-10.6,1.64-15.79,2.69-14.21,5.56-28.38,8.4-42.56a39.65,39.65,0,0,1,1.29-4l22.82,22.27c3.69,3.61,7.73,6.93,10.94,10.93,7.85,9.79,18.38,14,30.25,16.5,16.17,3.38,32.24,5.61,48.91,4.24,12.73-1,25.53-1.34,38.19-3.27a56,56,0,0,0,10.56-2.84,11.6,11.6,0,0,0,7.93-8.12c2.06-6.7,4.29-8.17,11.27-8.18q48.9-.09,97.8,0c7.09,0,9.08,1.33,11.11,8.2,1.92,6.5,7.11,8.44,12.63,9.86,8.39,2.15,17.07,2.71,25.65,3.52,27.51,2.6,54.76,1.93,81.27-7.19a22.34,22.34,0,0,0,8.78-5.37c12.67-12.5,25.46-24.88,38.13-37.38,2.6-2.57,3.75-3.23,4.59,1.31,2.62,14.22,5.58,28.38,8.53,42.53,3.43,16.49-1.25,31.21-9.45,45.27-14.92,25.58-31.53,50.07-47.88,74.74-10.54,15.92-22.09,31.24-30,48.82a138.26,138.26,0,0,0-12.27,50.08c-.51,10.61-5.56,18.68-13.21,25.31-4.38,3.79-9.41,6.83-14,10.34-1.92,1.45-3.22,1.76-4.86-.48-3.62-5-7.73-9.55-9.26-15.79A13.83,13.83,0,0,0,458.3,807c-1.67-1.43-3.68-1.3-5.68-1.3H283.53C281.91,805.67,280.16,805.28,278.88,806.78Z" transform="translate(-0.03)"></path><path class="cls-2" d="M441.92,825.09c9.25,1.71,15.53,8,21.52,14.45,4.61,5,8.92,10.31,13.09,15.69,2,2.55,3.17,2.4,5.3.21,9.4-9.65,18.95-19.15,28.46-28.69,1.16-1.16,2.41-2.23,4.26-3.92,2.32,9.92,4.51,19.22,6.68,28.53,1.24,5.35,2.31,10.73,3.7,16,.85,3.22.35,5.56-2.25,8q-17.59,16.23-34.86,32.84c-2.58,2.47-4.79,2.5-7.39.41-6.87-5.51-14.19-10.55-20.53-16.62-8.62-8.25-18.83-11.37-30.29-11.9-4.48-.21-9-.93-13.42-.9-7.39,0-14.25-.91-19.23-7.16a2.31,2.31,0,0,0-.39-.31c-14.91-11.24-46.73-9.55-60.08,3.42-3.24,3.15-7,3.47-11,3.78-10.43.79-20.92.93-31.24,3a25,25,0,0,0-11.1,5.29c-8.81,7.08-17.72,14-26.51,21.14-3,2.4-5.14,2.34-8-.48q-16.67-16.14-33.83-31.75c-2.93-2.67-3.88-5.2-2.9-9.14,3.27-13.22,6.14-26.54,9.31-39.79.3-1.29,0-3.4,1.76-3.73,1.37-.25,2.1,1.42,3,2.34,9.58,9.71,19.21,19.37,28.64,29.22,2.48,2.6,3.89,2.54,6.12-.23,5.73-7.12,11.16-14.51,18-20.66,4.62-4.16,9.57-7.73,15.84-9,1.39-.84,2.92-.47,4.39-.47H437.46C439,824.66,440.51,824.38,441.92,825.09Z" transform="translate(-0.03)"></path><path class="cls-3" d="M278.88,806.78c.91-2.46,3-1.6,4.71-1.6q84.56-.07,169.09,0c1.92,0,4.49-1.16,5.59,1.78-3.13-.28-6.25-.81-9.38-.81q-79.8-.07-159.6,0C285.81,806.12,282.31,805.92,278.88,806.78Z" transform="translate(-0.03)"></path><path class="cls-4" d="M441.92,825.09H294.58c2.79-1.57,5.79-1.07,8.79-1.07q65.43-.09,130.86,0C436.77,824,439.51,823.52,441.92,825.09Z" transform="translate(-0.03)"></path></svg><p>主题</p></button></span>
 </div></div>
 
 <a class="bulb" href="chatgpt.html" title="ChatGPT玩法 · 点我查看全部玩法">
@@ -701,9 +725,17 @@ document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
 const sw=document.getElementById('opticTheme');
+const THEMES=[{v:'light',n:'默认',c:'#16a34a'},{v:'dark',n:'暗夜',c:'#34d399'},{v:'neu',n:'柔影',c:'#5F9DE7'},{v:'glass',n:'雾面',c:'#2879F3'},{v:'doodle',n:'手绘',c:'#5B8DD9'},{v:'lever',n:'拨杆',c:'#1269EF'},{v:'y2k',n:'千禧',c:'#00A8E8'},{v:'crystal',n:'水晶',c:'#1668DC'},{v:'glasschat',n:'玻璃',c:'#60A5FA'}];
+const themePanel=document.getElementById('themePanel'),themePickBtn=document.getElementById('themePickBtn');
+themePanel.innerHTML=THEMES.map(t=>`<button class="theme-opt" data-v="${t.v}" style="background:${t.c}" role="menuitem"><span class="layer"></span><span>${t.n}</span></button>`).join('');
+function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='dark'||v==='glasschat');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 const saved=localStorage.getItem('landezhaole-theme');
-if(saved){document.documentElement.dataset.theme=saved;sw.checked=saved==='dark';}
-sw.onchange=()=>{const dark=sw.checked;document.documentElement.dataset.theme=dark?'dark':'light';localStorage.setItem('landezhaole-theme',document.documentElement.dataset.theme);};
+if(saved){document.documentElement.dataset.theme=saved;sw.checked=saved==='dark'||saved==='glasschat';}
+themePanel.querySelectorAll('.theme-opt').forEach(b=>{if(b.dataset.v===document.documentElement.dataset.theme)b.classList.add('on');b.onclick=()=>{applyTheme(b.dataset.v);themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');};});
+sw.onchange=()=>{applyTheme(sw.checked?'dark':'light');};
+themePickBtn.onclick=(e)=>{e.stopPropagation();const open=themePanel.classList.toggle('open');themePickBtn.setAttribute('aria-expanded',open);};
+document.addEventListener('click',(e)=>{if(!themePanel.contains(e.target)&&e.target!==themePickBtn){themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');}});
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');}});
 const fanBar=document.getElementById('topUtils'),fanMain=document.getElementById('fanMain');
 if(fanBar&&fanMain){fanMain.onclick=(e)=>{e.stopPropagation();fanBar.classList.toggle('fan-open');};
 fanBar.querySelectorAll('.fan-items a').forEach(a=>a.addEventListener('click',()=>fanBar.classList.remove('fan-open')));
