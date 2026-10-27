@@ -178,8 +178,10 @@ private fun LetterCanvas(progress: Float, strokeWidth: Float, brush: Brush, buil
         val len = AndroidPathMeasure(path.asAndroidPath(), false).length
         drawPath(
             path = path, brush = brush,
-            style = Stroke(width = strokeWidth * s),
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(len, len), len * (1f - progress))
+            style = Stroke(
+                width = strokeWidth * s,
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(len, len), len * (1f - progress))
+            )
         )
     }
 }
