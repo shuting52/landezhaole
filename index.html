@@ -187,14 +187,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .toast-notify .tt{font-size:14px;font-weight:700}
 .toast-notify .bd{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
 .toast-close{position:absolute;top:4px;right:8px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:2px}
-.update-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
-.update-overlay.show{display:flex}
-.update-dialog{background:var(--card);color:var(--text);border-radius:18px;max-width:480px;width:100%;max-height:80vh;overflow:auto;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
-.update-dialog h2{font-size:20px;margin:0 0 4px}
-.update-dialog .ver{font-size:13px;color:var(--muted);margin-bottom:14px}
-.update-dialog ul{margin:0;padding-left:20px;font-size:14px;line-height:1.8}
-.update-dialog .actions{margin-top:18px;text-align:right}
-.update-dialog button{border:0;background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 
@@ -224,13 +217,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .util-dialog a{color:var(--green)}
 .util-dialog .actions{margin-top:18px;text-align:right}
 .util-dialog button{border:0;background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:10px 24px;border-radius:999px;cursor:pointer}
-.update-dialog .upd-row{display:flex;gap:8px;align-items:flex-start;margin:0 0 12px;animation:updIn .45s ease both}
-@keyframes updIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.update-dialog .upd-tag{flex:none;font-size:11px;font-weight:800;line-height:1;padding:4px 9px;border-radius:999px;color:#fff;margin-top:1px;animation:tagPop .45s ease both}
-@keyframes tagPop{from{transform:scale(.7)}to{transform:scale(1)}}
-.update-dialog .upd-tag.new{background:#16a34a}.update-dialog .upd-tag.fix{background:#ef4444}.update-dialog .upd-tag.opt{background:#2563eb}
-.update-dialog .upd-text{font-size:14px;line-height:1.7;color:var(--text)}
-@media(prefers-reduced-motion:reduce){.update-dialog .upd-row,.update-dialog .upd-tag{animation:none}}
+
 
 .optic-switch{display:inline-flex;position:relative;font-size:10px;width:20em;height:7em;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .optic-input{display:none}
@@ -331,7 +318,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 </div>
 <div class="splash-name">懒得找了</div>
 </div>
-<script>(function(){var s=document.getElementById('splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;s.classList.add('splash-hide');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},600);}s.addEventListener('click',hide);if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){hide();return;}window.addEventListener('load',function(){setTimeout(hide,900);});setTimeout(hide,3000);})();</script>
+<script>(function(){var s=document.getElementById('splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;s.classList.add('splash-hide');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},600);}s.addEventListener('click',hide);if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){hide();return;}setTimeout(hide,5000);})();</script>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 <div class="topbar"><div class="wrap">
 <span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
@@ -368,7 +355,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <footer><div class="wrap">
 <div class="fbrand">懒得找了</div>
 <div>本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈</div>
-<div style="margin-top:6px">© 2026 懒得找了 · <a href="javascript:void(0)" onclick="if(window.siteVersionData)showUpdateModal(window.siteVersionData,false)" style="color:var(--green)">查看更新日志</a></div>
+<div style="margin-top:6px">© 2026 懒得找了</div>
 </div></footer>
 <nav class="top-utils fan" id="topUtils"><button class="fan-main" id="fanMain" title="工具菜单" aria-label="工具菜单"><span class="fan-plus">＋</span></button><div class="fan-items"><a style="animation-delay:240ms" style="animation-delay:180ms" style="animation-delay:120ms" style="animation-delay:60ms" style="animation-delay:0ms" onclick="showUtilAbout()" data-label="关于网站"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 2.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5L12 3z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="u-texts"><span class="u-label">关于网站</span><span class="u-hint">了解本站收录与更新</span></span></a><a onclick="showUtilQR('微信打赏','qr-wechat.jpg','微信扫一扫，支持一下')" data-label="微信打赏"><span class="uicon brand-wechat"><img src="icons/wechat-logo.png" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10" cy="9" rx="7" ry="5" fill="#07C160"/><polygon points="6,12.5 4,16.5 8.5,13.5" fill="#07C160"/><circle cx="8" cy="8.5" r="1.2" fill="#fff"/><circle cx="12" cy="8.5" r="1.2" fill="#fff"/><ellipse cx="17" cy="15" rx="4.5" ry="3.2" fill="#07C160"/><polygon points="15,17 14,20 17.5,17.5" fill="#07C160"/></svg></span><span class="u-texts"><span class="u-label">微信打赏</span><span class="u-hint">微信扫码，支持一下</span></span></a><a onclick="showUtilQR('QQ好友','qr-qq.jpg','QQ扫一扫，加我好友')" data-label="QQ好友"><span class="uicon brand-qq"><img src="icons/qq-penguin.svg" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="7" fill="#12B7F5"/><ellipse cx="12" cy="15" rx="3.5" ry="4.5" fill="#fff"/><circle cx="10" cy="9" r="1.1" fill="#111"/><circle cx="14" cy="9" r="1.1" fill="#111"/><polygon points="11,10.5 13,10.5 12,12" fill="#FF9F1C"/><ellipse cx="9" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/><ellipse cx="15" cy="20.5" rx="1.8" ry="1" fill="#FF9F1C"/></svg></span><span class="u-texts"><span class="u-label">QQ好友</span><span class="u-hint">QQ扫码，加我好友</span></span></a><a onclick="showUtilQR('支付宝打赏','qr-alipay.jpg','支付宝扫一扫，支持一下')" data-label="支付宝打赏"><span class="uicon brand-alipay"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1677FF"/><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" stroke="none" font-family="PingFang SC, Microsoft YaHei, sans-serif">支</text></svg></span><span class="u-texts"><span class="u-label">支付宝打赏</span><span class="u-hint">支付宝扫码，支持一下</span></span></a><a href="https://qm.qq.com/q/vsaFRiPuO4" target="_blank" data-label="最新Q群" rel="noopener" title="QQ群 836869262，点此直接跳转加群"><span class="uicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 19.5c.5-3 2.8-4.5 5.5-4.5s5 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.8"/><path d="M15.8 14.8c2.6.4 4.2 1.9 4.7 4.7"/></svg></span><span class="u-texts"><span class="u-label">最新Q群</span><span class="u-hint">QQ群 836869262，点此加群</span></span></a></div></nav>
 <div id="sideTools">
@@ -467,7 +454,6 @@ function render(){
  bindQuickDock();
  box.innerHTML=DATA.cats.map(renderCat).join('');
  showNewSiteToasts();
- checkSiteUpdate();
  const secs=box.querySelectorAll('section.cat');
  secs.forEach((sec,i)=>{
    const cat=DATA.cats[i];
@@ -555,26 +541,6 @@ function showNewSiteToasts(){
      hide(function(){});
    },3500);
  });
-}
-window.siteVersionData=null;
-function showUpdateModal(data,markSeen){
- window.siteVersionData=data;
- document.getElementById('updateVer').textContent='版本 '+data.version+' · '+data.date;
- const tagCls={新增:'new',修复:'fix',优化:'opt'};
- const changes=data.changes||(data.changelog||[]).map(c=>({tag:'',text:c}));
- document.getElementById('updateList').innerHTML=changes.map((c,i)=>`<div class="upd-row" style="animation-delay:${i*90}ms">${c.tag?`<span class="upd-tag ${tagCls[c.tag]||''}">${esc(c.tag)}</span>`:''}<span class="upd-text">${esc(c.text)}</span></div>`).join('');
- const overlay=document.getElementById('updateOverlay');
- overlay.classList.add('show');
- const close=function(){overlay.classList.remove('show');if(markSeen){try{localStorage.setItem('landezhaole-seen-site-version',data.version);}catch(e){}}};
- document.getElementById('updateCloseBtn').onclick=close;
- overlay.onclick=function(e){if(e.target===overlay)close();};
-}
-function checkSiteUpdate(){
- fetch('version.json').then(r=>r.json()).then(data=>{
-   let seen=null;try{seen=localStorage.getItem('landezhaole-seen-site-version');}catch(e){}
-   window.siteVersionData=data;
-   if(seen!==data.version)setTimeout(function(){showUpdateModal(data,true);},5000);
- }).catch(function(){});
 }
 let appDlSeq=0;
 function fmtSize(b){if(!b)return '';return (b/1048576).toFixed(1)+' MB';}
@@ -802,6 +768,5 @@ fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{docu
 <div class="toast-notify" id="toastNotify"><div class="tic" id="toastIc">新</div><div><div class="tt" id="toastTt"></div><div class="bd" id="toastBd"></div></div><button class="toast-close" id="toastClose" aria-label="关闭提醒">×</button></div>
 
 <div class="util-overlay" id="utilOverlay"><div class="util-dialog"><h2 id="utilTitle"></h2><div id="utilBody"></div><div class="actions"><button onclick="document.getElementById('utilOverlay').classList.remove('show')">知道了</button></div></div></div>
-<div class="update-overlay" id="updateOverlay"><div class="update-dialog"><h2>网站更新</h2><div class="ver" id="updateVer"></div><div id="updateList"></div><div class="actions"><button id="updateCloseBtn">知道了</button></div></div></div>
 </body>
 </html>
