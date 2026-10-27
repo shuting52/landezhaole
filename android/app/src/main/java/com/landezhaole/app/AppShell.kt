@@ -727,7 +727,10 @@ fun SaveScreen(pal: AppPalette) {
 @Composable
 fun CouponCardView(card: CouponCard, pal: AppPalette, onClick: () -> Unit) {
     Box(
-        modifier = Modifier
+        modifier = if (isDefaultSchemePal(pal)) Modifier
+            .glassCardStyle(14.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+            .clickable { onClick() }
+        else Modifier
             .clip(RoundedCornerShape(14.dp))
             .background(pal.barBackground)
             .border(1.dp, pal.line, RoundedCornerShape(14.dp))

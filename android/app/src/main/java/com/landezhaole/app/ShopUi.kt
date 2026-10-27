@@ -370,7 +370,10 @@ fun ShopCard(
 ) {
     val sty = styleOf(pal)
     Box(
-        modifier = Modifier
+        modifier = if (isDefaultSchemePal(pal)) Modifier
+            .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+            .clickable { onOpen() }
+        else Modifier
             .hardShadow(sty.cardShape, sty.cardHardShadow, sty.cardHardShadowColor)
             .shadow(sty.cardElevation, sty.cardShape)
             .clip(sty.cardShape)
@@ -975,66 +978,6 @@ fun ShopHome(
 // ---- 分类页：左 21 分类 + 右子类 chips + 2 列站点卡（前 6 个） ----
 // ---- 分类页：21 分类索引（点分类进独立详情页） ----
 // ---- 极光底（分类页背景；卡片玻璃渲染已统一用 GlassComponents 库）----
-private fun Modifier.auroraBackground(): Modifier = this
-    .background(Color(0xFF100A16))
-    .drawBehind {
-        val w = size.width
-        val h = size.height
-        drawRect(
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF1B1030), Color(0xFF3A1E52), Color(0xFF6E293C)),
-                start = Offset.Zero,
-                end = Offset(w, h),
-            )
-        )
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(Color(0xFFFF9B4A).copy(alpha = 0.80f), Color.Transparent),
-                center = Offset(w * 0.14f, h * 0.30f), radius = h * 0.28f,
-            ),
-            radius = h * 0.28f, center = Offset(w * 0.14f, h * 0.30f),
-        )
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(Color(0xFF3FD2E8).copy(alpha = 0.55f), Color.Transparent),
-                center = Offset(w * 0.98f, h * 0.08f), radius = h * 0.22f,
-            ),
-            radius = h * 0.22f, center = Offset(w * 0.98f, h * 0.08f),
-        )
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(Color(0xFFFF5A8A).copy(alpha = 0.42f), Color.Transparent),
-                center = Offset(w * 0.86f, h * 0.60f), radius = h * 0.24f,
-            ),
-            radius = h * 0.24f, center = Offset(w * 0.86f, h * 0.60f),
-        )
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(Color(0xFF43E0A0).copy(alpha = 0.30f), Color.Transparent),
-                center = Offset(w * 0.30f, h * 0.88f), radius = h * 0.22f,
-            ),
-            radius = h * 0.22f, center = Offset(w * 0.30f, h * 0.88f),
-        )
-        drawArc(
-            color = Color.White.copy(alpha = 0.07f),
-            startAngle = 195f, sweepAngle = 130f, useCenter = false,
-            topLeft = Offset(w * 0.30f, -h * 0.12f), size = Size(w * 1.25f, h * 0.95f),
-            style = Stroke(width = 1.5.dp.toPx(), cap = StrokeCap.Round),
-        )
-        drawArc(
-            color = Color.White.copy(alpha = 0.05f),
-            startAngle = 200f, sweepAngle = 120f, useCenter = false,
-            topLeft = Offset(w * 0.42f, h * 0.02f), size = Size(w * 1.05f, h * 0.78f),
-            style = Stroke(width = 1.dp.toPx(), cap = StrokeCap.Round),
-        )
-        drawRect(
-            Brush.verticalGradient(
-                colors = listOf(Color.Transparent, Color(0xFF0A0610).copy(alpha = 0.70f)),
-                startY = h * 0.45f, endY = h,
-            )
-        )
-    }
-
 @Composable
 fun ShopCategory(
     pal: AppPalette,
@@ -1042,14 +985,15 @@ fun ShopCategory(
     onOpenCategory: (String) -> Unit
 ) {
     // 玻璃列表：按用户给的 GlassChat 代码改——极光底 + 渐变着色 + 内高光 + 渐变描边，内容仍是真实分类
-    Column(modifier = Modifier.fillMaxSize().auroraBackground()) {
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         GlassSectionHeader(
             title = "站点分类",
+            color = pal.foreground,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
         )
         if (categories.isEmpty()) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text("数据加载中…", fontSize = 14.sp, color = Color.White.copy(alpha = 0.7f))
+                Text("数据加载中…", fontSize = 14.sp, color = pal.secondary)
             }
             return
         }
@@ -1067,7 +1011,12 @@ fun ShopCategory(
                     iconColors = listOf(CAT_COLORS[i % CAT_COLORS.size], CAT_COLORS[i % CAT_COLORS.size]),
                     iconTint = CAT_ICON_TINTS[i % CAT_ICON_TINTS.size],
                     onClick = { onOpenCategory(cat.id) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    titleColor = pal.foreground,
+                    subtitleColor = pal.secondary,
+                    arrowTint = pal.secondary,
+                    tintAlpha = if (pal.isDark) 0.10f else 0.55f,
+                    badgeAccent = !pal.isDark
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -1211,7 +1160,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.20" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.21" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1393,7 +1342,10 @@ fun ShopMine(
             }
         }
         Box(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
+            modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
+                .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+                .padding(vertical = 6.dp)
+            else Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(pal.barBackground)
                 .border(1.dp, pal.line, RoundedCornerShape(12.dp))
@@ -1419,7 +1371,9 @@ fun ShopMine(
             }
         }
         Box(
-            modifier = Modifier.fillMaxWidth().padding(12.dp)
+            modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(12.dp)
+                .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+            else Modifier.fillMaxWidth().padding(12.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(pal.barBackground)
                 .border(1.dp, pal.line, RoundedCornerShape(12.dp))
@@ -1507,7 +1461,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.20" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.21" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
@@ -1714,7 +1668,11 @@ fun ShopPlayfulPage(pal: AppPalette, showToast: (String) -> Unit) {
 @Composable
 fun PlayPromptCard(pal: AppPalette, catName: String?, item: PromptItem, onCopy: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
+        modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
+            .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+            .clickable { onCopy() }
+            .padding(12.dp)
+        else Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
             .clip(RoundedCornerShape(14.dp))
             .background(pal.barBackground)
             .clickable { onCopy() }

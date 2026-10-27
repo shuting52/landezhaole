@@ -564,10 +564,15 @@ fun GlassListRow(
     badge: String? = null,
     iconColors: List<Color> = listOf(Color(0xFF8E6CEF), Color(0xFF3B1E6E)),
     iconTint: Color = Color.White,
+    titleColor: Color = Color.White,
+    subtitleColor: Color = Color.White.copy(alpha = 0.6f),
+    arrowTint: Color = Color.White.copy(alpha = 0.6f),
+    tintAlpha: Float = 0.10f,
+    badgeAccent: Boolean = false,
 ) {
     Row(
         modifier = modifier
-            .glassCardStyle(cornerRadius = 20.dp, tintAlpha = 0.10f, elevation = 16.dp)
+            .glassCardStyle(cornerRadius = 20.dp, tintAlpha = tintAlpha, elevation = 16.dp)
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -582,25 +587,25 @@ fun GlassListRow(
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.White,
+                text = title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = titleColor,
                 maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
             if (subtitle != null) {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = subtitle, fontSize = 12.sp, color = Color.White.copy(alpha = 0.6f),
+                    text = subtitle, fontSize = 12.sp, color = subtitleColor,
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
             }
         }
         if (badge != null) {
             Spacer(modifier = Modifier.width(8.dp))
-            GlassBadge(text = badge)
+            GlassBadge(text = badge, accent = badgeAccent)
         }
         Spacer(modifier = Modifier.width(4.dp))
         Icon(
             imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = null,
-            tint = Color.White.copy(alpha = 0.6f), modifier = Modifier.size(22.dp),
+            tint = arrowTint, modifier = Modifier.size(22.dp),
         )
     }
 }
@@ -612,17 +617,19 @@ fun GlassSectionHeader(
     modifier: Modifier = Modifier,
     actionText: String? = null,
     onAction: (() -> Unit)? = null,
+    color: Color = Color.White,
+    actionColor: Color = Color.White.copy(alpha = 0.7f),
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text(text = title, color = color, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.weight(1f))
         if (actionText != null && onAction != null) {
             Text(
                 text = actionText,
-                color = Color.White.copy(alpha = 0.7f), fontSize = 13.sp,
+                color = actionColor, fontSize = 13.sp,
                 modifier = Modifier.clickable { onAction() },
             )
         }
