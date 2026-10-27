@@ -376,7 +376,7 @@ fun ShopCard(
     ) {
         Column {
             Box(
-                modifier = Modifier.fillMaxWidth().height(110.dp).background(pal.subtleFill),
+                modifier = Modifier.fillMaxWidth().height(110.dp),
                 contentAlignment = Alignment.Center
             ) {
                 SiteIcon(card, 56.dp)
@@ -472,7 +472,10 @@ fun ShopBanner(pal: AppPalette, categories: List<Category>, onOpenCategory: (Str
     Box(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
             .height(150.dp)
-            .then(if (pal.isDark) Modifier.glassCardStyle(12.dp) else Modifier.clip(RoundedCornerShape(12.dp)))
+            .then(
+                if (pal.isDark) Modifier.shadow(16.dp, RoundedCornerShape(12.dp)).clip(RoundedCornerShape(12.dp))
+                else Modifier.clip(RoundedCornerShape(12.dp))
+            )
     ) {
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
             val cat = slides[page]
@@ -498,6 +501,14 @@ fun ShopBanner(pal: AppPalette, categories: List<Category>, onOpenCategory: (Str
                 }
             }
         }
+        // 深色下幻灯片上方加一层玻璃高光 + 玻璃边：无点击修饰，不拦截幻灯片点击
+        if (pal.isDark) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .background(bannerSheenBrush())
+                    .glassBorder(cornerRadius = 12.dp, width = 1.dp)
+            )
+        }
         Row(
             modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -513,6 +524,16 @@ fun ShopBanner(pal: AppPalette, categories: List<Category>, onOpenCategory: (Str
         }
     }
 }
+
+// 横幅高光：与 GlassComponents 库内高光同款四段白渐变（库内函数为私有，此处复刻）
+private fun bannerSheenBrush(): Brush = Brush.verticalGradient(
+    colorStops = arrayOf(
+        0.00f to Color.White.copy(alpha = 0.16f),
+        0.18f to Color.White.copy(alpha = 0.05f),
+        0.55f to Color.White.copy(alpha = 0.00f),
+        1.00f to Color.White.copy(alpha = 0.05f),
+    )
+)
 
 @Composable
 fun ShopHome(
@@ -651,36 +672,46 @@ fun ShopHome(
                         fontWeight = FontWeight.Black, letterSpacing = 1.sp
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier.weight(1f).height(36.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color.White)
-                            .padding(horizontal = 12.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("🔍", fontSize = 13.sp)
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Box(modifier = Modifier.weight(1f)) {
-                                BasicTextField(
-                                    value = query,
-                                    onValueChange = { query = it },
-                                    singleLine = true,
-                                    textStyle = TextStyle(fontSize = 13.sp, color = pal.foreground),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    decorationBox = { inner ->
-                                        if (query.isEmpty()) {
-                                            Text("搜本站资源", fontSize = 13.sp, color = Color(0xFF999999))
+                    if (glassHome) {
+                        GlassSearchField(
+                            value = query,
+                            onValueChange = { query = it },
+                            placeholder = "搜本站资源",
+                            modifier = Modifier.weight(1f),
+                            onSearch = { doSearch() }
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier.weight(1f).height(36.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color.White)
+                                .padding(horizontal = 12.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("🔍", fontSize = 13.sp)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Box(modifier = Modifier.weight(1f)) {
+                                    BasicTextField(
+                                        value = query,
+                                        onValueChange = { query = it },
+                                        singleLine = true,
+                                        textStyle = TextStyle(fontSize = 13.sp, color = pal.foreground),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        decorationBox = { inner ->
+                                            if (query.isEmpty()) {
+                                                Text("搜本站资源", fontSize = 13.sp, color = Color(0xFF999999))
+                                            }
+                                            inner()
                                         }
-                                        inner()
-                                    }
-                                )
-                            }
-                            if (query.isNotEmpty()) {
-                                Text(
-                                    "搜索", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = shopBrand(pal),
-                                    modifier = Modifier.clickable { doSearch() }.padding(start = 6.dp)
-                                )
+                                    )
+                                }
+                                if (query.isNotEmpty()) {
+                                    Text(
+                                        "搜索", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = shopBrand(pal),
+                                        modifier = Modifier.clickable { doSearch() }.padding(start = 6.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -693,8 +724,12 @@ fun ShopHome(
                     ENGINES.forEachIndexed { idx, e ->
                         val sel = idx == engineIdx
                         Box(
-                            modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                                .background(if (sel) Color.White else Color.White.copy(alpha = 0.25f))
+                            modifier = Modifier
+                                .then(
+                                    if (glassHome && !sel) Modifier.glassCardStyle(16.dp, elevation = 0.dp)
+                                    else Modifier.clip(RoundedCornerShape(16.dp))
+                                        .background(if (sel) Color.White else Color.White.copy(alpha = 0.25f))
+                                )
                                 .clickable { engineIdx = idx }
                                 .padding(horizontal = 14.dp, vertical = 5.dp),
                             contentAlignment = Alignment.Center
@@ -783,7 +818,7 @@ fun ShopHome(
                 }
                 item {
                     Column(
-                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp).glassCardStyle(20.dp).padding(vertical = 4.dp) else Modifier
+                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp).glassCardStyle(20.dp, tintAlpha = 0.14f, elevation = 24.dp).padding(vertical = 4.dp) else Modifier
                     ) {
                         if (glassHome) GlassSectionHeader(title = "站点分类", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp))
                         else ShopSectionTitle("站点分类", "${categories.size} 个分类", pal)
@@ -851,7 +886,7 @@ fun ShopHome(
                                 ) {
                                     Box(
                                         modifier = Modifier.size(96.dp)
-                                            .then(if (glassHome) Modifier.glassCardStyle(12.dp) else Modifier.clip(RoundedCornerShape(8.dp)).background(pal.subtleFill)),
+                                            .then(if (glassHome) Modifier.glassCardStyle(12.dp, tintAlpha = 0.14f, elevation = 24.dp) else Modifier.clip(RoundedCornerShape(8.dp)).background(pal.subtleFill)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         SiteIcon(card, 48.dp)
@@ -1157,7 +1192,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.14" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.15" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1453,7 +1488,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.14" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.15" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center

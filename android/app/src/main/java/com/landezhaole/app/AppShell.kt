@@ -181,7 +181,6 @@ fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
         Row(
             modifier = Modifier.fillMaxWidth()
                 .hardShadow(sty.tabBarShape, sty.tabBarHardShadow, sty.tabBarHardShadowColor)
-                .shadow(sty.tabBarElevation, sty.tabBarShape)
                 .clip(sty.tabBarShape)
                 .background(sty.tabBarBg)
                 .border(sty.tabBarBorderWidth, sty.tabBarBorderColor, sty.tabBarShape)
