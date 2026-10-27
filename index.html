@@ -186,6 +186,8 @@ section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;p
 #sideTools{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;z-index:99}
 #sideTools button,#sideTools a{width:46px;height:46px;border-radius:14px;background:var(--card);border:1px solid var(--line);box-shadow:0 8px 22px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);text-decoration:none;font-size:20px;font-weight:700}
 #sideTools button:hover,#sideTools a:hover{border-color:var(--green)}
+#sideTools button,#sideTools a{transition:opacity .25s,visibility .25s}
+#sideTools .side-hide{opacity:0;visibility:hidden;pointer-events:none}
 #sideTools svg{width:24px;height:24px}
 @media(max-width:640px){#sideTools{top:auto;bottom:84px;transform:none;right:12px;max-height:calc(100vh - 100px);overflow-y:auto}#sideTools button,#sideTools a{width:42px;height:42px}}
 #topUtils{position:fixed;left:12px;right:auto;top:50%;transform:translateY(-50%);z-index:99;padding:0;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -560,6 +562,7 @@ function render(){
    secs.forEach((sec,i)=>{if(i>0)fillGrid(sec,DATA.cats[i],'all');});
  }
  if(!window.__capResizeBound){window.__capResizeBound=true;let capT=null;window.addEventListener('resize',()=>{clearTimeout(capT);capT=setTimeout(applyAllCaps,200);});}
+ updateSideTools();
 }
 function bindQuickDock(){
  const dock=document.getElementById('quickDock'),tip=document.getElementById('quickTip'),wrap=document.getElementById('quickWrap');
@@ -823,6 +826,11 @@ document.getElementById('sideShareBtn').onclick=async()=>{
 };
 document.getElementById('sideTopBtn').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 document.getElementById('sideBottomBtn').onclick=()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'});
+function updateSideTools(){const y=window.scrollY||document.documentElement.scrollTop;const max=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('sideTopBtn').classList.toggle('side-hide',y<=200);document.getElementById('sideBottomBtn').classList.toggle('side-hide',y>=max-200);}
+window.addEventListener('scroll',updateSideTools,{passive:true});
+window.addEventListener('resize',updateSideTools);
+window.addEventListener('load',updateSideTools);
+updateSideTools();
 document.getElementById('shareCloseBtn').onclick=()=>document.getElementById('shareOverlay').classList.remove('show');
 document.getElementById('shareOverlay').onclick=(e)=>{ if(e.target.id==='shareOverlay')e.target.classList.remove('show'); };
 function todayClickKey(){return 'landezhaole-clicks-'+new Date().toLocaleDateString('en-CA');}
