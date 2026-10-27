@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChatGPT玩法 · 懒得找了</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#16a34a;--red:#dc2626}
+[data-theme="dark"]{--bg:#0b1220;--card:#1f2937;--text:#f3f4f6;--muted:#9ca3af;--line:#374151;--green:#34d399;--red:#f87171}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.chead{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:14px 0}
+.chead .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.back{color:var(--green);text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
+.cat-title{font-size:20px;font-weight:800;color:var(--red)}
+.cat-count{font-size:12px;color:var(--muted);background:rgba(127,127,127,.12);border-radius:12px;padding:1px 10px}
+.cat-desc{color:var(--muted);font-size:12px;margin:14px 0 0}
+.searchrow{margin:16px 0 0;display:flex;gap:8px}
+.searchrow input{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:10px 14px;font-size:14px;outline:none}
+.searchrow input:focus{border-color:var(--green)}
+.searchrow button{border:0;background:var(--green);color:#fff;border-radius:12px;padding:0 20px;font-size:14px;font-weight:700;cursor:pointer}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 15px;font-size:12px;cursor:pointer}
+.tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;padding-top:10px;padding-bottom:40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;transition:transform .22s,box-shadow .22s,border-color .22s}
+.card:hover{transform:translateY(-4px);border-color:var(--green);box-shadow:0 12px 26px rgba(22,163,74,.18)}
+.key{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;font-weight:700;color:var(--green);background:rgba(22,163,74,.1);border-radius:8px;padding:2px 8px;word-break:break-all}
+.desc{font-size:14px;line-height:1.6;margin-top:8px}
+.copy{margin-top:10px;font-size:12px;color:var(--muted)}
+.card:hover .copy{color:var(--green)}
+.empty{text-align:center;color:var(--muted);padding:60px 20px}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.foot a{color:var(--green);text-decoration:none}
+.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 20px;border-radius:999px;font-size:14px;z-index:99;display:none;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+@media(max-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+</style>
+</head>
+<body>
+<header class="chead"><div class="wrap"><a class="back" href="index.html">← 回导航</a><span class="cat-title">ChatGPT玩法</span><span class="cat-count" id="ccount">加载中…</span></div></header>
+<main class="wrap">
+<p class="cat-desc">点卡片复制玩法说明，粘贴到 ChatGPT 并附上你的图片即可使用。当前收录 39 类 305 条（原稿 161 类 1521 条，剩余部分待补）。</p>
+<div class="searchrow"><input id="q" placeholder="搜玩法，比如：黏土、霓虹、老照片、机甲…"><button id="go">搜索</button></div>
+<div class="tabs" id="tabs"></div>
+<div class="grid" id="grid"></div>
+<p class="empty" id="empty" style="display:none">没找到相关玩法，换个关键词试试</p>
+<p class="foot"><a href="index.html">← 回导航</a> · © 2026 懒得找了</p>
+</main>
+<div class="toast" id="toast">已复制，去 ChatGPT 粘贴使用</div>
+<script>
+const saved=localStorage.getItem('landezhaole-theme');if(saved)document.documentElement.dataset.theme=saved;
+function esc(s){return String(s||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));}
+let DATA=null,curCat='all',curQ='';
+const tabsEl=document.getElementById('tabs'),gridEl=document.getElementById('grid'),emptyEl=document.getElementById('empty'),countEl=document.getElementById('ccount'),toastEl=document.getElementById('toast');
+let toastTimer=null;
+function showToast(){toastEl.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.style.display='none',1800);}
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(showToast).catch(()=>fallbackCopy(t));}
+  else fallbackCopy(t);
+}
+function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');showToast();}catch(e){}ta.remove();}
+function renderTabs(){
+  const all=document.createElement('button');all.textContent='全部';all.className=curCat==='all'?'on':'';all.onclick=()=>{curCat='all';renderTabs();render();};tabsEl.appendChild(all);
+  DATA.categories.forEach(c=>{
+    const b=document.createElement('button');b.textContent=c.name+'（'+c.prompts.length+'）';b.className=curCat===c.id?'on':'';b.onclick=()=>{curCat=c.id;renderTabs();render();};tabsEl.appendChild(b);
+  });
+}
+function render(){
+  tabsEl.innerHTML='';renderTabs();
+  const q=curQ.trim().toLowerCase();let total=0;let html='';
+  DATA.categories.forEach(c=>{
+    if(curCat!=='all'&&curCat!==c.id)return;
+    c.prompts.forEach(p=>{
+      const hay=(c.name+' '+p.key+' '+p.desc).toLowerCase();
+      if(q&&hay.indexOf(q)<0)return;
+      total++;
+      html+='<div class="card" data-text="'+esc(p.desc)+'"><span class="key">'+esc(p.key)+'</span><div class="desc">'+esc(p.desc)+'</div><div class="copy">点卡片复制玩法说明</div></div>';
+    });
+  });
+  gridEl.innerHTML=html;emptyEl.style.display=total?'none':'block';
+  gridEl.querySelectorAll('.card').forEach(el=>{el.onclick=()=>copyText(el.dataset.text);});
+}
+function doSearch(){curQ=document.getElementById('q').value;render();}
+document.getElementById('go').onclick=doSearch;
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+document.getElementById('q').addEventListener('input',()=>{curQ=document.getElementById('q').value;render();});
+fetch('chatgpt-prompts.json').then(r=>r.json()).then(d=>{
+  DATA=d;const n=d.categories.reduce((s,c)=>s+c.prompts.length,0);
+  countEl.textContent=d.categories.length+' 类 · '+n+' 条';render();
+}).catch(()=>{
+  countEl.textContent='加载失败';emptyEl.textContent='玩法数据加载失败，请刷新重试';emptyEl.style.display='block';
+});
+</script>
+</body>
+</html>
