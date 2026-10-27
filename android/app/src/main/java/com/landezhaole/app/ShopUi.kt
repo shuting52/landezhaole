@@ -836,21 +836,6 @@ fun ShopHome(
                     ShopRankCard(categories = categories, clicks = clicks, totalSites = totalSites)
                 }
                 item {
-                    Row(
-                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp).glassCardStyle(20.dp, tintAlpha = 0.14f, elevation = 24.dp).clickable { onOpenPlayful() }.padding(14.dp)
-                        else Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp).shadow(4.dp, RoundedCornerShape(16.dp)).clip(RoundedCornerShape(16.dp)).background(pal.barBackground).clickable { onOpenPlayful() }.padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("💬", fontSize = 26.sp)
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("ChatGPT玩法", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
-                            Text("点卡片复制玩法说明，去 ChatGPT 粘贴使用", fontSize = 12.sp, color = pal.secondary)
-                        }
-                        Text("→", fontSize = 18.sp, color = pal.secondary)
-                    }
-                }
-                item {
                     Column(
                         modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp).glassCardStyle(20.dp, tintAlpha = 0.14f, elevation = 24.dp).padding(vertical = 4.dp) else Modifier
                     ) {
@@ -1226,7 +1211,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.19" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.20" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1522,7 +1507,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.19" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.20" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center

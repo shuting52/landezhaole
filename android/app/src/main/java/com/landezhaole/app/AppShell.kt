@@ -1,6 +1,8 @@
 package com.landezhaole.app
 
+import android.app.Activity
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import android.net.Uri
 import android.widget.Toast
 import android.widget.VideoView
@@ -227,6 +229,7 @@ fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
         )
         Box(
             modifier = Modifier.fillMaxWidth().height(63.dp)
+                .shadow(8.dp, RoundedCornerShape(31.5.dp))
                 .clip(RoundedCornerShape(31.5.dp)).background(pal.barBackground)
         ) {
             Box(
@@ -423,6 +426,30 @@ fun AppShell(
         tab = t
         subPage = ShopSubPage.None
         overlay = null
+    }
+
+    // 返回键：先关启动页/更新弹窗/浮层，否则回首页；已在首页时 2 秒内按两次退出
+    var lastBackPress by remember { mutableStateOf(0L) }
+    BackHandler(enabled = true) {
+        when {
+            showSplash -> showSplash = false
+            pendingUpdate != null -> pendingUpdate = null
+            overlay != null || subPage != ShopSubPage.None -> {
+                overlay = null
+                subPage = ShopSubPage.None
+                tab = 0
+            }
+            tab != 0 -> tab = 0
+            else -> {
+                val now = System.currentTimeMillis()
+                if (now - lastBackPress < 2000) {
+                    (ctx as? Activity)?.finish()
+                } else {
+                    lastBackPress = now
+                    showToastMsg("再按一次退出")
+                }
+            }
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize().pageBg(pal)) {
