@@ -1,5 +1,8 @@
 package com.landezhaole.app
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
@@ -550,7 +553,8 @@ fun ShopHome(
     onRecordDownload: (String) -> Unit,
     showToast: (String) -> Unit,
     clicks: Map<String, Int>,
-    totalSites: Int
+    totalSites: Int,
+    onOpenPlayful: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -820,6 +824,21 @@ fun ShopHome(
                 }
                 item {
                     ShopRankCard(categories = categories, clicks = clicks, totalSites = totalSites)
+                }
+                item {
+                    Row(
+                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp).glassCardStyle(20.dp, tintAlpha = 0.14f, elevation = 24.dp).clickable { onOpenPlayful() }.padding(14.dp)
+                        else Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp).shadow(4.dp, RoundedCornerShape(16.dp)).clip(RoundedCornerShape(16.dp)).background(pal.barBackground).clickable { onOpenPlayful() }.padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("💬", fontSize = 26.sp)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("ChatGPT玩法", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
+                            Text("点卡片复制玩法说明，去 ChatGPT 粘贴使用", fontSize = 12.sp, color = pal.secondary)
+                        }
+                        Text("→", fontSize = 18.sp, color = pal.secondary)
+                    }
                 }
                 item {
                     Column(
@@ -1197,7 +1216,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.16" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.17" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1493,7 +1512,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.16" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.17" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
@@ -1564,5 +1583,153 @@ fun ShopRankCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text("本站共收录 $totalSites 个站点", fontSize = 12.sp, color = Color(0xFF6B7578))
         }
+    }
+}
+
+// ---- ChatGPT 玩法页：对标网站 chatgpt.html；题库运行时从云端拉取，点卡片复制说明 ----
+@Composable
+fun ShopPlayfulPage(pal: AppPalette, showToast: (String) -> Unit) {
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var data by remember { mutableStateOf<PromptsData?>(null) }
+    var loading by remember { mutableStateOf(true) }
+    var failed by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
+    var curCat by remember { mutableStateOf<String?>(null) }
+    fun load() {
+        loading = true
+        failed = false
+        scope.launch {
+            val d = fetchPrompts()
+            data = d
+            failed = d == null
+            loading = false
+        }
+    }
+    LaunchedEffect(Unit) { load() }
+    fun copyDesc(t: String) {
+        try {
+            val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            cm.setPrimaryClip(ClipData.newPlainText("ChatGPT玩法", t))
+            showToast("已复制，去 ChatGPT 粘贴使用")
+        } catch (e: Exception) {
+            showToast("复制失败")
+        }
+    }
+    val cats = data?.categories ?: emptyList()
+    val q = query.trim().lowercase()
+    val showAll = curCat == null && q.isEmpty()
+    val flat: List<Pair<String, PromptItem>> = when {
+        data == null -> emptyList()
+        q.isNotEmpty() -> cats.flatMap { c ->
+            c.prompts.filter { p ->
+                c.name.lowercase().contains(q) || p.key.lowercase().contains(q) || p.desc.lowercase().contains(q)
+            }.map { c.name to it }
+        }
+        curCat != null -> cats.firstOrNull { it.id == curCat }?.prompts?.map { (cats.firstOrNull { it.id == curCat }?.name ?: "") to it } ?: emptyList()
+        else -> emptyList()
+    }
+    Column(modifier = Modifier.fillMaxSize().pageBg(pal)) {
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
+                .border(1.dp, pal.line, RoundedCornerShape(12.dp))
+                .background(pal.barBackground, RoundedCornerShape(12.dp))
+                .padding(horizontal = 14.dp, vertical = 12.dp)
+        ) {
+            if (query.isEmpty()) Text("搜玩法，比如：黏土、霓虹、老照片…", fontSize = 14.sp, color = pal.secondary)
+            BasicTextField(
+                value = query, onValueChange = { query = it }, singleLine = true,
+                textStyle = TextStyle(fontSize = 14.sp, color = pal.foreground),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        if (data != null) {
+            Text(
+                "${cats.size} 类 · ${data!!.total} 条",
+                fontSize = 13.sp, fontWeight = FontWeight.Bold, color = pal.foreground,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+            )
+            Text(
+                "前 39 类为原稿，后 50 类为同风格补全",
+                fontSize = 11.sp, color = pal.secondary,
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+        if (cats.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val allSel = curCat == null && q.isEmpty()
+                Box(
+                    modifier = Modifier.clip(RoundedCornerShape(50))
+                        .background(if (allSel) pal.accent else pal.barBackground)
+                        .clickable { curCat = null }
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) { Text("全部", fontSize = 13.sp, color = if (allSel) Color.White else pal.foreground) }
+                for (c in cats) {
+                    val sel = curCat == c.id
+                    Box(
+                        modifier = Modifier.clip(RoundedCornerShape(50))
+                            .background(if (sel) pal.accent else pal.barBackground)
+                            .clickable { curCat = c.id }
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) { Text("${c.name}（${c.prompts.size}）", fontSize = 13.sp, color = if (sel) Color.White else pal.foreground) }
+                }
+            }
+        }
+        when {
+            loading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("正在加载…", fontSize = 14.sp, color = pal.secondary)
+            }
+            failed -> Box(
+                modifier = Modifier.fillMaxSize().clickable { load() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text("加载失败，点此重试", fontSize = 14.sp, color = pal.secondary)
+            }
+            showAll -> LazyColumn(modifier = Modifier.fillMaxSize()) {
+                for (c in cats) {
+                    item {
+                        Text(
+                            c.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = pal.foreground,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                        )
+                    }
+                    items(c.prompts) { pItem ->
+                        PlayPromptCard(pal = pal, catName = null, item = pItem, onCopy = { copyDesc(pItem.desc) })
+                    }
+                }
+                item { Spacer(modifier = Modifier.height(16.dp)) }
+            }
+            flat.isEmpty() -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("没有找到相关玩法", fontSize = 14.sp, color = pal.secondary)
+            }
+            else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(flat) { (catName, pItem) ->
+                    PlayPromptCard(pal = pal, catName = if (q.isNotEmpty()) catName else null, item = pItem, onCopy = { copyDesc(pItem.desc) })
+                }
+                item { Spacer(modifier = Modifier.height(16.dp)) }
+            }
+        }
+    }
+}
+
+@Composable
+fun PlayPromptCard(pal: AppPalette, catName: String?, item: PromptItem, onCopy: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(pal.barBackground)
+            .clickable { onCopy() }
+            .padding(12.dp)
+    ) {
+        if (catName != null) Text(catName, fontSize = 11.sp, color = pal.secondary)
+        Text(item.key, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = pal.accent)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(item.desc, fontSize = 13.sp, color = pal.foreground)
+        Spacer(modifier = Modifier.height(6.dp))
+        Text("点卡片复制玩法说明", fontSize = 11.sp, color = pal.secondary)
     }
 }

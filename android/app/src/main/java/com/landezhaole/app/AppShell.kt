@@ -108,6 +108,7 @@ sealed class ShopOverlay {
     data class Category(val id: String) : ShopOverlay()
     object Hot : ShopOverlay()
     object Guess : ShopOverlay()
+    object ChatGpt : ShopOverlay()
 }
 
 // 应用下载记录：本次重做之后完成的才记，之前没有的不编造
@@ -389,6 +390,7 @@ fun AppShell(
                                 is ShopOverlay.Category -> categories.firstOrNull { it.id == ov.id }?.name?.substringBefore(" · ") ?: "分类"
                                 ShopOverlay.Hot -> "热门站点"
                                 ShopOverlay.Guess -> "猜你喜欢"
+                                ShopOverlay.ChatGpt -> "ChatGPT玩法"
                             }
                             SubPageWrapper(pal, ovTitle, { overlay = null }) {
                                 when (ov) {
@@ -416,6 +418,9 @@ fun AppShell(
                                         }
                                         ShopMoreList(pal = pal, sites = guessAll, onOpenCard = onOpenCard)
                                     }
+                                    ShopOverlay.ChatGpt -> {
+                                        ShopPlayfulPage(pal = pal, showToast = showToastMsg)
+                                    }
                                 }
                             }
                         }
@@ -437,7 +442,8 @@ fun AppShell(
                             onRecordDownload = recordDownload,
                             showToast = showToastMsg,
                             clicks = clicks,
-                            totalSites = total
+                            totalSites = total,
+                            onOpenPlayful = { overlay = ShopOverlay.ChatGpt }
                         )
                         tab == 1 -> ShopCategory(
                             pal = pal, categories = categories,
