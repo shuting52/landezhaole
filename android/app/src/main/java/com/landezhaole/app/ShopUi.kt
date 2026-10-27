@@ -559,6 +559,8 @@ fun ShopHome(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val glassHome = pal.isDark
+    val glowAngle = rememberGlowAngle()
+    val glowBrush = remember(glowAngle) { rotatingGlowBrush(glowAngle) }
     var query by remember { mutableStateOf("") }
     var gridExpanded by remember { mutableStateOf(false) }
     var engineIdx by remember { mutableStateOf(0) }
@@ -683,7 +685,7 @@ fun ShopHome(
                             value = query,
                             onValueChange = { query = it },
                             placeholder = "搜本站资源",
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).border(2.dp, glowBrush, RoundedCornerShape(50)),
                             onSearch = { doSearch() }
                         )
                     } else {
@@ -691,6 +693,7 @@ fun ShopHome(
                             modifier = Modifier.weight(1f).height(36.dp)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color.White)
+                                .border(2.dp, glowBrush, RoundedCornerShape(20.dp))
                                 .padding(horizontal = 12.dp),
                             contentAlignment = Alignment.CenterStart
                         ) {
@@ -820,7 +823,13 @@ fun ShopHome(
         } else {
             LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 item {
-                    ShopBanner(pal, categories) { id -> onOpenCategory(id) }
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        ShopBanner(pal, categories) { id -> onOpenCategory(id) }
+                        SwingBulb(
+                            onClick = onOpenPlayful,
+                            modifier = Modifier.align(Alignment.TopEnd).padding(top = 8.dp, end = 12.dp)
+                        )
+                    }
                 }
                 item {
                     ShopRankCard(categories = categories, clicks = clicks, totalSites = totalSites)
@@ -1216,7 +1225,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.17" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.18" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1512,7 +1521,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.17" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.18" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center

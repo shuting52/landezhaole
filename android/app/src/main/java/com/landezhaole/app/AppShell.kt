@@ -258,6 +258,11 @@ fun AppShell(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     var tab by remember { mutableStateOf(0) }
+    var showSplash by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        delay(3500)
+        showSplash = false
+    }
     var subPage by remember { mutableStateOf(ShopSubPage.None) }
     var overlay by remember { mutableStateOf<ShopOverlay?>(null) }
     var homeEngineJump by remember { mutableStateOf<String?>(null) }
@@ -534,6 +539,15 @@ fun AppShell(
                     .padding(horizontal = 22.dp, vertical = 10.dp)
             ) {
                 Text(toastMsg, color = Color(0xFFFFFDF8), fontSize = 14.sp)
+            }
+        }
+        if (showSplash) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+                    .clickable { showSplash = false },
+                contentAlignment = Alignment.Center
+            ) {
+                SplashContent()
             }
         }
     }
