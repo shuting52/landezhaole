@@ -206,7 +206,8 @@
      "d": "基于 WebAssembly 完全在网页运行的纯正 X86 虚拟机与虚拟网络",
      "b": "黑科技",
      "s": "remote_sandbox",
-     "f": "webvm"
+     "f": "webvm",
+     "i": "https://icons.duckduckgo.com/ip3/webvm.io.ico"
     },
     {
      "t": "OnWorks Free Ubuntu",
@@ -1638,7 +1639,7 @@
      "b": "",
      "s": "models",
      "f": "文心",
-     "i": "https://psstatic.cdn.bcebos.com/aife/image/baidu_ai_logo_1736910930000.png"
+     "i": "https://www.baidu.com/favicon.ico"
     },
     {
      "t": "通义千问",
@@ -2079,8 +2080,7 @@
      "d": "Mistral 对话",
      "b": "",
      "s": "all",
-     "f": "MI",
-     "i": "https://chat.mistral.ai/favicons/favicon-32x32.png"
+     "f": "MI"
     },
     {
      "t": "Qtrade AI",
@@ -2088,7 +2088,8 @@
      "d": "AI 量化工具",
      "b": "",
      "s": "all",
-     "f": "QT"
+     "f": "QT",
+     "i": "https://icons.duckduckgo.com/ip3/qtrade.ai.ico"
     },
     {
      "t": "沉浸式翻译",
@@ -2177,7 +2178,7 @@
      "b": "",
      "s": "all",
      "f": "文心",
-     "i": "https://psstatic.cdn.bcebos.com/aife/image/baidu_ai_logo_1736910930000.png"
+     "i": "https://www.baidu.com/favicon.ico"
     },
     {
      "t": "腾讯智影",
@@ -2315,7 +2316,8 @@
      "d": "经过数亿条Facebook/Google真实高转化广告训练，一键生成高ROI投放横幅与视频",
      "b": "高转化广告图",
      "s": "creative",
-     "f": "AC"
+     "f": "AC",
+     "i": "https://cdn.prod.website-files.com/661ce890f68a1d352ebbed35/66aa467aba9463ef88f4949d_256.png"
     },
     {
      "t": "Predis.ai",
@@ -2347,7 +2349,8 @@
      "d": "将普通真人实拍或人台照片无痕重绘为全球各肤色顶级时尚画报超模",
      "b": "时尚女装AI模特",
      "s": "creative",
-     "f": "BK"
+     "f": "BK",
+     "i": "https://cdn.prod.website-files.com/66fa67b1f207f846cd05b5a1/677e4cb0403eb301fc3a7418_Botika_Logo_AppleWebclip.png"
     },
     {
      "t": "Vue.ai",
@@ -2749,7 +2752,8 @@
      "d": "全球汽车主机厂与工业设计师封神工具：iPad手绘几笔汽车或耳机草图，毫秒级实时渲染金属烤漆质感并转3D网格",
      "b": "工业汽车设计手绘秒变3D",
      "s": "creative",
-     "f": "VZ"
+     "f": "VZ",
+     "i": "https://cdn.prod.website-files.com/68da69e18c8988d039a9f6fe/694ae66d4eb76e40c3f02251_webclip.png"
     },
     {
      "t": "NewArc.ai 产品鞋履渲染",
@@ -2910,7 +2914,8 @@
      "d": "商汤科技新一代生成式AI视觉创意工作台",
      "b": "",
      "s": "canvas",
-     "f": "Seko"
+     "f": "Seko",
+     "i": "https://seko.sensetime.com/logo-32x32.png"
     },
     {
      "t": "小影马",
@@ -3015,7 +3020,8 @@
      "d": "Google 数字白板画布",
      "b": "",
      "s": "canvas",
-     "f": "JA"
+     "f": "JA",
+     "i": "https://icons.duckduckgo.com/ip3/jamboard.google.com.ico"
     },
     {
      "t": "Lucidspark",
@@ -3303,7 +3309,8 @@
      "d": "在线动画视频制作",
      "b": "",
      "s": "video",
-     "f": "AN"
+     "f": "AN",
+     "i": "https://www.animaker.com/static/assets/images/favicon.png"
     },
     {
      "t": "Powtoon",
@@ -3335,7 +3342,8 @@
      "d": "国内在线协作白板",
      "b": "",
      "s": "all",
-     "f": "BO"
+     "f": "BO",
+     "i": "https://cms.boardmix.cn/images/board.ico"
     },
     {
      "t": "Xmind",
@@ -3367,7 +3375,8 @@
      "d": "在线设计画布",
      "b": "",
      "s": "all",
-     "f": "CA"
+     "f": "CA",
+     "i": "https://static.canva.cn/domain-assets/canva/static/images/apple-touch-180x180-1.png"
     },
     {
      "t": "稿定抠图",
@@ -3479,7 +3488,8 @@
      "d": "字体识别工具",
      "b": "",
      "s": "all",
-     "f": "求字"
+     "f": "求字",
+     "i": "https://qiuziti.com/image/icon.ico"
     },
     {
      "t": "MyFonts",
@@ -3495,8 +3505,7 @@
      "d": "AI 图像增强",
      "b": "",
      "s": "all",
-     "f": "TO",
-     "i": "https://cdn.prod.website-files.com/6005fac27a49a9cd477afb63/66207d4875f767e21d812b11_tnb-favicon-32.png"
+     "f": "TO"
     },
     {
      "t": "Remove Image BG",
@@ -3568,7 +3577,8 @@
      "d": "内置丰富SDXL/Flux模型库、开箱即用的云端GPU工作空间",
      "b": "AIGC算力",
      "s": "platform",
-     "f": "揽"
+     "f": "揽",
+     "i": "https://icons.duckduckgo.com/ip3/lanrui-ai.com.ico"
     },
     {
      "t": "酷家乐AI",
@@ -3576,7 +3586,8 @@
      "d": "群核科技旗下全球领先云设计平台，户型图一键生成3D全景漫游与超写实家装效果图",
      "b": "10秒户型出图",
      "s": "canvas",
-     "f": "酷"
+     "f": "酷",
+     "i": "https://qhstaticssl.kujiale.com/static/images/favicon.ico"
     },
     {
      "t": "三维家3D云设计",
@@ -4098,7 +4109,8 @@
      "d": "扣子 Bot 应用商店",
      "b": "",
      "s": "skill",
-     "f": "CO"
+     "f": "CO",
+     "i": "https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/coze-space/static/favicon2.ico"
     },
     {
      "t": "Dify 模板",
@@ -4115,7 +4127,8 @@
      "d": "企业级对话机器人平台",
      "b": "",
      "s": "skill",
-     "f": "BO"
+     "f": "BO",
+     "i": "https://cdn.prod.website-files.com/635c4eeb78332f7971255095/6a8876810551d667a25125aa_bp-logo.jpg"
     },
     {
      "t": "Rasa",
@@ -4235,7 +4248,8 @@
      "d": "免费 AI 绘画社区",
      "b": "",
      "s": "gallery",
-     "f": "BL"
+     "f": "BL",
+     "i": "https://bluewillow.ai/images/webclip.png"
     },
     {
      "t": "Bing Image Creator",
@@ -4267,7 +4281,8 @@
      "d": "动漫风 AI 绘画资源",
      "b": "",
      "s": "gallery",
-     "f": "WA"
+     "f": "WA",
+     "i": "https://icons.duckduckgo.com/ip3/waifudiffusion.com.ico"
     },
     {
      "t": "Prompt 中文网",
@@ -4492,7 +4507,8 @@
      "d": "轻量级云端脚本与微服务极速托管平台",
      "b": "",
      "s": "dev",
-     "f": "Run"
+     "f": "Run",
+     "i": "https://runable.com/_marketing/logo_v2_dark-BQ50K8I_.ico"
     },
     {
      "t": "AI 工作市场",
@@ -4836,7 +4852,8 @@
      "d": "免费快速云存储",
      "b": "",
      "s": "net",
-     "f": "12"
+     "f": "12",
+     "i": "https://statics.123957.com/static-by-custom/favicon.ico"
     },
     {
      "t": "腾讯微云",
@@ -4844,7 +4861,8 @@
      "d": "腾讯云存储空间",
      "b": "",
      "s": "net",
-     "f": "腾讯"
+     "f": "腾讯",
+     "i": "https://img.weiyun.com/vipstyle/nr/box/img/favicon.ico?max_age=31536000"
     },
     {
      "t": "坚果云",
@@ -4916,7 +4934,8 @@
      "d": "综合站长工具箱",
      "b": "",
      "s": "net",
-     "f": "站长"
+     "f": "站长",
+     "i": "https://csstools.chinaz.com/favicon.ico"
     },
     {
      "t": "爱站工具",
@@ -5324,7 +5343,8 @@
      "d": "资源导航站",
      "b": "",
      "s": "all",
-     "f": "老唐"
+     "f": "老唐",
+     "i": "https://laoleng.vip/img/favicon.ico"
     },
     {
      "t": "小舒同学",
@@ -5422,7 +5442,8 @@
      "d": "商标专利查询",
      "b": "",
      "s": "all",
-     "f": "国家"
+     "f": "国家",
+     "i": "https://unavatar.io/cnipa.gov.cn"
     },
     {
      "t": "Browserbase",
@@ -5574,7 +5595,8 @@
      "d": "中国移动官方超低延迟云端电脑，手机平板秒变高配办公主机",
      "b": "央企云桌面",
      "s": "net",
-     "f": "移动"
+     "f": "移动",
+     "i": "https://ecloud.eos-guangzhou-1.cmecloud.cn/fe/favicon.ico"
     },
     {
      "t": "天翼云电脑",
@@ -5606,7 +5628,8 @@
      "d": "支持群控同步操作与高清流畅画质的云端安卓虚拟手机",
      "b": "矩阵云手机",
      "s": "daily",
-     "f": "双"
+     "f": "双",
+     "i": "https://armcloud.net/favicon.svg"
     },
     {
      "t": "多多云手机",
@@ -5638,7 +5661,8 @@
      "d": "实时AIS卫星追踪全球海洋上每一艘万吨集装箱巨轮、油轮与游艇的航速、目的港及港口拥堵热力图",
      "b": "外贸供应链实时查全球集装箱船",
      "s": "daily",
-     "f": "MT"
+     "f": "MT",
+     "i": "https://icons.duckduckgo.com/ip3/marinetraffic.com.ico"
     },
     {
      "t": "微步在线威胁情报AI",
@@ -5718,7 +5742,8 @@
      "d": "由ZMap发明团队打造的全球SSL证书、IPv4主机端口与云资产安全审计搜索引擎",
      "b": "密歇根大学安全搜",
      "s": "net",
-     "f": "CS"
+     "f": "CS",
+     "i": "https://search.censys.io/static/img/apple-touch-icon.png"
     },
     {
      "t": "VirusTotal (Google多引擎查毒)",
@@ -6115,7 +6140,8 @@
      "d": "微短剧在线观看",
      "b": "",
      "s": "new",
-     "f": "微短"
+     "f": "微短",
+     "i": "https://res.qiguoread.com/staticResources/fellow_townsman/image/script/logo2.png"
     },
     {
      "t": "爱看短剧",
@@ -6416,7 +6442,8 @@
      "d": "界面清爽加载飞快的现代在线观影站",
      "b": "",
      "s": "online",
-     "f": "OK"
+     "f": "OK",
+     "i": "https://juok5.top/favicon.png"
     },
     {
      "t": "搜剧AI",
@@ -6456,7 +6483,8 @@
      "d": "上世纪经典老电影、译制片与黑白胶片回顾",
      "b": "",
      "s": "download",
-     "f": "老"
+     "f": "老",
+     "i": "https://icons.duckduckgo.com/ip3/ldysg.com.ico"
     },
     {
      "t": "美剧下载",
@@ -6473,7 +6501,7 @@
      "b": "",
      "s": "online",
      "f": "努",
-     "i": "https://video.ainunu.cc/logo_video_cc.jpg"
+     "i": "https://www.ainunu.com/images/nu.ico"
     },
     {
      "t": "4K指南",
@@ -6562,7 +6590,8 @@
      "d": "高品质双语精校日漫日剧字幕",
      "b": "",
      "s": "anime",
-     "f": "诸"
+     "f": "诸",
+     "i": "https://subs.kamigami.org/wp-content/themes/a-supercms-3.9-pro/favicon.ico"
     },
     {
      "t": "AGE动漫",
@@ -7090,7 +7119,8 @@
      "d": "纪录片资源",
      "b": "",
      "s": "all",
-     "f": "纪录"
+     "f": "纪录",
+     "i": "https://icons.duckduckgo.com/ip3/jlpzj.com.ico"
     },
     {
      "t": "国家地理",
@@ -7161,7 +7191,8 @@
      "d": "网飞猫，奈飞免费看，每日更新",
      "b": "NEW",
      "s": "online",
-     "f": "看"
+     "f": "看",
+     "i": "https://301z.com/uploads/avatar_1788234089111.ico"
     },
     {
      "t": "学霸盘",
@@ -7177,7 +7208,8 @@
      "d": "无广告免会员，全网影视免费看",
      "b": "NEW",
      "s": "online",
-     "f": "免"
+     "f": "免",
+     "i": "https://zhuiju.kdns.fr/file/zhuiju.png?v=1792870791"
     },
     {
      "t": "聚盘搜索",
@@ -7209,7 +7241,8 @@
      "d": "AcFun 弹幕视频直播",
      "b": "NEW",
      "s": "online",
-     "f": "A"
+     "f": "A",
+     "i": "https://cdn.aixifan.com/ico/favicon.ico"
     },
     {
      "t": "可可看片影视",
@@ -7353,7 +7386,8 @@
      "d": "专注粤语配音动画资源站",
      "b": "NEW",
      "s": "anime",
-     "f": "粤"
+     "f": "粤",
+     "i": "https://ymvid.com/favicon/favicon.ico"
     },
     {
      "t": "G站漫画",
@@ -7491,7 +7525,8 @@
      "d": "星巴克咖啡特惠券与第二杯立减特权",
      "b": "",
      "s": "drink",
-     "f": "星"
+     "f": "星",
+     "i": "https://www-static.chinacdn.starbucks.com.cn/prod/assets/favicons/apple-touch-icon.png"
     },
     {
      "t": "滴滴打车红包",
@@ -7539,7 +7574,8 @@
      "d": "京东外卖平台",
      "b": "",
      "s": "takeout",
-     "f": "京东"
+     "f": "京东",
+     "i": "https://storage.360buyimg.com/retail-mall/mall-common-component/favicon.ico"
     },
     {
      "t": "百度外卖",
@@ -8253,7 +8289,8 @@
      "d": "桌面壁纸社区",
      "b": "",
      "s": "wallpaper",
-     "f": "DE"
+     "f": "DE",
+     "i": "https://static.desktopnexus.com/images/favicon.ico"
     },
     {
      "t": "Society6",
@@ -8341,7 +8378,8 @@
      "d": "科技互联网媒体",
      "b": "",
      "s": "community",
-     "f": "极客"
+     "f": "极客",
+     "i": "https://imgslim.geekpark.net/geekpark-icon-196-black.png"
     },
     {
      "t": "IT 之家",
@@ -8397,7 +8435,8 @@
      "d": "硅谷极客新闻社区",
      "b": "",
      "s": "community",
-     "f": "HA"
+     "f": "HA",
+     "i": "https://icons.duckduckgo.com/ip3/news.ycombinator.com.ico"
     },
     {
      "t": "马小帮",
@@ -8493,7 +8532,8 @@
      "d": "条漫平台",
      "b": "",
      "s": "all",
-     "f": "WE"
+     "f": "WE",
+     "i": "https://webtoons-static.pstatic.net/image/favicon/favicon.ico?dt=2017082301"
     },
     {
      "t": "腐漫画",
@@ -8872,7 +8912,8 @@
      "d": "每日整理资源，按标签快速切换",
      "b": "NEW",
      "s": "community",
-     "f": "深"
+     "f": "深",
+     "i": "https://kuake.isjdh.com/uploads/avatar_1788234089111.ico"
     },
     {
      "t": "小刀资源网",
@@ -9113,7 +9154,8 @@
      "d": "海量曲库在线听听",
      "b": "",
      "s": "lossless",
-     "f": "酷我"
+     "f": "酷我",
+     "i": "https://icons.duckduckgo.com/ip3/kuwo.cn.ico"
     },
     {
      "t": "咪咕音乐",
@@ -9265,7 +9307,8 @@
      "d": "央广网络直播",
      "b": "",
      "s": "radio",
-     "f": "中央"
+     "f": "中央",
+     "i": "https://icons.duckduckgo.com/ip3/cnr.cn.ico"
     },
     {
      "t": "粤听",
@@ -9715,7 +9758,8 @@
      "d": "高品质在线听与免费下载 MP3",
      "b": "NEW",
      "s": "lossless",
-     "f": "动"
+     "f": "动",
+     "i": "https://www.dgcol.com/favicon.ico"
     },
     {
      "t": "发现好音乐",
@@ -9723,7 +9767,8 @@
      "d": "九天音乐网，高品质试听与正版下载",
      "b": "NEW",
      "s": "lossless",
-     "f": "发"
+     "f": "发",
+     "i": "https://icons.duckduckgo.com/ip3/9sky.com.ico"
     },
     {
      "t": "小蜜蜂音乐网",
@@ -9926,7 +9971,7 @@
      "b": "",
      "s": "library",
      "f": "阁",
-     "i": "https://duzhege.cn/wp-content/uploads/2024/03/2024032011464271-150x150.png"
+     "i": "https://duzhege.cn/wp-content/uploads/2024/03/2024032011464271.png"
     },
     {
      "t": "起点中文网",
@@ -10198,7 +10243,8 @@
      "d": "电子书阅读平台",
      "b": "",
      "s": "library",
-     "f": "京东"
+     "f": "京东",
+     "i": "https://m.360buyimg.com/babel/jfs/t1/323667/13/14668/3021/68b69c58F600bd880/be71f377de064a2f.png"
     },
     {
      "t": "掌阅",
@@ -10471,7 +10517,8 @@
      "u": "https://502book.com/",
      "d": "支持在线解析阅读的小说站…",
      "b": "NEW",
-     "s": "web_novel"
+     "s": "web_novel",
+     "i": "https://502book.com/static/novels/img/favicon.ico"
     },
     {
      "t": "我不是盐神",
@@ -10637,7 +10684,8 @@
      "d": "Switch与掌机ROM资源更新站",
      "b": "",
      "s": "pc",
-     "f": "掌"
+     "f": "掌",
+     "i": "https://cdn.wwwo.work/switchxiazai/favicon.ico"
     },
     {
      "t": "小叽资源Steam",
@@ -10693,7 +10741,8 @@
      "d": "网页版全武将身份局与国战模式",
      "b": "",
      "s": "online_game",
-     "f": "杀"
+     "f": "杀",
+     "i": "https://web.sanguosha.com/img/favicon.ico"
     },
     {
      "t": "我的世界网页版",
@@ -11065,7 +11114,8 @@
      "d": "EA 游戏平台",
      "b": "",
      "s": "all",
-     "f": "OR"
+     "f": "OR",
+     "i": "https://icons.duckduckgo.com/ip3/origin.com.ico"
     },
     {
      "t": "Ubisoft Connect",
@@ -11618,7 +11668,7 @@
      "b": "",
      "s": "ai_assist",
      "f": "履",
-     "i": "https://oss.upcv.tech/upcv-nuxt-static/images/favicon.svg"
+     "i": "https://oss.upcv.tech/upcv-nuxt-static/images/apple-touch-icon.png"
     },
     {
      "t": "PDF24 Tools",
@@ -11706,7 +11756,8 @@
      "d": "极客生产力桌面启动器，数百款开源插件与内置AI助理",
      "b": "",
      "s": "web_tool",
-     "f": "Ray"
+     "f": "Ray",
+     "i": "https://raycast.com/favicon-production.png"
     },
     {
      "t": "Obsidian",
@@ -11738,7 +11789,8 @@
      "d": "智能有损无损图片压缩算法，在保留高质量前提下极大缩减体积",
      "b": "",
      "s": "img_proc",
-     "f": "Tiny"
+     "f": "Tiny",
+     "i": "https://tinypng.com/images/apple-touch-icon.png"
     },
     {
      "t": "Squoosh",
@@ -11778,7 +11830,8 @@
      "d": "音视频转写总结",
      "b": "",
      "s": "ai_assist",
-     "f": "通义"
+     "f": "通义",
+     "i": "https://icons.duckduckgo.com/ip3/tingwu.aliyun.com.ico"
     },
     {
      "t": "百度 OCR",
@@ -12106,7 +12159,8 @@
      "d": "在线工具箱",
      "b": "",
      "s": "all",
-     "f": "麦子"
+     "f": "麦子",
+     "i": "https://icons.duckduckgo.com/ip3/maicoo.com.ico"
     },
     {
      "t": "uTool",
@@ -12298,7 +12352,8 @@
      "d": "网页存档回溯",
      "b": "",
      "s": "all",
-     "f": "时光"
+     "f": "时光",
+     "i": "https://web-static.archive.org/_static/images/archive.ico"
     },
     {
      "t": "在线 ps",
@@ -12474,7 +12529,8 @@
      "d": "矢量编辑",
      "b": "",
      "s": "all",
-     "f": "SV"
+     "f": "SV",
+     "i": "https://boxy-svg.com/icons/favicon.png"
     },
     {
      "t": "在线 Markdown",
@@ -12530,7 +12586,8 @@
      "d": "无需安装庞大AutoCAD，浏览器直接极速打开DWG建筑结构图纸测量批注与AI识图",
      "b": "网页免装看CAD",
      "s": "web_tool",
-     "f": "浩辰"
+     "f": "浩辰",
+     "i": "https://resource-cn.gstarcad.com/web-cn/prod/gstar-web-site/assets/img/favicon.ico"
     },
     {
      "t": "中望CAD工业云",
@@ -12698,7 +12755,8 @@
      "d": "免费在线图片水印，本地处理",
      "b": "NEW",
      "s": "img_proc",
-     "f": "在"
+     "f": "在",
+     "i": "https://watermark.chiloh.cn/icon.svg?icon.14b66560117~1.svg"
     },
     {
      "t": "扒网站工具",
@@ -13004,7 +13062,8 @@
      "d": "CPU 检测神器",
      "b": "",
      "s": "hardware",
-     "f": "CP"
+     "f": "CP",
+     "i": "https://cpuid.com/medias/images/apple-touch-icon-precomposed.png"
     },
     {
      "t": "GPU-Z",
@@ -13236,7 +13295,8 @@
      "d": "温度监控",
      "b": "",
      "s": "all",
-     "f": "HW"
+     "f": "HW",
+     "i": "https://cpuid.com/medias/images/apple-touch-icon-precomposed.png"
     },
     {
      "t": "Geekbench",
@@ -13364,7 +13424,8 @@
      "d": "强力卸载工具",
      "b": "",
      "s": "all",
-     "f": "RE"
+     "f": "RE",
+     "i": "https://icons.duckduckgo.com/ip3/revouninstaller.com.ico"
     },
     {
      "t": "Geek Uninstaller",
@@ -13380,7 +13441,8 @@
      "d": "卸载清理工具",
      "b": "",
      "s": "all",
-     "f": "IO"
+     "f": "IO",
+     "i": "https://iobit.com/tpl/images/favicon.ico"
     },
     {
      "t": "毛子系统",
@@ -13484,7 +13546,8 @@
      "d": "B站顶流硬核数码团队『极客湾』官方维护：一目了然对比历代手机平板SoC芯片CPU/GPU峰值性能与功耗能效比",
      "b": "骁龙天玑苹果A系芯片真实能效曲线横评",
      "s": "hardware",
-     "f": "极客湾"
+     "f": "极客湾",
+     "i": "https://socpk.com/assets/brand/favicon.png"
     },
     {
      "t": "PassMark CPU/GPU 全球跑分库",
@@ -14238,7 +14301,8 @@
      "d": "开源获奖项目",
      "b": "",
      "s": "all",
-     "f": "OP"
+     "f": "OP",
+     "i": "https://icons.duckduckgo.com/ip3/opensourceawards.com.ico"
     },
     {
      "t": "网易新闻",
@@ -14262,7 +14326,8 @@
      "d": "百度新闻",
      "b": "",
      "s": "all",
-     "f": "百度"
+     "f": "百度",
+     "i": "https://mbdp02.bdstatic.com/pcnews/static/fisp_static/common/img/favicon.ico"
     },
     {
      "t": "搜狐新闻",
@@ -14664,8 +14729,7 @@
      "d": "精选全球AI独角兽、Web3、创意工作室最具未来感与交互微动效的实时网页灵感库",
      "b": "全网最酷炫现代几何暗黑风网页",
      "s": "dev",
-     "f": "GD",
-     "i": "https://godly.website/favicon.svg"
+     "f": "GD"
     },
     {
      "t": "壹心理 Yixinli",
@@ -14745,7 +14809,8 @@
      "d": "深耕中国本土千万种家常炒菜、奶茶小吃营养成分数据库，AI拍照秒算热量、碳水蛋白质脂肪占比",
      "b": "拍餐盘1秒识别中餐卡路里与升糖GI",
      "s": "fun",
-     "f": "薄荷"
+     "f": "薄荷",
+     "i": "https://www-cdn.boohee.com/public/images/favicon.DRpwKRg1.png"
     },
     {
      "t": "美丽修行 (化妆品成分安全秒查)",
@@ -15053,7 +15118,8 @@
      "d": "全国运营商正规大流量号卡与低价宽带套餐",
      "b": "",
      "s": "service",
-     "f": "卡"
+     "f": "卡",
+     "i": "https://static.haokavip.com/pc-prod/favicon-hk.png"
     },
     {
      "t": "黑料吃瓜群",
@@ -15165,7 +15231,8 @@
      "d": "创意服务外包平台",
      "b": "",
      "s": "side_hustle",
-     "f": "一品"
+     "f": "一品",
+     "i": "https://icons.duckduckgo.com/ip3/epwk.com.ico"
     },
     {
      "t": "程序员客栈",
@@ -15229,7 +15296,8 @@
      "d": "拼多多开店平台",
      "b": "",
      "s": "side_hustle",
-     "f": "拼多"
+     "f": "拼多",
+     "i": "https://mms.pinduoduo.com/login/favicon.ico"
     },
     {
      "t": "知识星球",
@@ -15285,7 +15353,8 @@
      "d": "电费查询缴纳服务",
      "b": "",
      "s": "service",
-     "f": "国家"
+     "f": "国家",
+     "i": "https://95598.cn/logo.png"
     },
     {
      "t": "自来水缴费",
@@ -15335,7 +15404,7 @@
      "b": "",
      "s": "service",
      "f": "中国",
-     "i": "https://wenshu.court.gov.cn/website/wenshu/images/logo.png"
+     "i": "https://wenshu.court.gov.cn/website/wenshu/images/favicon.ico"
     },
     {
      "t": "电子营业执照",
@@ -15463,7 +15532,8 @@
      "d": "快手创作平台",
      "b": "",
      "s": "all",
-     "f": "快手"
+     "f": "快手",
+     "i": "https://p23-plat.wskwai.com/udata/pkg/fe/favicon.70ff1fcc.ico"
     },
     {
      "t": "百度统计",
@@ -15503,7 +15573,8 @@
      "d": "图标生成工具",
      "b": "",
      "s": "all",
-     "f": "FA"
+     "f": "FA",
+     "i": "https://dt2sdf0db8zob.cloudfront.net/wp-content/themes/websiteplanet/img/favicons/apple-icon-180x180.png?v=1"
     },
     {
      "t": "screely",
@@ -15584,7 +15655,8 @@
      "d": "抖音广告投放",
      "b": "",
      "s": "all",
-     "f": "千川"
+     "f": "千川",
+     "i": "https://lf1-cdn2-tos.bytegoofy.com/ad/ecom_marketing_fe/favicon.ico"
     },
     {
      "t": "巨量引擎",
@@ -15722,7 +15794,8 @@
      "d": "果核剥壳 · 前沿实用人工智能创新应用与生产力工具",
      "b": "",
      "s": "tools_all",
-     "f": ""
+     "f": "",
+     "i": "https://gongke.net/favicon.svg"
     },
     {
      "t": "必灵",
@@ -15875,8 +15948,7 @@
      "d": "字节 AI IDE 工具",
      "b": "",
      "s": "coding_agent",
-     "f": "TR",
-     "i": "https://lf-static.traecdn.us/obj/trae-ai-tx/trae_website/favicon.png"
+     "f": "TR"
     },
     {
      "t": "通义灵码",
@@ -16460,7 +16532,8 @@
      "d": "赋能数百家三甲医院的AI预问诊、智能分诊与家庭医生随访系统",
      "b": "智能导诊",
      "s": "tools_all",
-     "f": "左手"
+     "f": "左手",
+     "i": "https://web-cdn.zuoshouyisheng.com/static/image/favicon/favicon-16.ico?v=1"
     },
     {
      "t": "森亿智能生成式医疗",
@@ -16533,7 +16606,8 @@
      "d": "微医医疗大模型驱动的互联网医院智能问诊与慢病处方流转平台",
      "b": "数字健共体",
      "s": "tools_all",
-     "f": "微医"
+     "f": "微医",
+     "i": "https://icons.duckduckgo.com/ip3/guahao.com.ico"
     },
     {
      "t": "晶泰科技XtalPi",
@@ -16662,7 +16736,8 @@
      "d": "智能护理记录、跌倒姿态视觉预警与长者认知康复训练AI平台",
      "b": "养老康养AI",
      "s": "tools_all",
-     "f": "PF"
+     "f": "PF",
+     "i": "https://icons.duckduckgo.com/ip3/pflege.ai.ico"
     },
     {
      "t": "知网智慧医疗",
@@ -16686,7 +16761,8 @@
      "d": "收录上千款临床各科室标准医学评估量表与医学统计在线计算器",
      "b": "医学量表工具",
      "s": "tools_all",
-     "f": "常笑"
+     "f": "常笑",
+     "i": "https://www.cxmed.cn/static/images/favicon.png"
     },
     {
      "t": "用药参考AI",
@@ -16936,7 +17012,8 @@
      "d": "全国法院真实案件庭审同步高清视频直播与历年经典庭审录像回放库",
      "b": "真实庭审直播",
      "s": "office_writing",
-     "f": "庭审"
+     "f": "庭审",
+     "i": "https://sts.videoincloud.com/static/img/favorite.ico"
     },
     {
      "t": "企服法大夫",
@@ -16960,7 +17037,8 @@
      "d": "智能分析案件诉求与胜诉率，免费生成法律意见书并匹配属地专业律师",
      "b": "同城律师匹配",
      "s": "office_writing",
-     "f": "找法"
+     "f": "找法",
+     "i": "https://unavatar.io/china.findlaw.cn"
     },
     {
      "t": "华律网智能法务",
@@ -17032,7 +17110,8 @@
      "d": "提供多因子风险模型、机器学习选股策略研究与期权衍生品定价的量化云",
      "b": "机构量化投研",
      "s": "tools_all",
-     "f": "米筐"
+     "f": "米筐",
+     "i": "https://assets.ricequant.com/welcome/assets/img/favicon.png"
     },
     {
      "t": "BigQuant AI量化",
@@ -17057,7 +17136,7 @@
      "b": "极速实盘量化",
      "s": "tools_all",
      "f": "掘金",
-     "i": "https://www.myquant.cn/images/favicon-6a0420d2.ico"
+     "i": "https://myquant.cn/images/favicon-6a0420d2.ico"
     },
     {
      "t": "TradingView",
@@ -17154,7 +17233,8 @@
      "d": "一目了然查看全球宽基与行业指数历史温度计估值、网格交易与基金定投回测",
      "b": "指数估值定投",
      "s": "tools_all",
-     "f": "龟"
+     "f": "龟",
+     "i": "https://wglh.com/static/img/favicon.ico"
     },
     {
      "t": "集思录",
@@ -17170,7 +17250,8 @@
      "d": "中国证监会指定上市公司官方公告、招股说明书与年度报告唯一权威首发站",
      "b": "证监会指定披露",
      "s": "tools_all",
-     "f": "巨潮"
+     "f": "巨潮",
+     "i": "https://unavatar.io/cninfo.com.cn"
     },
     {
      "t": "金蝶云苍穹GPT",
@@ -17258,7 +17339,8 @@
      "d": "OpenAI创始人投资的区块链去匿名化情报平台，可视化追踪全球顶级机构链上持仓",
      "b": "链上侦探AI",
      "s": "tools_all",
-     "f": "AK"
+     "f": "AK",
+     "i": "https://platform.arkhamintelligence.com/black-logo.png"
     },
     {
      "t": "DefiLlama",
@@ -17675,7 +17757,8 @@
      "d": "集成AI智能落地页生成、高转化结账优化与全球收款物流的DTC品牌出海平台",
      "b": "国货出海独立站",
      "s": "tools_all",
-     "f": "店匠"
+     "f": "店匠",
+     "i": "https://shoplazza.cn/upload/sysconfigs/2023-12/656ef246ab9ae.png"
     },
     {
      "t": "领星ERP",
@@ -18563,7 +18646,8 @@
      "d": "字节跳动新一代AI智能体开发平台，快速构建办公与对话机器人",
      "b": "",
      "s": "agent",
-     "f": "扣子"
+     "f": "扣子",
+     "i": "https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/coze-space/static/favicon2.ico"
     },
     {
      "t": "ZenMux",
@@ -18683,7 +18767,8 @@
      "d": "激发创作者灵感的AI多模态艺术与音乐智能交互空间",
      "b": "",
      "s": "agent",
-     "f": "QM"
+     "f": "QM",
+     "i": "https://mdn.alipayobjects.com/huamei_4fgr8p/afts/img/a_I3RIgbaagAAAAAQDAAAAgADtNGAQFr/original"
     },
     {
      "t": "麦芽AI",
@@ -18723,7 +18808,8 @@
      "d": "中国移动云九天大模型与国家队级企业MaaS平台",
      "b": "",
      "s": "maas",
-     "f": "移动"
+     "f": "移动",
+     "i": "https://ecloud.eos-guangzhou-1.cmecloud.cn/fe/favicon.ico"
     },
     {
      "t": "博查万象",
@@ -18756,8 +18842,7 @@
      "d": "阿里智能客服与多模态交互智能体运营系统",
      "b": "",
      "s": "agent",
-     "f": "小智",
-     "i": "https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico"
+     "f": "小智"
     },
     {
      "t": "BASE44",
@@ -19003,7 +19088,8 @@
      "d": "致力于为中小科技企业提供高性价比的GPU算力与AI云原生托管",
      "b": "",
      "s": "maas",
-     "f": "胜算"
+     "f": "胜算",
+     "i": "https://shengsuanyun.com/favicon.ico"
     },
     {
      "t": "文心智能体平台",
@@ -19123,7 +19209,8 @@
      "d": "基于视觉模型的智能文档解析与高精度RAG切片引擎",
      "b": "",
      "s": "framework",
-     "f": "CK"
+     "f": "CK",
+     "i": "https://icons.duckduckgo.com/ip3/lumina.sh.ico"
     },
     {
      "t": "Vercel AI SDK",
@@ -19443,7 +19530,8 @@
      "d": "非腾科技打造的高性能AI代码助手，毫秒级极速推理与跨平台支持",
      "b": "",
      "s": "assistant",
-     "f": "非腾"
+     "f": "非腾",
+     "i": "https://icons.duckduckgo.com/ip3/code.fittentech.com.ico"
     },
     {
      "t": "Firebase Studio",
@@ -19467,7 +19555,8 @@
      "d": "基于WebContainers直接在浏览器运行Node环境并完整生成全栈应用",
      "b": "",
      "s": "agent",
-     "f": "Bolt"
+     "f": "Bolt",
+     "i": "https://bolt.new/static/apple-touch-icon.png"
     },
     {
      "t": "InfCode",
@@ -19475,8 +19564,7 @@
      "d": "Tokfinity出品的无限智能代码与AI生产力驱动引擎",
      "b": "",
      "s": "agent",
-     "f": "Inf",
-     "i": "https://www.tokfinity.com/favicon.svg"
+     "f": "Inf"
     },
     {
      "t": "Ollama",
@@ -19638,7 +19726,8 @@
      "d": "扣子国际版 Agent 平台",
      "b": "",
      "s": "agent",
-     "f": "字节"
+     "f": "字节",
+     "i": "https://sf-coze-web-cdn.coze.com/obj/coze-web-sg/obric/coze/favicon.1970.png"
     },
     {
      "t": "Dify Cloud",
@@ -20564,7 +20653,8 @@
      "d": "品牌特卖优惠券：大牌折扣、满减券、特卖专场，先领券再下单",
      "b": "NEW",
      "s": "youhuiquan",
-     "f": "唯品"
+     "f": "唯品",
+     "i": "https://www.vip.com/favicon.ico"
     },
     {
      "t": "淘宝闪购",
@@ -20697,7 +20787,8 @@
      "d": "腾讯广告推出的AI直播电商解决方案",
      "b": "",
      "s": "shengcheng",
-     "f": "妙播"
+     "f": "妙播",
+     "i": "https://qzonestyle.gdtimg.com/gdt_ui_proj/imghub/dist/mw-ico-favicon.ico?max_age=31536000"
     },
     {
      "t": "阶跃视频",
@@ -20841,7 +20932,8 @@
      "d": "商汤科技推出的可控人物视频生成AI模型",
      "b": "",
      "s": "shuziren",
-     "f": "Vi"
+     "f": "Vi",
+     "i": "https://sensetime.com/assets/favicon.ico"
     },
     {
      "t": "LensGo",
@@ -20857,7 +20949,8 @@
      "d": "B站推出的免费AI数字分身定制和视频创作工具",
      "b": "",
      "s": "jianji",
-     "f": "必剪"
+     "f": "必剪",
+     "i": "https://icons.duckduckgo.com/ip3/member.bilibili.com.ico"
     },
     {
      "t": "度加创作工具",
