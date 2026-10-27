@@ -1226,7 +1226,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.12" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.13" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1364,7 +1364,7 @@ fun ShopMine(
     val ctx = LocalContext.current
     var showTheme by remember { mutableStateOf(false) }
     var qrTitle by remember { mutableStateOf<String?>(null) }
-    var qrAsset by remember { mutableStateOf("") }
+    var qrUrl by remember { mutableStateOf("") }
     var qrHint by remember { mutableStateOf("") }
     var showAbout by remember { mutableStateOf(false) }
     if (showTheme) {
@@ -1485,19 +1485,19 @@ fun ShopMine(
                 MineRow(
                     icon = Icons.Filled.Chat, iconTint = Color(0xFF07C160), label = "微信打赏",
                     pal = pal,
-                    onClick = { qrTitle = "微信打赏"; qrAsset = "qr-wechat.jpg"; qrHint = "微信扫一扫，支持一下" }
+                    onClick = { qrTitle = "微信打赏"; qrUrl = "https://landezhaole.pages.dev/qr-wechat.jpg"; qrHint = "微信扫一扫，支持一下" }
                 )
                 Divider(color = pal.line)
                 MineRow(
                     icon = Icons.Filled.AccountCircle, iconTint = Color(0xFF12B7F5), label = "QQ好友",
                     pal = pal,
-                    onClick = { qrTitle = "QQ好友"; qrAsset = "qr-qq.jpg"; qrHint = "QQ扫一扫，加我好友" }
+                    onClick = { qrTitle = "QQ好友"; qrUrl = "https://landezhaole.pages.dev/qr-qq.jpg"; qrHint = "QQ扫一扫，加我好友" }
                 )
                 Divider(color = pal.line)
                 MineRow(
                     icon = Icons.Filled.Payment, iconTint = Color(0xFF1677FF), label = "支付宝打赏",
                     pal = pal,
-                    onClick = { qrTitle = "支付宝打赏"; qrAsset = "qr-alipay.jpg"; qrHint = "支付宝扫一扫，支持一下" }
+                    onClick = { qrTitle = "支付宝打赏"; qrUrl = "https://landezhaole.pages.dev/qr-alipay.jpg"; qrHint = "支付宝扫一扫，支持一下" }
                 )
                 Divider(color = pal.line)
                 MineRow(
@@ -1522,16 +1522,16 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.12" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.13" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
         )
     }
     if (qrTitle != null) {
-        QrDialog(title = qrTitle!!, asset = qrAsset, hint = qrHint, onDismiss = { qrTitle = null })
+        QrDialog(title = qrTitle!!, url = qrUrl, hint = qrHint, onDismiss = { qrTitle = null })
     }
     if (showAbout) {
-        AboutDialog(onDismiss = { showAbout = false })
+        AboutDialog(catCount = catCount, totalSites = totalSites, onDismiss = { showAbout = false })
     }
 }

@@ -375,13 +375,6 @@ fun parseCategories(text: String): List<Category> {
         emptyList()
     }
 }
-fun loadCategories(ctx: Context): List<Category> {
-    return try {
-        parseCategories(ctx.assets.open("data.json").bufferedReader().readText())
-    } catch (e: Exception) {
-        emptyList()
-    }
-}
 fun openUrl(ctx: Context, url: String) {
     try {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -429,14 +422,6 @@ private fun parseIconManifest(text: String): Map<String, String> {
 
 private suspend fun loadIconManifest(ctx: Context) {
     withContext(Dispatchers.IO) {
-        try {
-            val bundled = parseIconManifest(ctx.assets.open("icons.json").bufferedReader().readText())
-            if (bundled.isNotEmpty()) {
-                iconManifestState.value = bundled
-                iconManifestVersion.value++
-            }
-        } catch (e: Exception) {
-        }
         try {
             val cached = ctx.getSharedPreferences("landezhaole-icons", Context.MODE_PRIVATE).getString("manifest", null)
             if (!cached.isNullOrBlank()) {

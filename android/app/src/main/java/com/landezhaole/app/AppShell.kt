@@ -1,7 +1,6 @@
 package com.landezhaole.app
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.Toast
 import android.widget.VideoView
@@ -75,9 +74,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.landezhaole.app.ui.RemoteVersion
 import com.landezhaole.app.ui.ThemeMode
 import com.landezhaole.app.ui.UiZoom
@@ -260,7 +261,7 @@ fun AppShell(
     var subPage by remember { mutableStateOf(ShopSubPage.None) }
     var overlay by remember { mutableStateOf<ShopOverlay?>(null) }
     var homeEngineJump by remember { mutableStateOf<String?>(null) }
-    var categories by remember { mutableStateOf(loadCategories(ctx)) }
+    var categories by remember { mutableStateOf(emptyList<Category>()) }
     // 今日点击（landezhaole-clicks + todayKey，与旧版一致）
     val clicks = remember { mutableStateMapOf<String, Int>() }
     val clicksPrefs = remember { ctx.getSharedPreferences("landezhaole-clicks", Context.MODE_PRIVATE) }
@@ -838,25 +839,22 @@ fun VideoButton(
     }
 }
 
-fun loadAssetImageBitmap(ctx: Context, name: String): ImageBitmap? {
-    return try {
-        ctx.assets.open(name).use { BitmapFactory.decodeStream(it)?.asImageBitmap() }
-    } catch (e: Exception) {
-        null
-    }
-}
-
 @Composable
-fun QrDialog(title: String, asset: String, hint: String, onDismiss: () -> Unit) {
-    val ctx = LocalContext.current
-    val bitmap = remember(asset) { loadAssetImageBitmap(ctx, asset) }
+fun QrDialog(title: String, url: String, hint: String, onDismiss: () -> Unit) {
+    var bitmap by remember(url) { mutableStateOf<ImageBitmap?>(null) }
+    LaunchedEffect(url) {
+        bitmap = withContext(Dispatchers.IO) { fetchBitmap(url)?.asImageBitmap() }
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (bitmap != null) {
-                    Image(bitmap = bitmap, contentDescription = title, modifier = Modifier.size(240.dp))
+                val bm = bitmap
+                if (bm != null) {
+                    Image(bitmap = bm, contentDescription = title, modifier = Modifier.size(240.dp))
+                } else {
+                    Text("二维码加载中…", fontSize = 14.sp, color = Color.Gray)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(hint, fontSize = 14.sp, color = Color.Gray)
@@ -867,25 +865,12 @@ fun QrDialog(title: String, asset: String, hint: String, onDismiss: () -> Unit) 
 }
 
 @Composable
-fun AboutDialog(onDismiss: () -> Unit) {
-    val ctx = LocalContext.current
-    val counts = remember {
-        try {
-            val raw = ctx.assets.open("data.json").bufferedReader().use { it.readText() }
-            val obj = JSONObject(raw)
-            val cats = obj.getJSONArray("cats")
-            var total = 0
-            for (i in 0 until cats.length()) total += cats.getJSONObject(i).getJSONArray("cards").length()
-            Pair(cats.length(), total)
-        } catch (e: Exception) {
-            Pair(21, 2436)
-        }
-    }
+fun AboutDialog(catCount: Int, totalSites: Int, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("关于网站") },
         text = {
-            Text("懒得找了 · 免费资源导航\n已收录 ${counts.first} 大分类 · ${counts.second} 个精选站点，一搜即达。\n本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈。")
+            Text("懒得找了 · 免费资源导航\n已收录 $catCount 大分类 · $totalSites 个精选站点，一搜即达。\n本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈。")
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text("知道了") } }
     )
