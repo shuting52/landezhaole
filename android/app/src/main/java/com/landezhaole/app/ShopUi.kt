@@ -105,7 +105,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.landezhaole.app.ui.ThemeAppearanceScreen
@@ -472,7 +471,8 @@ fun ShopBanner(pal: AppPalette, categories: List<Category>, onOpenCategory: (Str
     )
     Box(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
-            .height(150.dp).clip(RoundedCornerShape(12.dp))
+            .height(150.dp)
+            .then(if (pal.isDark) Modifier.glassCardStyle(12.dp) else Modifier.clip(RoundedCornerShape(12.dp)))
     ) {
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
             val cat = slides[page]
@@ -531,6 +531,7 @@ fun ShopHome(
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
+    val glassHome = pal.isDark
     var query by remember { mutableStateOf("") }
     var gridExpanded by remember { mutableStateOf(false) }
     var engineIdx by remember { mutableStateOf(0) }
@@ -781,8 +782,11 @@ fun ShopHome(
                     ShopBanner(pal, categories) { id -> onOpenCategory(id) }
                 }
                 item {
-                    Column {
-                        ShopSectionTitle("站点分类", "${categories.size} 个分类", pal)
+                    Column(
+                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp).glassCardStyle(20.dp).padding(vertical = 4.dp) else Modifier
+                    ) {
+                        if (glassHome) GlassSectionHeader(title = "站点分类", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp))
+                        else ShopSectionTitle("站点分类", "${categories.size} 个分类", pal)
                         val gridCats = if (gridExpanded) categories else categories.take(10)
                         for (row in gridCats.chunked(5)) {
                             Row(
@@ -833,7 +837,8 @@ fun ShopHome(
                 }
                 item {
                     Column {
-                        ShopSectionTitle("热门站点", "更多", pal, onSmallClick = onOpenHotMore)
+                        if (glassHome) GlassSectionHeader(title = "热门站点", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), actionText = "更多", onAction = onOpenHotMore)
+                        else ShopSectionTitle("热门站点", "更多", pal, onSmallClick = onOpenHotMore)
                         Row(
                             modifier = Modifier.horizontalScroll(rememberScrollState())
                                 .padding(horizontal = 12.dp),
@@ -845,8 +850,8 @@ fun ShopHome(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Box(
-                                        modifier = Modifier.size(96.dp).clip(RoundedCornerShape(8.dp))
-                                            .background(pal.subtleFill),
+                                        modifier = Modifier.size(96.dp)
+                                            .then(if (glassHome) Modifier.glassCardStyle(12.dp) else Modifier.clip(RoundedCornerShape(8.dp)).background(pal.subtleFill)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         SiteIcon(card, 48.dp)
@@ -878,7 +883,8 @@ fun ShopHome(
                 }
                 item {
                     Column {
-                        ShopSectionTitle("猜你喜欢", "更多", pal, onSmallClick = onOpenGuessMore)
+                        if (glassHome) GlassSectionHeader(title = "猜你喜欢", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), actionText = "更多", onAction = onOpenGuessMore)
+                        else ShopSectionTitle("猜你喜欢", "更多", pal, onSmallClick = onOpenGuessMore)
                         for (row in guess.chunked(2)) {
                             Column {
                                 Row(
@@ -914,45 +920,7 @@ fun ShopHome(
 
 // ---- 分类页：左 21 分类 + 右子类 chips + 2 列站点卡（前 6 个） ----
 // ---- 分类页：21 分类索引（点分类进独立详情页） ----
-// ---- Demo 玻璃渲染（GlassChat 代码的可移植部分：不含 Haze/AGSL、不改构建配置）----
-private fun glassSheenBrush(): Brush = Brush.verticalGradient(
-    colorStops = arrayOf(
-        0.00f to Color.White.copy(alpha = 0.16f),
-        0.18f to Color.White.copy(alpha = 0.05f),
-        0.55f to Color.White.copy(alpha = 0.00f),
-        1.00f to Color.White.copy(alpha = 0.05f),
-    )
-)
-
-private fun Modifier.glassStroke(
-    cornerRadius: Dp,
-    width: Dp = 1.dp,
-    edgeHighlight: Float = 0.85f,
-): Modifier = drawWithContent {
-    drawContent()
-    val w = width.toPx()
-    if (w <= 0f) return@drawWithContent
-    val r = (cornerRadius.toPx() - w / 2f).coerceAtLeast(0f)
-    drawRoundRect(
-        brush = Brush.linearGradient(
-            colorStops = arrayOf(
-                0.00f to Color.White.copy(alpha = edgeHighlight.coerceIn(0f, 1f)),
-                0.10f to Color.White.copy(alpha = 0.30f),
-                0.32f to Color.White.copy(alpha = 0.05f),
-                0.60f to Color.White.copy(alpha = 0.03f),
-                0.84f to Color.White.copy(alpha = 0.28f),
-                1.00f to Color.White.copy(alpha = 0.72f),
-            ),
-            start = Offset.Zero,
-            end = Offset(size.width, size.height),
-        ),
-        topLeft = Offset(w / 2f, w / 2f),
-        size = Size((size.width - w).coerceAtLeast(0f), (size.height - w).coerceAtLeast(0f)),
-        cornerRadius = CornerRadius(r, r),
-        style = Stroke(width = w),
-    )
-}
-
+// ---- 极光底（分类页背景；卡片玻璃渲染已统一用 GlassComponents 库）----
 private fun Modifier.auroraBackground(): Modifier = this
     .background(Color(0xFF100A16))
     .drawBehind {
@@ -1020,14 +988,11 @@ fun ShopCategory(
     onOpenCategory: (String) -> Unit
 ) {
     // 玻璃列表：按用户给的 GlassChat 代码改——极光底 + 渐变着色 + 内高光 + 渐变描边，内容仍是真实分类
-    val glassShape = RoundedCornerShape(20.dp)
     Column(modifier = Modifier.fillMaxSize().auroraBackground()) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp)
-        ) {
-            Text("站点分类", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        }
+        GlassSectionHeader(
+            title = "站点分类",
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+        )
         if (categories.isEmpty()) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text("数据加载中…", fontSize = 14.sp, color = Color.White.copy(alpha = 0.7f))
@@ -1038,52 +1003,18 @@ fun ShopCategory(
             modifier = Modifier.weight(1f).fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy((-14).dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             categories.forEachIndexed { i, cat ->
-                Row(
+                GlassListRow(
+                    icon = catIcon(cat.id),
+                    title = cat.name,
+                    badge = "共 ${cat.cards.size} 个站点",
+                    iconColors = listOf(CAT_COLORS[i % CAT_COLORS.size], CAT_COLORS[i % CAT_COLORS.size]),
+                    iconTint = CAT_ICON_TINTS[i % CAT_ICON_TINTS.size],
+                    onClick = { onOpenCategory(cat.id) },
                     modifier = Modifier.fillMaxWidth()
-                        .zIndex((categories.size - i).toFloat())
-                        .shadow(
-                            elevation = 16.dp, shape = glassShape, clip = false,
-                            ambientColor = Color.Black.copy(alpha = 0.30f),
-                            spotColor = Color.Black.copy(alpha = 0.55f),
-                        )
-                        .clip(glassShape)
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(
-                                    Color.White.copy(alpha = 0.15f),
-                                    Color.White.copy(alpha = 0.045f),
-                                    Color.White.copy(alpha = 0.11f),
-                                )
-                            )
-                        )
-                        .background(glassSheenBrush())
-                        .glassStroke(cornerRadius = 20.dp, width = 1.dp)
-                        .clickable { onOpenCategory(cat.id) }
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier.size(44.dp).clip(CircleShape)
-                            .background(CAT_COLORS[i % CAT_COLORS.size]),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            catIcon(cat.id), contentDescription = null,
-                            tint = CAT_ICON_TINTS[i % CAT_ICON_TINTS.size],
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(cat.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text("共 ${cat.cards.size} 个站点", fontSize = 12.sp, color = Color.White.copy(alpha = 0.6f))
-                    }
-                    Text(">", fontSize = 18.sp, color = Color.White.copy(alpha = 0.6f))
-                }
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -1226,7 +1157,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.13" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.14" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1522,7 +1453,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.13" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.14" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
