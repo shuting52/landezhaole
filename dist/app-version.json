@@ -1,11 +1,11 @@
 {
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.19-release.apk",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.20-release.apk",
   "notes": [
-    "优化：默认主题换成即存风格（深蓝强调、灰绿页面底、卡片圆角 12、胶囊按钮）",
-    "删除：默认主题原绿色强调与红色顶部渐变",
-    "增加：默认底栏改为悬浮磨砂胶囊栏（选中胶囊滑动切换）"
+    "优化：默认底栏与卡片改不透明白、底栏加阴影，贴近即存玻璃栏效果",
+    "删除：首页 ChatGPT玩法入口卡（只留横幅吊牌）",
+    "增加：返回键回首页、在首页双击退出"
   ],
-  "sha256": "6f8737418f62ec1600fddc3420eb024e846aa603c84e79e4a6395710679c6d0b",
-  "versionCode": 38,
-  "versionName": "1.3.19"
+  "sha256": "8244bd0b1d2b25a741140bb2949b1aca94cacf681a8f39b2e4656da6c952342b",
+  "versionCode": 39,
+  "versionName": "1.3.20"
 }
