@@ -14,6 +14,7 @@
 [data-theme="huang"]{--bg:#FFFBEB;--card:#FFFFFF;--text:#1A1A1A;--muted:#6B7280;--line:#F0E2B8;--green:#D97706;--green-d:#B45309;--red:#E70000;--blue:#FFAF02;--orange:#FFAF02}
 [data-theme="lan"]{--bg:#EFF6FF;--card:#FFFFFF;--text:#1A1A1A;--muted:#6B7280;--line:#D0DFF5;--green:#1D4ED8;--green-d:#1E40AF;--red:#E70000;--blue:#FFAF02;--orange:#FFAF02}
 [data-theme="hei"]{--bg:#0C0C0C;--card:#1A1A1A;--text:#FFFFFF;--muted:#A1A1AA;--line:#2A2A2A;--green:#FFAF02;--green-d:#E69A00;--red:#FF3B30;--blue:#FFAF02;--orange:#FFAF02}
+[data-theme="clay"]{--bg:#F5F3EE;--card:#FFFFFF;--text:#1A1A1A;--muted:#6B7280;--line:#EAE6DE;--green:#34A853;--green-d:#2E8B47;--red:#EA4335;--blue:#4285F4;--orange:#FBBC05}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .blob{display:none}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) section.cat,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .card,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .searchrow,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .theme-panel,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .share-dialog,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .util-dialog,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .toast-notify{border-radius:0}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) section.cat,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .searchrow,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .theme-panel,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .share-dialog,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .util-dialog{box-shadow:4px 4px 0 #0c0c0c}
@@ -22,6 +23,17 @@
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .engines button,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .tabs button,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .theme-btn,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .stat,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .more-bar,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .qicon,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .avatar,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .apk-btn,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) #sideTools button,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) #sideTools a{border-radius:0}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) #sideTools button,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) #sideTools a{box-shadow:3px 3px 0 #0c0c0c}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .searchrow:focus-within{box-shadow:4px 4px 0 #0c0c0c}
+[data-theme="clay"] section.cat,[data-theme="clay"] .searchrow,[data-theme="clay"] .theme-panel,[data-theme="clay"] .share-dialog,[data-theme="clay"] .util-dialog{border-radius:24px;box-shadow:0 14px 30px rgba(120,110,90,.20),inset 0 2px 0 rgba(255,255,255,.95)}
+[data-theme="clay"] .searchrow::after{border-radius:22px}
+[data-theme="clay"] .card{border-radius:20px;box-shadow:0 8px 20px rgba(120,110,90,.16),inset 0 1px 0 rgba(255,255,255,.95)}
+[data-theme="clay"] .card-wrap:hover .card{transform:translateY(-3px);box-shadow:0 16px 30px rgba(120,110,90,.25),inset 0 1px 0 rgba(255,255,255,.95);border-color:var(--green)}
+[data-theme="clay"] .engines button,[data-theme="clay"] .tabs button,[data-theme="clay"] .theme-btn,[data-theme="clay"] .stat,[data-theme="clay"] .apk-btn{border-radius:999px;box-shadow:0 6px 14px rgba(120,110,90,.18),inset 0 1px 0 rgba(255,255,255,.95)}
+[data-theme="clay"] .more-bar{border-radius:20px}
+[data-theme="clay"] .qicon{border-radius:18px;box-shadow:0 8px 16px rgba(120,110,90,.30),inset 0 2px 3px rgba(255,255,255,.55)}
+[data-theme="clay"] .avatar{border-radius:16px;box-shadow:0 6px 14px rgba(120,110,90,.28),inset 0 2px 3px rgba(255,255,255,.5)}
+[data-theme="clay"] #sideTools button,[data-theme="clay"] #sideTools a{border-radius:18px;box-shadow:0 10px 22px rgba(120,110,90,.25),inset 0 1px 0 rgba(255,255,255,.95)}
+[data-theme="clay"] .toast-notify{border-radius:20px}
+[data-theme="clay"] .searchrow:focus-within{box-shadow:0 14px 30px rgba(120,110,90,.20),inset 0 2px 0 rgba(255,255,255,.95)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
 a{color:inherit;text-decoration:none}
@@ -771,12 +783,12 @@ document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
 const sw=document.getElementById('opticTheme');
-const THEMES=[{v:'light',n:'默认',c:'#16a34a',t:'#fff'},{v:'dark',n:'暗夜',c:'#34d399',t:'#fff'},{v:'hong',n:'大红',c:'#E70000',t:'#fff'},{v:'huang',n:'明黄',c:'#FFAF02',t:'#111'},{v:'lan',n:'宝蓝',c:'#1D4ED8',t:'#fff'},{v:'hei',n:'曜黑',c:'#FFAF02',t:'#111'}];
+const THEMES=[{v:'light',n:'默认',c:'#16a34a',t:'#fff'},{v:'dark',n:'暗夜',c:'#34d399',t:'#fff'},{v:'hong',n:'大红',c:'#E70000',t:'#fff'},{v:'huang',n:'明黄',c:'#FFAF02',t:'#111'},{v:'lan',n:'宝蓝',c:'#1D4ED8',t:'#fff'},{v:'hei',n:'曜黑',c:'#FFAF02',t:'#111'},{v:'clay',n:'黏土',c:'#4285F4',t:'#fff'}];
 const themePanel=document.getElementById('themePanel'),themePickBtn=document.getElementById('themePickBtn');
 themePanel.innerHTML=THEMES.map(t=>`<button class="theme-opt" data-v="${t.v}" style="background:${t.c};color:${t.t}" role="menuitem"><span class="layer"></span><span>${t.n}</span></button>`).join('');
 function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='dark'||v==='hei');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 let saved=localStorage.getItem('landezhaole-theme');
-if(['light','dark','hong','huang','lan','hei'].indexOf(saved)<0){saved='light';try{localStorage.setItem('landezhaole-theme','light');}catch(e){}}
+if(['light','dark','hong','huang','lan','hei','clay'].indexOf(saved)<0){saved='light';try{localStorage.setItem('landezhaole-theme','light');}catch(e){}}
 if(saved){document.documentElement.dataset.theme=saved;sw.checked=saved==='dark'||saved==='hei';}
 themePanel.querySelectorAll('.theme-opt').forEach(b=>{if(b.dataset.v===document.documentElement.dataset.theme)b.classList.add('on');b.onclick=()=>{applyTheme(b.dataset.v);themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');};});
 sw.onchange=()=>{applyTheme(sw.checked?'dark':'light');};
