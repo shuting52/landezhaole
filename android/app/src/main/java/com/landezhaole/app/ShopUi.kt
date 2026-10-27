@@ -125,7 +125,7 @@ val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xF
 
 // 画廊主题生效时顶栏与品牌红跟主题主色走；默认主题保持电商红
 fun isGallerySchemePal(pal: AppPalette): Boolean =
-    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette || pal == CrystalPalette
+    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette || pal == CrystalPalette || pal == GlassChatPalette
 fun shopBrand(pal: AppPalette): Color = if (isGallerySchemePal(pal)) pal.accent else SHOP_RED
 // 主题组件样式：颜色之外，卡片/Tab/芯片/按钮的形状与阴影也跟主题走
 data class ThemeStyle(
@@ -258,6 +258,21 @@ fun styleOf(pal: AppPalette): ThemeStyle = when (pal) {
         buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 4.dp,
         buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
     )
+    GlassChatPalette -> ThemeStyle(
+        cardShape = RoundedCornerShape(20.dp), cardBorderWidth = 1.dp,
+        cardBorderColor = Color(0xCCFFFFFF), cardElevation = 16.dp,
+        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = Color(0x33FFFFFF),
+        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0xCCFFFFFF),
+        tabBarElevation = 16.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+        tabSelBg = pal.accent, tabSelText = Color.White, tabShape = RoundedCornerShape(50),
+        chipShape = RoundedCornerShape(50), chipBorderWidth = 1.dp,
+        chipBorderColor = Color(0xCCFFFFFF), chipSelBg = pal.accent, chipSelText = Color.White,
+        chipSelBorderColor = pal.accent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+        buttonShape = RoundedCornerShape(50), buttonBorderWidth = 1.dp,
+        buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 8.dp,
+        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
+    )
     else -> ThemeStyle(
         cardShape = RoundedCornerShape(12.dp), cardBorderWidth = 1.dp,
         cardBorderColor = pal.line, cardElevation = 0.dp,
@@ -293,7 +308,8 @@ fun Modifier.hardShadow(shape: Shape, offset: Dp, color: Color): Modifier = this
 )
 
 fun shopBrandGradient(pal: AppPalette): Brush =
-    if (pal == CrystalPalette) Brush.horizontalGradient(
+    if (pal == GlassChatPalette) GlassAccentGradient
+    else if (pal == CrystalPalette) Brush.horizontalGradient(
         listOf(Color(0xFF60A5FA), Color(0xFF1668DC), Color(0xFF7C3AED))
     ) else if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else SHOP_GRADIENT
 
@@ -1210,7 +1226,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.11" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.12" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1506,7 +1522,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.11" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.12" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center

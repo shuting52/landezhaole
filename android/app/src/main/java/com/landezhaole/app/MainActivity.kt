@@ -242,6 +242,21 @@ val CrystalPalette = AppPalette(
     line = Color(0xFFD3E3F8)
 )
 
+// GlassChat 玻璃（组件库同款语言）：暗底 + 蓝紫主色 + 半透明白卡
+val GlassChatPalette = AppPalette(
+    isDark = true,
+    accent = Color(0xFF60A5FA),
+    accentSoft = Color(0x1A60A5FA),
+    danger = Color(0xFFDC2626),
+    surface = Color(0x1AFFFFFF),
+    foreground = Color(0xFFFFFFFF),
+    secondary = Color(0x99FFFFFF),
+    barBackground = Color(0xCC100A16),
+    pageBackground = Color(0xFF100A16),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0x33FFFFFF)
+)
+
 // 水晶液态页面底：蓝 → 雾白 → 粉 → 薄荷，四段竖向渐变（与 HTML 组件库一致）
 fun crystalPageBrush(): Brush = Brush.verticalGradient(
     listOf(Color(0xFFD8E6FB), Color(0xFFEEF2FB), Color(0xFFFDEEF4), Color(0xFFE2F7F0))
@@ -534,6 +549,7 @@ class MainActivity : ComponentActivity() {
                 "lever009" -> LeverPalette
                 "y2k032" -> Y2kPalette
                 "crystal" -> CrystalPalette
+                "glasschat" -> GlassChatPalette
                 else -> if (dark) DarkPalette else LightPalette
             }
             MaterialTheme(
