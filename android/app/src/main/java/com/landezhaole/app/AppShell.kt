@@ -435,7 +435,9 @@ fun AppShell(
                             engineJump = homeEngineJump,
                             onEngineJumpConsumed = { homeEngineJump = null },
                             onRecordDownload = recordDownload,
-                            showToast = showToastMsg
+                            showToast = showToastMsg,
+                            clicks = clicks,
+                            totalSites = total
                         )
                         tab == 1 -> ShopCategory(
                             pal = pal, categories = categories,

@@ -548,7 +548,9 @@ fun ShopHome(
     engineJump: String?,
     onEngineJumpConsumed: () -> Unit,
     onRecordDownload: (String) -> Unit,
-    showToast: (String) -> Unit
+    showToast: (String) -> Unit,
+    clicks: Map<String, Int>,
+    totalSites: Int
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -815,6 +817,9 @@ fun ShopHome(
             LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 item {
                     ShopBanner(pal, categories) { id -> onOpenCategory(id) }
+                }
+                item {
+                    ShopRankCard(categories = categories, clicks = clicks, totalSites = totalSites)
                 }
                 item {
                     Column(
@@ -1192,7 +1197,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.15" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.16" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1488,7 +1493,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.15" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.16" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
@@ -1499,5 +1504,65 @@ fun ShopMine(
     }
     if (showAbout) {
         AboutDialog(catCount = catCount, totalSites = totalSites, onDismiss = { showAbout = false })
+    }
+}
+
+// ---- 首页排名卡：对标网站右上角排名卡；网站是悬停展开详情，手机上改为点按展开 ----
+@Composable
+fun ShopRankCard(
+    categories: List<Category>,
+    clicks: Map<String, Int>,
+    totalSites: Int
+) {
+    var expanded by remember { mutableStateOf(false) }
+    // 直接算，不用 remember：点击会改 clicks 状态，组合时读到就自动重算
+    val topEntry: Pair<SiteCard, Int>? = categories.flatMap { it.cards }
+        .mapNotNull { c ->
+            val n = clicks[c.u] ?: 0
+            if (n > 0) c to n else null
+        }
+        .maxByOrNull { it.second }
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .shadow(4.dp, RoundedCornerShape(18.dp))
+            .clip(RoundedCornerShape(18.dp))
+            .background(Brush.horizontalGradient(listOf(Color(0xFFFFFBF0), Color(0xFFFFDD87))))
+            .clickable { expanded = !expanded }
+            .padding(14.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("🏆", fontSize = 26.sp)
+            Spacer(modifier = Modifier.width(10.dp))
+            Text("1", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFC64B))
+            Text("st", fontSize = 16.sp, color = Color(0xFF424C50))
+            Spacer(modifier = Modifier.width(10.dp))
+            if (topEntry != null) {
+                SiteIcon(topEntry.first, size = 40.dp)
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+            Text(
+                text = topEntry?.first?.t ?: "今日暂无点击",
+                fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF6B7578),
+                maxLines = 1, overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            Text(if (expanded) "收起 ∧" else "详情 ∨", fontSize = 12.sp, color = Color(0xFF6B7578))
+        }
+        if (expanded) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color(0xFFFFE8A0)))
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("今日点击", fontSize = 12.sp, color = Color(0xFF424C50))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "${topEntry?.second ?: 0}",
+                    fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEA9518)
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text("本站共收录 $totalSites 个站点", fontSize = 12.sp, color = Color(0xFF6B7578))
+        }
     }
 }
