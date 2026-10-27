@@ -1,11 +1,11 @@
 {
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.16-release.apk",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.17-release.apk",
   "notes": [
     "优化：无",
     "删除：无",
-    "增加：首页排名卡（今日点击第一名与收录总数，点击展开详情）"
+    "增加：首页 ChatGPT玩法入口与玩法页（云端题库、搜索、分类、点卡复制）"
   ],
-  "sha256": "59864e5dd04b6588c5ef5bbc42fb389d63bcac9f00619317d92e3d9071508c8f",
-  "versionCode": 35,
-  "versionName": "1.3.16"
+  "sha256": "4e034236b1ca8797bc4e90c960534ef34dc6b9ab3bc809f73b41f6efcdf9cc4c",
+  "versionCode": 36,
+  "versionName": "1.3.17"
 }
