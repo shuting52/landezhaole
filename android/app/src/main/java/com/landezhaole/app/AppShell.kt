@@ -24,6 +24,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -198,6 +202,49 @@ fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(emoji, fontSize = 22.sp)
                         Text(label, fontSize = 11.sp, color = if (sel) sty.tabSelText else pal.secondary)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 悬浮磨砂胶囊底栏：对标 shuiyingongju 非玻璃栏（高 63、半径 31.5、边距 18、距底 20，选中磨砂胶囊 26，滑动 220ms）
+@Composable
+fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
+    val capsuleFill = if (pal.isDark) Color(0x24FFFFFF) else Color(0x17000000)
+    val items = listOf("🏠" to "首页", "🗂️" to "分类", "💰" to "省钱小助手", "👤" to "我的")
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding()
+            .padding(horizontal = 18.dp).padding(bottom = 20.dp, top = 8.dp)
+    ) {
+        val slot = maxWidth / 4
+        val targetOffset = 6.dp + slot * tab
+        val offset by animateDpAsState(
+            targetValue = targetOffset,
+            animationSpec = tween(220, easing = EaseOut),
+            label = "capsuleSlide"
+        )
+        Box(
+            modifier = Modifier.fillMaxWidth().height(63.dp)
+                .clip(RoundedCornerShape(31.5.dp)).background(pal.barBackground)
+        ) {
+            Box(
+                modifier = Modifier.align(Alignment.CenterStart)
+                    .offset(x = offset).width(slot - 12.dp).height(51.dp)
+                    .clip(RoundedCornerShape(26.dp)).background(capsuleFill)
+            )
+            Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                items.forEachIndexed { i, (emoji, label) ->
+                    Box(
+                        modifier = Modifier.weight(1f).fillMaxHeight()
+                            .clickable { goTab(i) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(emoji, fontSize = 22.sp)
+                            Text(label, fontSize = 11.sp, color = if (tab == i) pal.foreground else pal.secondary)
+                        }
                     }
                 }
             }
@@ -474,6 +521,8 @@ fun AppShell(
             }
             if (isGallerySchemePal(pal)) {
                 GalleryTabBar(pal = pal, tab = tab, goTab = { goTab(it) })
+            } else if (isDefaultSchemePal(pal)) {
+                CapsuleTabBar(pal = pal, tab = tab, goTab = { goTab(it) })
             } else {
                 NavigationBar(
                     containerColor = pal.barBackground,
@@ -543,7 +592,7 @@ fun AppShell(
         }
         if (showSplash) {
             Box(
-                modifier = Modifier.fillMaxSize().background(pal.pageBackground)
+                modifier = Modifier.fillMaxSize().pageBg(pal)
                     .clickable { showSplash = false },
                 contentAlignment = Alignment.Center
             ) {

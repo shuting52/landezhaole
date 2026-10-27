@@ -125,31 +125,33 @@ data class AppPalette(
     val line: Color
 )
 
+// 默认主题 = shuiyingongju（即存）浅色：深蓝强调 + 灰绿调页面底
 val LightPalette = AppPalette(
     isDark = false,
-    accent = Color(0xFF16A34A),
-    accentSoft = Color(0x1416A34A),
-    danger = Color(0xFFDC2626),
-    surface = Color(0xFFF4F5F7),
-    foreground = Color(0xFF1F2937),
-    secondary = Color(0xFF6B7280),
-    barBackground = Color(0xFFFFFFFF),
-    pageBackground = Color(0xFFF4F5F7),
-    subtleFill = Color(0x1F7F7F7F),
-    line = Color(0xFFE5E7EB)
+    accent = Color(0xFF1257C9),
+    accentSoft = Color(0x141257C9),
+    danger = Color(0xFFC0392B),
+    surface = Color(0x12000000),
+    foreground = Color(0xFF1B2430),
+    secondary = Color(0xFF6E7887),
+    barBackground = Color(0xE6F2F2F7),
+    pageBackground = Color(0xFFCDDCDC),
+    subtleFill = Color(0x14000000),
+    line = Color(0x14000000)
 )
+// 默认主题 = shuiyingongju（即存）深色：亮蓝强调 + 中灰页面底
 val DarkPalette = AppPalette(
     isDark = true,
-    accent = Color(0xFF34D399),
-    accentSoft = Color(0x1F34D399),
-    danger = Color(0xFFF87171),
-    surface = Color(0xFF0B1220),
-    foreground = Color(0xFFF3F4F6),
-    secondary = Color(0xFF9CA3AF),
-    barBackground = Color(0xFF1F2937),
-    pageBackground = Color(0xFF0B1220),
-    subtleFill = Color(0x1F7F7F7F),
-    line = Color(0xFF374151)
+    accent = Color(0xFF5AA9FF),
+    accentSoft = Color(0x1F5AA9FF),
+    danger = Color(0xFFFF7B72),
+    surface = Color(0x1FFFFFFF),
+    foreground = Color(0xFFF5F7FA),
+    secondary = Color(0xFFADB7C5),
+    barBackground = Color(0xE61C1C1E),
+    pageBackground = Color(0xFF434343),
+    subtleFill = Color(0x1FFFFFFF),
+    line = Color(0x1FFFFFFF)
 )
 // 003 NEU 柔影（app-gallery）
 val NeuPalette = AppPalette(
@@ -263,8 +265,15 @@ fun crystalPageBrush(): Brush = Brush.verticalGradient(
 )
 
 // 页面根背景：水晶主题用渐变底，其他主题保持原单色底
+// shui 深色页面底：竖向渐变（上黑下灰），与即存深色背景一致
+fun shuiDarkPageBrush(): Brush = Brush.verticalGradient(
+    listOf(Color(0xFF000000), Color(0xFF434343))
+)
+
 fun Modifier.pageBg(pal: AppPalette): Modifier =
-    if (pal == CrystalPalette) background(crystalPageBrush()) else background(pal.pageBackground)
+    if (pal == CrystalPalette) background(crystalPageBrush())
+    else if (pal == DarkPalette) background(shuiDarkPageBrush())
+    else background(pal.pageBackground)
 
 @Composable
 fun GlassPanel(modifier: Modifier = Modifier, pal: AppPalette, content: @Composable () -> Unit) {
