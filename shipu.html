@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>食谱 · 今天吃什么 · 懒得找了</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<script>try{var t=localStorage.getItem('landezhaole-theme');if(t==='dark'||t==='hei')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#16a34a;--red:#dc2626;--orange:#ea580c}
+[data-theme="dark"]{--bg:#0b1220;--card:#1f2937;--text:#f3f4f6;--muted:#9ca3af;--line:#374151;--green:#34d399;--red:#f87171;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+.chead{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:14px 0}
+.chead .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.back{color:var(--green);text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
+.chead h1{font-size:20px;font-weight:800;color:var(--red)}
+.chead .sub{font-size:12px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:18px 0}
+.hero .kicker{font-size:12px;color:var(--muted);letter-spacing:2px}
+.hero h2{font-size:30px;font-weight:900;margin:8px 0 4px}
+.hero .meta{color:var(--muted);font-size:13px}
+.hero h3{font-size:14px;margin:16px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{background:rgba(22,163,74,.1);color:var(--green);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600}
+.hero ol{padding-left:20px;line-height:1.9;font-size:14px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{border:0;border-radius:999px;padding:12px 26px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.btn-rand{background:var(--green);color:#fff}
+.btn-video{background:var(--red);color:#fff}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
+.pills button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:5px 16px;font-size:13px;cursor:pointer}
+.pills button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding-bottom:40px}
+.dish{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;text-align:left;font-family:inherit}
+.dish:hover{border-color:var(--green);transform:translateY(-2px)}
+.dish b{font-size:15px}
+.dish div{color:var(--muted);font-size:12px;margin-top:4px}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.foot a{color:var(--green);text-decoration:none}
+@media(max-width:640px){.hero h2{font-size:26px}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+</style>
+</head>
+<body>
+<div class="chead"><div class="wrap"><a class="back" href="index.html">← 回首页</a><h1>食谱 · 今天吃什么</h1><span class="sub">点随机，今晚就吃它</span></div></div>
+<div class="wrap">
+<div class="hero" id="hero">
+<div class="kicker">今天吃什么</div>
+<h2 id="dishName"></h2>
+<div class="meta" id="dishMeta"></div>
+<h3>食材</h3>
+<div class="chips" id="dishIng"></div>
+<h3>做法</h3>
+<ol id="dishSteps"></ol>
+<div class="btns">
+<button class="btn btn-rand" id="randBtn" type="button">🎲 再随机一道</button>
+<a class="btn btn-video" id="videoBtn" href="#" target="_blank" rel="noopener">▶ 看视频教程</a>
+</div>
+</div>
+<div class="pills" id="pills"></div>
+<div class="grid" id="list"></div>
+<div class="foot">菜谱食材与步骤供参考，口味按自家习惯调整 · 视频教程打开 B 站对应菜名搜索结果 · <a href="index.html">回首页</a></div>
+</div>
+<script>
+var DISHES=[
+{n:"宫保鸡丁",c:"荤菜",t:20,ing:["鸡腿肉300g","花生米50g","干辣椒8个","葱姜蒜","料酒","生抽","老抽","白糖","醋","淀粉"],st:["鸡腿肉切丁，加料酒、生抽、淀粉抓匀腌10分钟。","调宫保汁：生抽、老抽、白糖、醋、淀粉、水拌匀。","热油爆香葱姜蒜和干辣椒。","下鸡丁滑炒至变色。","倒入宫保汁收汁，下花生米翻匀出锅。"]},
+{n:"鱼香肉丝",c:"荤菜",t:20,ing:["猪里脊200g","木耳","胡萝卜","青椒","郫县豆瓣","白糖","醋","生抽","淀粉"],st:["里脊切丝，加料酒、生抽、淀粉腌10分钟。","调鱼香汁：白糖、醋、生抽、淀粉、水。","热油爆香郫县豆瓣。","下肉丝滑散至变色。","下木耳、胡萝卜、青椒，倒入鱼香汁收汁。"]},
+{n:"红烧肉",c:"荤菜",t:60,ing:["五花肉500g","冰糖","生抽","老抽","料酒","葱姜","八角"],st:["五花肉切块，冷水下锅焯水去沫。","小火炒冰糖至枣红，下肉块上色。","加料酒、生抽、老抽、葱姜、八角。","加水没过肉，小火炖40分钟。","大火收汁至油亮。"]},
+{n:"可乐鸡翅",c:"荤菜",t:30,ing:["鸡翅8只","可乐1罐","生抽","料酒","姜片"],st:["鸡翅划两刀，焯水去沫。","平底锅煎至两面金黄。","倒入可乐没过鸡翅，加生抽、姜片。","中小火炖15分钟。","大火收汁至浓稠。"]},
+{n:"糖醋排骨",c:"荤菜",t:40,ing:["排骨500g","冰糖","醋","生抽","料酒","姜"],st:["排骨焯水去沫。","煎至表面微黄。","加冰糖、醋、生抽、料酒、姜。","加水炖25分钟。","大火收汁，汁水亮油即可。"]},
+{n:"青椒肉丝",c:"荤菜",t:15,ing:["猪里脊200g","青椒2个","料酒","生抽","淀粉","蒜"],st:["里脊切丝，加料酒、生抽、淀粉腌10分钟。","热油爆香蒜末。","下肉丝大火滑炒变色盛出。","下青椒炒断生。","回锅肉丝，调味翻匀出锅。"]},
+{n:"水煮肉片",c:"荤菜",t:25,ing:["猪里脊200g","豆芽","干辣椒","花椒","郫县豆瓣","蛋清","淀粉"],st:["里脊切片，加蛋清、淀粉腌10分钟。","豆芽焯水垫碗底。","炒香郫县豆瓣，加水煮开。","下肉片滑散，煮1分钟连汤倒出。","撒干辣椒、花椒，泼一勺热油。"]},
+{n:"回锅肉",c:"荤菜",t:25,ing:["五花肉300g","青蒜","郫县豆瓣","甜面酱","姜"],st:["五花肉冷水下锅，加姜煮20分钟，晾凉切片。","干锅煸肉片至出油微卷。","下郫县豆瓣和甜面酱炒出红油。","下青蒜段炒断生。","调味出锅。"]},
+{n:"蒜香排骨",c:"荤菜",t:35,ing:["排骨500g","蒜末","生抽","料酒","淀粉","五香粉"],st:["排骨加生抽、料酒、五香粉腌30分钟。","裹一层干淀粉。","油温六成炸至金黄，复炸一遍。","留底油爆香蒜末。","下排骨翻炒均匀，撒蒜末出锅。"]},
+{n:"番茄牛腩",c:"荤菜",t:90,ing:["牛腩600g","番茄3个","洋葱","姜","生抽","冰糖"],st:["牛腩切块焯水去沫。","番茄切块炒出汁。","下牛腩、洋葱、姜，加水炖1小时。","加生抽、冰糖调味。","收汁至浓稠。"]},
+{n:"地三鲜",c:"素菜",t:20,ing:["茄子","土豆","青椒","蒜","生抽","白糖"],st:["茄子、土豆、青椒切滚刀块。","过油炸至表面微黄捞出。","爆香蒜末。","回锅加生抽、白糖调味。","勾薄芡出锅。"]},
+{n:"干煸四季豆",c:"素菜",t:25,ing:["四季豆300g","干辣椒","花椒","蒜末"],st:["四季豆掰段，干锅小火煸至表皮起皱。","盛出，爆香干辣椒、花椒。","回锅四季豆，加蒜末。","调味翻炒均匀。"]},
+{n:"清炒西兰花",c:"素菜",t:12,ing:["西兰花1颗","蒜","盐"],st:["西兰花切小朵，焯水1分钟捞出。","热油爆香蒜末。","下西兰花翻炒。","加盐调味出锅。"]},
+{n:"蒜蓉空心菜",c:"素菜",t:10,ing:["空心菜1把","蒜末","盐"],st:["空心菜洗净切段，梗叶分开。","大火爆香蒜末。","先下菜梗炒1分钟，再下菜叶。","快炒断生，加盐出锅。"]},
+{n:"虎皮青椒",c:"素菜",t:15,ing:["尖椒8个","蒜","生抽","醋","白糖"],st:["尖椒去蒂，干锅煎至表皮起虎皮斑。","调汁：生抽、醋、白糖、水。","倒入调汁焖1分钟。","撒蒜末出锅。"]},
+{n:"手撕包菜",c:"素菜",t:12,ing:["包菜半颗","干辣椒","蒜","醋"],st:["包菜手撕成大块。","热油爆香干辣椒、蒜。","大火下包菜快炒。","沿锅边烹醋，调味出锅。"]},
+{n:"紫菜蛋花汤",c:"汤羹",t:8,ing:["紫菜","鸡蛋1个","虾皮","香油","盐"],st:["水开下紫菜和虾皮。","鸡蛋打散，淋入锅中成蛋花。","加盐调味。","点几滴香油。"]},
+{n:"番茄蛋汤",c:"汤羹",t:10,ing:["番茄2个","鸡蛋2个","葱花"],st:["番茄切块炒软。","加水煮开。","淋入蛋液成蛋花。","撒葱花，加盐出锅。"]},
+{n:"冬瓜排骨汤",c:"汤羹",t:60,ing:["排骨400g","冬瓜300g","姜"],st:["排骨焯水去沫。","加姜炖40分钟。","下冬瓜炖15分钟。","加盐调味。"]},
+{n:"酸辣汤",c:"汤羹",t:20,ing:["豆腐","木耳","鸡蛋","胡椒粉","醋","生抽"],st:["豆腐、木耳切丝入锅煮开。","加生抽、胡椒粉。","勾芡至浓稠。","淋蛋花，起锅前加醋。"]},
+{n:"玉米排骨汤",c:"汤羹",t:60,ing:["排骨400g","玉米1根","胡萝卜","姜"],st:["排骨焯水去沫。","加玉米、胡萝卜、姜。","炖50分钟。","加盐调味。"]},
+{n:"蛋炒饭",c:"主食",t:12,ing:["隔夜饭1碗","鸡蛋2个","葱花","生抽"],st:["鸡蛋炒散盛出。","热油下米饭，炒至粒粒分明。","回锅鸡蛋、葱花。","淋生抽翻匀。"]},
+{n:"阳春面",c:"主食",t:10,ing:["面条","小葱","猪油或香油","生抽","开水"],st:["碗里放生抽、猪油、开水调成汤底。","水开煮面。","面捞入碗，撒葱花。"]},
+{n:"葱油拌面",c:"主食",t:15,ing:["面条","小葱1把","生抽","老抽","白糖"],st:["小葱切段，小火熬出葱油。","加生抽、老抽、白糖调成葱油汁。","煮面捞出。","浇汁拌匀。"]},
+{n:"韭菜鸡蛋饺子",c:"主食",t:40,ing:["韭菜","鸡蛋","饺子皮","香油"],st:["鸡蛋炒碎，韭菜切末。","加香油、盐拌成馅。","包成饺子。","水开下锅，点三次水煮熟。"]},
+{n:"馄饨",c:"主食",t:30,ing:["馄饨皮","猪肉末","虾皮","紫菜","葱"],st:["猪肉末加生抽、葱姜调馅。","包成馄饨。","碗里放虾皮、紫菜、香油。","煮熟连汤盛出。"]},
+{n:"拍黄瓜",c:"凉菜",t:10,ing:["黄瓜2根","蒜末","醋","生抽","香油","辣椒油"],st:["黄瓜拍碎切段。","加蒜末、醋、生抽、香油、辣椒油。","拌匀，冷藏10分钟更脆。"]},
+{n:"凉拌木耳",c:"凉菜",t:15,ing:["黑木耳","香菜","蒜末","醋"],st:["木耳泡发，焯水过凉。","加香菜、蒜末。","调醋、生抽、香油拌匀。"]},
+{n:"蒜泥白肉",c:"凉菜",t:30,ing:["五花肉300g","蒜泥","生抽","醋","辣椒油"],st:["五花肉冷水下锅煮20分钟，晾凉切片。","调蒜泥汁：蒜泥、生抽、醋、辣椒油。","肉片摆盘，浇汁。"]},
+{n:"凉拌三丝",c:"凉菜",t:12,ing:["胡萝卜","土豆丝","海带丝","醋"],st:["三丝分别焯水，过凉。","沥干水分。","加醋、生抽、香油拌匀。"]}
+];
+var CATS=["全部","荤菜","素菜","汤羹","主食","凉菜"];
+var curCat="全部",bag=[];
+function pool(){return curCat==="全部"?DISHES:DISHES.filter(function(d){return d.c===curCat;});}
+function refill(){bag=pool().map(function(d,i){return d;});for(var i=bag.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=bag[i];bag[i]=bag[j];bag[j]=t;}}
+function showDish(d){
+document.getElementById('dishName').textContent=d.n;
+document.getElementById('dishMeta').textContent=d.c+" · 约"+d.t+"分钟";
+document.getElementById('dishIng').innerHTML=d.ing.map(function(x){return '<span>'+x+'</span>';}).join('');
+document.getElementById('dishSteps').innerHTML=d.st.map(function(x){return '<li>'+x+'</li>';}).join('');
+document.getElementById('videoBtn').href='https://search.bilibili.com/all?keyword='+encodeURIComponent(d.n+'做法');
+}
+function pickRandom(){if(bag.length===0)refill();showDish(bag.pop());window.scrollTo({top:0,behavior:'smooth'});}
+function renderPills(){document.getElementById('pills').innerHTML=CATS.map(function(c){return '<button type="button" class="'+(c===curCat?'on':'')+'" data-c="'+c+'">'+c+'</button>';}).join('');
+document.querySelectorAll('#pills button').forEach(function(b){b.onclick=function(){curCat=b.getAttribute('data-c');bag=[];renderPills();renderList();pickRandom();};});}
+function renderList(){var list=pool();document.getElementById('list').innerHTML=list.map(function(d){return '<button type="button" class="dish" data-n="'+d.n+'"><b>'+d.n+'</b><div>'+d.c+' · 约'+d.t+'分钟</div></button>';}).join('');
+document.querySelectorAll('#list .dish').forEach(function(b){b.onclick=function(){var d=DISHES.filter(function(x){return x.n===b.getAttribute('data-n');})[0];showDish(d);window.scrollTo({top:0,behavior:'smooth'});};});}
+document.getElementById('randBtn').onclick=pickRandom;
+renderPills();renderList();pickRandom();
+</script>
+</body>
+</html>
