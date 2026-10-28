@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 // 签名密钥文件路径（CI 上由 Secrets 还原，本地没有时为 null，不挂签名）
