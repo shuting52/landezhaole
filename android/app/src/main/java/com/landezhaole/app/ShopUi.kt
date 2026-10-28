@@ -119,6 +119,7 @@ import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 // ---- 电商风主色（按 HTML 原型，App 仍叫懒得找了） ----
@@ -582,6 +583,22 @@ fun ShopHome(
             onEngineJumpConsumed()
         }
     }
+    // 应用下载：输入即自动搜。停 500ms 后搜一次，继续输入会取消上一轮等待；
+    // 站内本来就是边输边滤；网页引擎要点搜索才会跳出去，不自动跳。
+    LaunchedEffect(query, engineIdx) {
+        if (ENGINES[engineIdx].id != "appdl") return@LaunchedEffect
+        val q = query.trim()
+        if (q.isEmpty()) {
+            appResults = null
+            appTotal = 0
+            appError = null
+            return@LaunchedEffect
+        }
+        if (appQuery == q) return@LaunchedEffect
+        delay(500)
+        if (appQuery == query.trim()) return@LaunchedEffect
+        searchAppsNow(q)
+    }
     val isSearching = query.isNotBlank() && engineIdx == 0
     val searchResults: List<SiteCard> = if (isSearching) {
         val low = query.trim().lowercase()
@@ -610,13 +627,17 @@ fun ShopHome(
         scope.launch {
             try {
                 val (t, list) = searchApps(q, 0)
-                appResults = list
-                appTotal = t
+                if (appQuery == q) {
+                    appResults = list
+                    appTotal = t
+                }
             } catch (e: Exception) {
-                appError = "搜索失败：" + (e.message ?: "网络异常")
-                appResults = emptyList()
+                if (appQuery == q) {
+                    appError = "搜索失败：" + (e.message ?: "网络异常")
+                    appResults = emptyList()
+                }
             }
-            appLoading = false
+            if (appQuery == q) appLoading = false
         }
     }
     fun loadMoreApps() {
@@ -1165,7 +1186,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.23" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.24" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1466,7 +1487,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.23" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.24" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
