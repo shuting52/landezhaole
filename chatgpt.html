@@ -50,7 +50,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 </main>
 <div class="toast" id="toast">已复制，去 ChatGPT 粘贴使用</div>
 <script>
-const saved=localStorage.getItem('landezhaole-theme');document.documentElement.dataset.theme=(saved==='dark'||saved==='hei'||saved==='yetai-blue-dark'||saved==='yetai-purple-dark'||saved==='liquid-dark')?'dark':'light';
+const saved=localStorage.getItem('landezhaole-theme');document.documentElement.dataset.theme=(saved==='dark'||saved==='hei'||saved==='libraries-dark')?'dark':'light';
 function esc(s){return String(s||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));}
 let DATA=null,curCat='all',curQ='';
 const tabsEl=document.getElementById('tabs'),gridEl=document.getElementById('grid'),emptyEl=document.getElementById('empty'),countEl=document.getElementById('ccount'),toastEl=document.getElementById('toast');

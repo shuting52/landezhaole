@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="yetai-blue-light">
+<html lang="zh-CN" data-theme="libraries-light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,14 +8,9 @@
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="description" content="懒得找了官网与网页版导航站：19 个分类、2320 个精选站点，一搜即达。另有 Android App 可下载。">
 <style>
-:root{--bg:#f4f5f7;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--green:#16a34a;--green-d:#15803d;--red:#dc2626;--blue:#2563eb;--orange:#f59e0b}
-[data-theme="yetai-blue-light"]{--bg:#E3F2FD;--card:rgba(255,255,255,.72);--text:#0D47A1;--muted:#5E7FA8;--line:#BBDEFB;--green:#0D47A1;--green-d:#0A357A;--red:#DC2626;--blue:#1976D2;--orange:#F9A825}
-[data-theme="yetai-blue-dark"]{--bg:#0A1929;--card:rgba(19,42,68,.72);--text:#90CAF9;--muted:#7FA8D0;--line:#1E3A5F;--green:#90CAF9;--green-d:#64B5F6;--red:#FF7B72;--blue:#64B5F6;--orange:#FFCA28}
-[data-theme="yetai-purple-light"]{--bg:#F3E5F5;--card:rgba(255,255,255,.72);--text:#4A148C;--muted:#8A6BA8;--line:#E1BEE7;--green:#4A148C;--green-d:#380A6E;--red:#DC2626;--blue:#7B1FA2;--orange:#F9A825}
-[data-theme="yetai-purple-dark"]{--bg:#160B26;--card:rgba(36,22,64,.72);--text:#CE93D8;--muted:#A88BB8;--line:#3A2358;--green:#CE93D8;--green-d:#BA68C8;--red:#FF7B72;--blue:#BA68C8;--orange:#FFD54F}
-[data-theme="liquid-light"]{--bg:#FFFFFF;--card:rgba(255,255,255,.72);--text:#000000;--muted:#6B7280;--line:#E5E7EB;--green:#000000;--green-d:#1A1A1A;--red:#DC2626;--blue:#0088FF;--orange:#F59E0B}
-[data-theme="liquid-dark"]{--bg:#000000;--card:rgba(28,28,30,.72);--text:#FFFFFF;--muted:#9CA3AF;--line:#2A2A2E;--green:#FFFFFF;--green-d:#E5E5E5;--red:#FF7B72;--blue:#0091FF;--orange:#FF9F0A}
-:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"],[data-theme="liquid-light"],[data-theme="liquid-dark"]) section.cat,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"],[data-theme="liquid-light"],[data-theme="liquid-dark"]) .card,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"],[data-theme="liquid-light"],[data-theme="liquid-dark"]) .searchrow{backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3)}
+:root{--bg:#fdfdfd;--card:#ffffff;--text:#0d0d0d;--muted:#6c6c6c;--line:rgba(0,0,0,0.06);--green:#0073e5;--green-d:#0064c8;--red:#dc2626;--blue:#0073e5;--orange:#f59e0b;--tab-bar:#f1f1f1;--tab-pill:#ffffff;--ring:rgba(0,115,229,.25)}
+[data-theme="libraries-light"]{--bg:#fdfdfd;--card:#ffffff;--text:#0d0d0d;--muted:#6c6c6c;--line:rgba(0,0,0,0.06);--green:#0073e5;--green-d:#0064c8;--red:#dc2626;--blue:#0073e5;--orange:#f59e0b;--tab-bar:#f1f1f1;--tab-pill:#ffffff;--ring:rgba(0,115,229,.25)}
+[data-theme="libraries-dark"]{--bg:#121212;--card:#181818;--text:#ffffff;--muted:rgba(202,202,202,0.7);--line:rgba(255,255,255,0.08);--green:#55cfff;--green-d:#74d8ff;--red:#FF7B72;--blue:#55cfff;--orange:#FF9F0A;--tab-bar:rgba(255,255,255,0.05);--tab-pill:#2a2a2a;--ring:rgba(85,207,255,.30)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
 a{color:inherit;text-decoration:none}
@@ -29,16 +24,9 @@ button{font-family:inherit}
 .header{position:relative;margin-top:-8px;padding:10px 0 4px;text-align:center;animation:fadeUp .7s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(-4deg)}}
-@keyframes shineText{to{background-position:220% center}}
 @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
-@keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(90px,60px) scale(1.15)}}
-@keyframes drift2{from{transform:translate(0,0) scale(1.1)}to{transform:translate(-70px,90px) scale(.95)}}
-.blob{position:fixed;border-radius:50%;filter:blur(60px);z-index:-1;opacity:.45;pointer-events:none}
-.b1{width:520px;height:520px;left:-140px;top:-120px;background:#a7f3d0}
-.b2{width:460px;height:460px;right:-120px;top:22%;background:#bfdbfe}
-.b3{width:420px;height:420px;left:30%;bottom:-160px;background:#fde68a}
 .logo{font-size:46px;font-weight:900;letter-spacing:4px;display:flex;align-items:center;justify-content:flex-start;gap:14px}
-.logo-text{background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shineText 6s linear infinite}
+.logo-text{color:var(--text)}
 .wave-logo{position:relative;width:120px;height:120px;flex:none}
 .wave-circle{position:absolute;left:0;top:0;width:220px;height:220px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#16a34a,#0ea5e9);box-shadow:0 8px 24px rgba(22,163,74,.35);transform:scale(.5454);transform-origin:top left}
 .wave-circle .wave{position:absolute;width:100%;height:100%;display:flex;align-items:flex-end}
@@ -76,7 +64,7 @@ button{font-family:inherit}
 .wave-disc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:62px;height:62px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:2}
 .wave-disc img{width:56px;height:56px;border-radius:12px}
 @media(max-width:640px){.wave-logo{width:88px;height:88px}.wave-circle{transform:scale(.4)}.wave-disc{width:48px;height:48px;border-radius:12px}.wave-disc img{width:42px;height:42px;border-radius:10px}}
-.logo span{color:var(--green)}
+.logo span{color:var(--text)}
 .tagline{color:var(--muted);margin-top:6px}
 .stat{display:inline-block;margin-top:12px;background:var(--card);border:1px solid var(--line);color:var(--green-d);border-radius:20px;padding:4px 18px;font-size:12px;font-weight:700}
 .searchbox{max-width:680px;margin:10px auto 0;position:relative;text-align:center}
@@ -89,7 +77,7 @@ button{font-family:inherit}
 #splash.splash-hide{opacity:0;pointer-events:none}
 #splash .loader svg.inline-block{width:72px;height:72px}
 #splash .loader{margin:0}
-.splash-name{font-size:34px;font-weight:800;background:linear-gradient(100deg,#16a34a,#0ea5e9,#8b5cf6,#16a34a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent}
+.splash-name{font-size:34px;font-weight:800;color:var(--text)}
 @media(max-width:640px){#splash .loader svg.inline-block{width:56px;height:56px}.splash-name{font-size:26px}}
 .absolute{position:absolute}
 .inline-block{display:inline-block}
@@ -103,16 +91,10 @@ button{font-family:inherit}
 .engines{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
 .engines button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 16px;font-size:12px;cursor:pointer}
 .engines button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
-.searchrow{display:flex;border-radius:14px;overflow:hidden;border:1px solid transparent;background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.06);position:relative;isolation:isolate}
+.searchrow{display:flex;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative}
 .searchrow{transition:box-shadow .25s,transform .25s}
 .searchrow:hover{transform:translateY(-2px)}
-.searchrow:focus-within{box-shadow:0 0 0 3px rgba(22,163,74,.25)}
-.searchrow::before{content:"";position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0deg,transparent 290deg,rgba(34,197,94,.95) 305deg,rgba(255,255,255,.95) 322deg,transparent 350deg);animation:searchGlowSpin 5s linear infinite;opacity:.85;z-index:0}
-.searchrow::after{content:"";position:absolute;inset:2px;border-radius:12px;background:var(--card);z-index:0}
-.searchrow>*{position:relative;z-index:1}
-.searchrow:hover::before,.searchrow:focus-within::before{opacity:1;animation-duration:2.5s}
-@keyframes searchGlowSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.searchrow::before{display:none}.searchrow{border-color:var(--line)}}
+.searchrow:focus-within{box-shadow:0 0 0 3px var(--ring)}
 .searchrow input{flex:1;border:0;outline:none;padding:14px 20px;font-size:16px;background:transparent;color:var(--text)}
 .searchrow button{border:0;background:var(--green);color:#fff;font-size:16px;font-weight:700;padding:0 36px;cursor:pointer}
 .hint{text-align:center;color:var(--muted);font-size:12px;margin-top:6px}
@@ -137,15 +119,15 @@ button{font-family:inherit}
 .dock-win-body{flex:1;overflow-y:auto;padding:16px}
 .dock-win-sub{font-size:14px;font-weight:800;color:var(--text);margin:16px 4px 8px}
 .dock-win-sub:first-child{margin-top:0}
-section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
+section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 1px 3px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
 .cat-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cat-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 8px var(--blue);animation:none}
-.cat-title{font-size:20px;font-weight:800;color:var(--red)}
+.cat-title{font-size:20px;font-weight:800;color:var(--text)}
 .cat-count{font-size:12px;color:var(--muted);background:rgba(127,127,127,.12);border-radius:12px;padding:1px 10px}
 .cat-desc{color:var(--muted);font-size:12px;margin:2px 0 12px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.tabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:16px;padding:4px 15px;font-size:12px;cursor:pointer}
-.tabs button.on{background:var(--green);border-color:transparent;color:#fff;font-weight:700}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px;background:var(--tab-bar);border-radius:999px;padding:4px}
+.tabs button{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:999px;padding:4px 15px;font-size:12px;cursor:pointer}
+.tabs button.on{background:var(--tab-pill);border-color:transparent;color:var(--text);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
 .more-bar{display:flex;align-items:center;justify-content:center;min-height:68px;padding:12px;border:1.5px dashed #6b7280;border-radius:14px;background:var(--bg);color:var(--text);font-size:14px;font-weight:700;text-decoration:none;text-align:center;cursor:pointer}
 .more-bar:hover{border-color:var(--green)}
@@ -156,7 +138,7 @@ section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;p
 .card{position:relative;overflow:hidden;display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px;min-width:0;height:100%;box-sizing:border-box;background:var(--bg);border:1px solid var(--line);transition:transform .22s,box-shadow .22s,border-color .22s}
 
 .card::after{content:"";position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);transition:left .5s ease;pointer-events:none}
-.card-wrap:hover .card{transform:translateY(-4px);border-color:var(--green);box-shadow:0 12px 26px rgba(22,163,74,.18)}
+.card-wrap:hover .card{transform:translateY(-4px);border-color:var(--green);box-shadow:0 12px 26px rgba(0,0,0,.10)}
 .card-wrap:hover .card::after{left:130%}
 @keyframes cornerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 @keyframes rainbowShift{to{background-position:200% center}}
@@ -275,7 +257,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .theme-pick-btn:hover .layer{left:0;width:100%}
 .theme-pick-btn p{color:#fff;font-weight:600;font-size:13px;position:relative;z-index:2;transition-duration:.1s;margin:0}
 .theme-pick-btn:hover p{color:transparent;transition-duration:.3s}
-.theme-panel{position:fixed;top:44px;right:8px;z-index:120;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.25);padding:12px;display:none;grid-template-columns:repeat(3,84px);gap:10px}
+.theme-panel{position:fixed;top:44px;right:8px;z-index:120;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.25);padding:12px;display:none;grid-template-columns:repeat(2,84px);gap:10px}
 .theme-panel.open{display:grid}
 .theme-opt{position:relative;height:34px;border:none;display:flex;align-items:center;justify-content:center;overflow-y:hidden;border-radius:0;cursor:pointer;box-shadow:3px 3px 0 rgb(12,12,12);transition-duration:.3s;color:#fff;font-weight:700;font-size:13px}
 .theme-opt .layer{position:absolute;left:-14px;top:0;bottom:0;width:28px;background:#ffaf02;transition-duration:.3s}
@@ -284,7 +266,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 .theme-opt span{position:relative;z-index:2;transition-duration:.1s}
 .theme-opt:hover span{color:transparent;transition-duration:.3s}
 .theme-opt.on{outline:2px solid var(--green);outline-offset:2px}
-@media(max-width:640px){.theme-pick-btn{width:54px;height:24px}.theme-pick-btn p{font-size:12px}.theme-panel{right:8px;left:8px;grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.theme-pick-btn{width:54px;height:24px}.theme-pick-btn p{font-size:12px}.theme-panel{right:8px;left:8px;grid-template-columns:repeat(2,1fr)}}
 #rankCard{position:absolute;right:150px;top:10px;z-index:60;display:none}
 @media(min-width:1400px){#rankCard{display:block}}
 #rankCard .cards{position:relative;height:100px;transition-duration:0.5s;background:none;overflow:hidden;transform:scale(.8);transform-origin:top right}
@@ -342,7 +324,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 </style>
 </head>
 <body>
-<script>(function(){try{var t=localStorage.getItem('landezhaole-theme');document.documentElement.dataset.theme=(['yetai-blue-light','yetai-blue-dark','yetai-purple-light','yetai-purple-dark','liquid-light','liquid-dark'].indexOf(t)>=0)?t:'yetai-blue-light';}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('landezhaole-theme');document.documentElement.dataset.theme=(['libraries-light','libraries-dark'].indexOf(t)>=0)?t:'libraries-light';}catch(e){}})();</script>
 <div id="themePanel" class="theme-panel" role="menu"></div>
 <div id="splash">
 <div class="loader">
@@ -376,7 +358,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 <div class="splash-name">懒得找了</div>
 </div>
 <script>(function(){var s=document.getElementById('splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;s.classList.add('splash-hide');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},600);}s.addEventListener('click',hide);if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){hide();return;}setTimeout(hide,1500);})();</script>
-<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
 <div class="topbar"><div class="wrap">
 <span>懒得找了 · <b>免费资源导航</b> &nbsp;|&nbsp; <span id="today"></span></span>
 <span><a class="dl" href="https://github.com/shuting52/10-05landezhaole/releases/latest" target="_blank" rel="noopener">下载 Android App</a> &nbsp; <label class="optic-switch" title="切换夜间模式"><input class="optic-input" type="checkbox" id="opticTheme" aria-label="切换夜间模式"><span class="optic-ambient"></span><span class="optic-track"><span class="optic-fiber"><span class="optic-fiber-fill"></span></span><span class="optic-node optic-node-left"><span class="optic-node-dot"></span></span><span class="optic-node optic-node-right"><span class="optic-node-dot"></span></span><span class="optic-shuttle"><span class="optic-chassis"><span class="optic-mark optic-mark-vertical optic-m1"></span><span class="optic-mark optic-mark-vertical optic-m2"></span><span class="optic-mark optic-mark-horizontal optic-m3"></span><span class="optic-mark optic-mark-horizontal optic-m4"></span><span class="optic-aperture"><span class="optic-pupil"></span><span class="optic-lens"></span></span></span></span><span class="optic-rim"></span></span></label> &nbsp; <button id="themePickBtn" class="theme-pick-btn" title="选择主题" aria-haspopup="true" aria-expanded="false"><svg class="layer" viewBox="0 0 734.93 1135.91"><defs></defs><path class="cls-1" d="M1.25,0V1128.28c0,6.54,0,6.54,6.52,6.54H734.91c-.22.31.5,1-.5,1h-4q-362.83,0-725.67.09c-3.75,0-4.59-.84-4.59-4.59Q.32,567.92.37,4.52C.37,3-.83,1.11,1.25,0Z" transform="translate(-0.03)"></path><path class="cls-2" d="M574.37,543.4C572.14,538,570,533,568,527.89c-1.14-3-2.79-4-6.06-3.28Q496.49,538.92,431,553.08a54.57,54.57,0,0,1-11.8,1.44c-32.76,0-65.53-.14-98.29.08-11.5.08-22.34-3.17-33.35-5.51q-56.28-12-112.46-24.4c-3.3-.72-5.2-.1-6.33,3.41-1.38,4.25-3.45,8.28-5.11,12.45-.86,2.15-1.56,3.07-3.65.89-4.83-5-9.93-9.84-14.8-14.84-2.73-2.8-3.53-6-2.52-10.07,3.57-14.17,7.83-28.17,9.67-42.76,1.11-8.78-.19-17.35-1.64-25.8-8.61-50.48-8.6-101.37-7.77-152.31.1-6.66.05-13.31.16-20a20.72,20.72,0,0,1,6.95-15.86c12.77-11.66,24.95-24,37.83-35.52,18.35-16.44,41-24.25,64.27-30.4,6.74-1.78,13.58-3.22,20.26-5.19,3.54-1,4.65.08,5.18,3.44,3.27,20.68,6.3,41.41,10.13,62,5,27.12,7.13,54.74,13.88,81.56a148.51,148.51,0,0,0,7.12,21.25c3.17,7.55,8.37,12.17,17,12.18,25,0,49.89.19,74.84.27,3.32,0,6.65-.09,10-.14,9.11-.15,14.71-4.94,18-13.21a179.88,179.88,0,0,0,10.88-40.85c5.45-38,12.37-75.77,18.43-113.68.55-3.44,1-6.9,1.56-10.35.3-2,.65-3.52,3.42-2.79,25.52,6.72,51.55,11.89,74.15,26.77,10.09,6.64,18.41,15.26,27.17,23.4,7.8,7.25,15.4,14.71,23.25,21.89a17.4,17.4,0,0,1,6.09,13.16c.47,49.06,3.21,98.17-4.15,147-2,13.3-3.43,26.7-5,40.07-1.52,12.87,2.26,25.06,5.18,37.33q2.31,9.7,4.82,19.36c.72,2.77.58,5.46-1.39,7.49C587,531.05,580.82,537,574.37,543.4Z" transform="translate(-0.03)"></path><path class="cls-2" d="M278.88,806.78a13.6,13.6,0,0,0-9,9.92c-1.7,6.51-5.84,11.48-9.91,16.53-1,1.17-1.66,2-3.19.84C249.22,828.43,240.7,824,235,816c-3.43-4.85-6.24-10-6.45-16-1.18-33.61-15.46-62-34.05-89-19-27.67-37.83-55.51-54.92-84.45-6-10.12-10.47-20.73-12.25-32.42-.82-5.44.66-10.6,1.64-15.79,2.69-14.21,5.56-28.38,8.4-42.56a39.65,39.65,0,0,1,1.29-4l22.82,22.27c3.69,3.61,7.73,6.93,10.94,10.93,7.85,9.79,18.38,14,30.25,16.5,16.17,3.38,32.24,5.61,48.91,4.24,12.73-1,25.53-1.34,38.19-3.27a56,56,0,0,0,10.56-2.84,11.6,11.6,0,0,0,7.93-8.12c2.06-6.7,4.29-8.17,11.27-8.18q48.9-.09,97.8,0c7.09,0,9.08,1.33,11.11,8.2,1.92,6.5,7.11,8.44,12.63,9.86,8.39,2.15,17.07,2.71,25.65,3.52,27.51,2.6,54.76,1.93,81.27-7.19a22.34,22.34,0,0,0,8.78-5.37c12.67-12.5,25.46-24.88,38.13-37.38,2.6-2.57,3.75-3.23,4.59,1.31,2.62,14.22,5.58,28.38,8.53,42.53,3.43,16.49-1.25,31.21-9.45,45.27-14.92,25.58-31.53,50.07-47.88,74.74-10.54,15.92-22.09,31.24-30,48.82a138.26,138.26,0,0,0-12.27,50.08c-.51,10.61-5.56,18.68-13.21,25.31-4.38,3.79-9.41,6.83-14,10.34-1.92,1.45-3.22,1.76-4.86-.48-3.62-5-7.73-9.55-9.26-15.79A13.83,13.83,0,0,0,458.3,807c-1.67-1.43-3.68-1.3-5.68-1.3H283.53C281.91,805.67,280.16,805.28,278.88,806.78Z" transform="translate(-0.03)"></path><path class="cls-2" d="M441.92,825.09c9.25,1.71,15.53,8,21.52,14.45,4.61,5,8.92,10.31,13.09,15.69,2,2.55,3.17,2.4,5.3.21,9.4-9.65,18.95-19.15,28.46-28.69,1.16-1.16,2.41-2.23,4.26-3.92,2.32,9.92,4.51,19.22,6.68,28.53,1.24,5.35,2.31,10.73,3.7,16,.85,3.22.35,5.56-2.25,8q-17.59,16.23-34.86,32.84c-2.58,2.47-4.79,2.5-7.39.41-6.87-5.51-14.19-10.55-20.53-16.62-8.62-8.25-18.83-11.37-30.29-11.9-4.48-.21-9-.93-13.42-.9-7.39,0-14.25-.91-19.23-7.16a2.31,2.31,0,0,0-.39-.31c-14.91-11.24-46.73-9.55-60.08,3.42-3.24,3.15-7,3.47-11,3.78-10.43.79-20.92.93-31.24,3a25,25,0,0,0-11.1,5.29c-8.81,7.08-17.72,14-26.51,21.14-3,2.4-5.14,2.34-8-.48q-16.67-16.14-33.83-31.75c-2.93-2.67-3.88-5.2-2.9-9.14,3.27-13.22,6.14-26.54,9.31-39.79.3-1.29,0-3.4,1.76-3.73,1.37-.25,2.1,1.42,3,2.34,9.58,9.71,19.21,19.37,28.64,29.22,2.48,2.6,3.89,2.54,6.12-.23,5.73-7.12,11.16-14.51,18-20.66,4.62-4.16,9.57-7.73,15.84-9,1.39-.84,2.92-.47,4.39-.47H437.46C439,824.66,440.51,824.38,441.92,825.09Z" transform="translate(-0.03)"></path><path class="cls-3" d="M278.88,806.78c.91-2.46,3-1.6,4.71-1.6q84.56-.07,169.09,0c1.92,0,4.49-1.16,5.59,1.78-3.13-.28-6.25-.81-9.38-.81q-79.8-.07-159.6,0C285.81,806.12,282.31,805.92,278.88,806.78Z" transform="translate(-0.03)"></path><path class="cls-4" d="M441.92,825.09H294.58c2.79-1.57,5.79-1.07,8.79-1.07q65.43-.09,130.86,0C436.77,824,439.51,823.52,441.92,825.09Z" transform="translate(-0.03)"></path></svg><p>主题</p></button></span>
@@ -798,15 +780,15 @@ document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
 const sw=document.getElementById('opticTheme');
-const THEMES=[{v:'yetai-blue-light',n:'水蓝·浅',c:'#0D47A1',t:'#fff'},{v:'yetai-blue-dark',n:'水蓝·深',c:'#90CAF9',t:'#0A1929'},{v:'yetai-purple-light',n:'暮紫·浅',c:'#4A148C',t:'#fff'},{v:'yetai-purple-dark',n:'暮紫·深',c:'#CE93D8',t:'#160B26'},{v:'liquid-light',n:'液态原版·浅',c:'#000000',t:'#fff'},{v:'liquid-dark',n:'液态原版·深',c:'#FFFFFF',t:'#000'}];
+const THEMES=[{v:'libraries-light',n:'Libraries·浅',c:'#0073e5',t:'#fff'},{v:'libraries-dark',n:'Libraries·深',c:'#55cfff',t:'#0d0d0d'}];
 const themePanel=document.getElementById('themePanel'),themePickBtn=document.getElementById('themePickBtn');
 themePanel.innerHTML=THEMES.map(t=>`<button class="theme-opt" data-v="${t.v}" style="background:${t.c};color:${t.t}" role="menuitem"><span class="layer"></span><span>${t.n}</span></button>`).join('');
-function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='yetai-blue-dark'||v==='yetai-purple-dark'||v==='liquid-dark');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='libraries-dark');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 let saved=localStorage.getItem('landezhaole-theme');
-if(['yetai-blue-light','yetai-blue-dark','yetai-purple-light','yetai-purple-dark','liquid-light','liquid-dark'].indexOf(saved)<0){saved='yetai-blue-light';try{localStorage.setItem('landezhaole-theme','yetai-blue-light');}catch(e){}}
+if(['libraries-light','libraries-dark'].indexOf(saved)<0){saved='libraries-light';try{localStorage.setItem('landezhaole-theme','libraries-light');}catch(e){}}
 if(saved)applyTheme(saved);
 themePanel.querySelectorAll('.theme-opt').forEach(b=>{if(b.dataset.v===document.documentElement.dataset.theme)b.classList.add('on');b.onclick=()=>{applyTheme(b.dataset.v);themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');};});
-sw.onchange=()=>{const cur=document.documentElement.dataset.theme;const fam=(cur==='yetai-purple-light'||cur==='yetai-purple-dark')?'purple':(cur==='liquid-light'||cur==='liquid-dark')?'liquid':'blue';applyTheme(fam==='purple'?(sw.checked?'yetai-purple-dark':'yetai-purple-light'):fam==='liquid'?(sw.checked?'liquid-dark':'liquid-light'):(sw.checked?'yetai-blue-dark':'yetai-blue-light'));};
+sw.onchange=()=>{applyTheme(sw.checked?'libraries-dark':'libraries-light');};
 themePickBtn.onclick=(e)=>{e.stopPropagation();const open=themePanel.classList.toggle('open');themePickBtn.setAttribute('aria-expanded',open);};
 document.addEventListener('click',(e)=>{if(!themePanel.contains(e.target)&&e.target!==themePickBtn){themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');}});
 document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');}});
