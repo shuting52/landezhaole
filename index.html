@@ -13,7 +13,9 @@
 [data-theme="yetai-blue-dark"]{--bg:#0A1929;--card:rgba(19,42,68,.72);--text:#90CAF9;--muted:#7FA8D0;--line:#1E3A5F;--green:#90CAF9;--green-d:#64B5F6;--red:#FF7B72;--blue:#64B5F6;--orange:#FFCA28}
 [data-theme="yetai-purple-light"]{--bg:#F3E5F5;--card:rgba(255,255,255,.72);--text:#4A148C;--muted:#8A6BA8;--line:#E1BEE7;--green:#4A148C;--green-d:#380A6E;--red:#DC2626;--blue:#7B1FA2;--orange:#F9A825}
 [data-theme="yetai-purple-dark"]{--bg:#160B26;--card:rgba(36,22,64,.72);--text:#CE93D8;--muted:#A88BB8;--line:#3A2358;--green:#CE93D8;--green-d:#BA68C8;--red:#FF7B72;--blue:#BA68C8;--orange:#FFD54F}
-:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"]) section.cat,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"]) .card,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"]) .searchrow{backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3)}
+[data-theme="liquid-light"]{--bg:#FFFFFF;--card:rgba(255,255,255,.72);--text:#000000;--muted:#6B7280;--line:#E5E7EB;--green:#000000;--green-d:#1A1A1A;--red:#DC2626;--blue:#0088FF;--orange:#F59E0B}
+[data-theme="liquid-dark"]{--bg:#000000;--card:rgba(28,28,30,.72);--text:#FFFFFF;--muted:#9CA3AF;--line:#2A2A2E;--green:#FFFFFF;--green-d:#E5E5E5;--red:#FF7B72;--blue:#0091FF;--orange:#FF9F0A}
+:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"],[data-theme="liquid-light"],[data-theme="liquid-dark"]) section.cat,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"],[data-theme="liquid-light"],[data-theme="liquid-dark"]) .card,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"],[data-theme="liquid-light"],[data-theme="liquid-dark"]) .searchrow{backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
 a{color:inherit;text-decoration:none}
@@ -328,7 +330,7 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 </style>
 </head>
 <body>
-<script>(function(){try{var t=localStorage.getItem('landezhaole-theme');document.documentElement.dataset.theme=(['yetai-blue-light','yetai-blue-dark','yetai-purple-light','yetai-purple-dark'].indexOf(t)>=0)?t:'yetai-blue-light';}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('landezhaole-theme');document.documentElement.dataset.theme=(['yetai-blue-light','yetai-blue-dark','yetai-purple-light','yetai-purple-dark','liquid-light','liquid-dark'].indexOf(t)>=0)?t:'yetai-blue-light';}catch(e){}})();</script>
 <div id="themePanel" class="theme-panel" role="menu"></div>
 <div id="splash">
 <div class="loader">
@@ -764,15 +766,15 @@ document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
 const sw=document.getElementById('opticTheme');
-const THEMES=[{v:'yetai-blue-light',n:'水蓝·浅',c:'#0D47A1',t:'#fff'},{v:'yetai-blue-dark',n:'水蓝·深',c:'#90CAF9',t:'#0A1929'},{v:'yetai-purple-light',n:'暮紫·浅',c:'#4A148C',t:'#fff'},{v:'yetai-purple-dark',n:'暮紫·深',c:'#CE93D8',t:'#160B26'}];
+const THEMES=[{v:'yetai-blue-light',n:'水蓝·浅',c:'#0D47A1',t:'#fff'},{v:'yetai-blue-dark',n:'水蓝·深',c:'#90CAF9',t:'#0A1929'},{v:'yetai-purple-light',n:'暮紫·浅',c:'#4A148C',t:'#fff'},{v:'yetai-purple-dark',n:'暮紫·深',c:'#CE93D8',t:'#160B26'},{v:'liquid-light',n:'液态原版·浅',c:'#000000',t:'#fff'},{v:'liquid-dark',n:'液态原版·深',c:'#FFFFFF',t:'#000'}];
 const themePanel=document.getElementById('themePanel'),themePickBtn=document.getElementById('themePickBtn');
 themePanel.innerHTML=THEMES.map(t=>`<button class="theme-opt" data-v="${t.v}" style="background:${t.c};color:${t.t}" role="menuitem"><span class="layer"></span><span>${t.n}</span></button>`).join('');
-function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='yetai-blue-dark'||v==='yetai-purple-dark');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='yetai-blue-dark'||v==='yetai-purple-dark'||v==='liquid-dark');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 let saved=localStorage.getItem('landezhaole-theme');
-if(['yetai-blue-light','yetai-blue-dark','yetai-purple-light','yetai-purple-dark'].indexOf(saved)<0){saved='yetai-blue-light';try{localStorage.setItem('landezhaole-theme','yetai-blue-light');}catch(e){}}
+if(['yetai-blue-light','yetai-blue-dark','yetai-purple-light','yetai-purple-dark','liquid-light','liquid-dark'].indexOf(saved)<0){saved='yetai-blue-light';try{localStorage.setItem('landezhaole-theme','yetai-blue-light');}catch(e){}}
 if(saved)applyTheme(saved);
 themePanel.querySelectorAll('.theme-opt').forEach(b=>{if(b.dataset.v===document.documentElement.dataset.theme)b.classList.add('on');b.onclick=()=>{applyTheme(b.dataset.v);themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');};});
-sw.onchange=()=>{const cur=document.documentElement.dataset.theme;applyTheme((cur==='yetai-purple-light'||cur==='yetai-purple-dark')?(sw.checked?'yetai-purple-dark':'yetai-purple-light'):(sw.checked?'yetai-blue-dark':'yetai-blue-light'));};
+sw.onchange=()=>{const cur=document.documentElement.dataset.theme;const fam=(cur==='yetai-purple-light'||cur==='yetai-purple-dark')?'purple':(cur==='liquid-light'||cur==='liquid-dark')?'liquid':'blue';applyTheme(fam==='purple'?(sw.checked?'yetai-purple-dark':'yetai-purple-light'):fam==='liquid'?(sw.checked?'liquid-dark':'liquid-light'):(sw.checked?'yetai-blue-dark':'yetai-blue-light'));};
 themePickBtn.onclick=(e)=>{e.stopPropagation();const open=themePanel.classList.toggle('open');themePickBtn.setAttribute('aria-expanded',open);};
 document.addEventListener('click',(e)=>{if(!themePanel.contains(e.target)&&e.target!==themePickBtn){themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');}});
 document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');}});
