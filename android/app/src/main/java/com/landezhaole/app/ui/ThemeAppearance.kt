@@ -47,6 +47,18 @@ fun themeModeLabel(mode: ThemeMode): String = when (mode) {
     ThemeMode.DARK -> "深色"
 }
 
+fun themeSchemeLabel(scheme: String): String = when (scheme) {
+    "neu003" -> "NEU 柔影"
+    "glass004" -> "GLASS 雾面"
+    "doodle006" -> "DOODLE 手绘"
+    "lever009" -> "LEVER 拨杆"
+    "y2k032" -> "S11 千禧复兴"
+    "crystal" -> "CRYSTAL 水晶液态"
+    "glasschat" -> "GlassChat 玻璃"
+    "liquid" -> "液态原版（跟随深浅）"
+    else -> "默认（跟随深浅）"
+}
+
 // UiZoom mirrors the Flutter UiZoom: lay the content out at virtual size
 // (real size / scale) and draw it scaled, so padding, text and spacing all
 // scale together instead of only the font size changing.
@@ -130,6 +142,8 @@ fun ThemeAppearanceScreen(
     pal: AppPalette,
     mode: ThemeMode,
     onModeChange: (ThemeMode) -> Unit,
+    scheme: String,
+    onSchemeChange: (String) -> Unit,
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit,
     onBack: () -> Unit
@@ -144,12 +158,18 @@ fun ThemeAppearanceScreen(
                     shape = RoundedCornerShape(16.dp)
                 ) { Text("‹ 返回", fontSize = 14.sp) }
                 Spacer(modifier = Modifier.width(12.dp))
-                Text("外观", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
+                Text("主题与外观", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = pal.foreground)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            ExpandableThemeCard(pal = pal, title = "深浅模式", currentValue = themeModeLabel(mode)) {
+            ExpandableThemeCard(pal = pal, title = "系统主题", currentValue = themeModeLabel(mode)) {
                 ThemeMode.values().forEach { m ->
                     ThemeChoiceRow(pal = pal, label = themeModeLabel(m), selected = mode == m, onClick = { onModeChange(m) })
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            ExpandableThemeCard(pal = pal, title = "主题风格", currentValue = themeSchemeLabel(scheme)) {
+                listOf("default", "liquid", "neu003", "glass004", "doodle006", "lever009", "y2k032", "crystal", "glasschat").forEach { s ->
+                    ThemeChoiceRow(pal = pal, label = themeSchemeLabel(s), selected = scheme == s, onClick = { onSchemeChange(s) })
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -166,7 +186,7 @@ fun ThemeAppearanceScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "全站只有液态玻璃一套（Backdrop 2.0.1 真液态玻璃渲染）：深浅跟随上面的系统主题，深色模式与界面缩放仍可调。",
+                "深浅两档色板与毛玻璃卡片均按你发来的 Flutter 主题翻译：浅色强调蓝、深色强调蓝、页底色与半透明白底，卡片无阴影、无模糊。",
                 fontSize = 12.sp, color = pal.secondary
             )
             Spacer(modifier = Modifier.height(72.dp))

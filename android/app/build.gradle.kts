@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 // 签名密钥文件路径（CI 上由 Secrets 还原，本地没有时为 null，不挂签名）
@@ -7,13 +8,13 @@ val keystoreFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
 
 android {
     namespace = "com.landezhaole.app"
-    compileSdk = 37
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.landezhaole.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 48
-        versionName = "1.3.29"
+        versionCode = 49
+        versionName = "1.3.30"
         vectorDrawables { useSupportLibrary = true }
     }
     signingConfigs {
@@ -77,5 +78,4 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("io.github.kyant0:backdrop:2.0.1")
 }

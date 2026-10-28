@@ -112,8 +112,8 @@ data class SiteCard(val t: String, val u: String, val d: String, val b: String, 
 data class Category(val id: String, val name: String, val desc: String, val subs: List<SubTab>, val cards: List<SiteCard>)
 data class Engine(val id: String, val name: String, val url: String?)
 
-// ---- 唯一主题：液态玻璃（Backdrop 2.0.1）----
-// 窗口纯白/纯黑、内容纯黑/纯白、上游 Catalog 蓝强调（浅 #0088FF / 深 #0091FF）
+// ---- 网站色板：与网站 :root / [data-theme="dark"] 一致 ----
+// accent=绿，danger=红标题，surface=卡片底（网站 --bg），barBackground=区底（网站 --card）
 data class AppPalette(
     val isDark: Boolean,
     val accent: Color,
@@ -128,11 +128,39 @@ data class AppPalette(
     val line: Color
 )
 
+// 默认主题 = shuiyingongju（即存）浅色：深蓝强调 + 灰绿调页面底
+val LightPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF1257C9),
+    accentSoft = Color(0x141257C9),
+    danger = Color(0xFFC0392B),
+    surface = Color(0x12000000),
+    foreground = Color(0xFF1B2430),
+    secondary = Color(0xFF6E7887),
+    barBackground = Color(0xFFFFFFFF),
+    pageBackground = Color(0xFFCDDCDC),
+    subtleFill = Color(0x14000000),
+    line = Color(0x14000000)
+)
+// 默认主题 = shuiyingongju（即存）深色：亮蓝强调 + 中灰页面底
+val DarkPalette = AppPalette(
+    isDark = true,
+    accent = Color(0xFF5AA9FF),
+    accentSoft = Color(0x1F5AA9FF),
+    danger = Color(0xFFFF7B72),
+    surface = Color(0x1FFFFFFF),
+    foreground = Color(0xFFF5F7FA),
+    secondary = Color(0xFFADB7C5),
+    barBackground = Color(0xFF1C1C1E),
+    pageBackground = Color(0xFF434343),
+    subtleFill = Color(0x1FFFFFFF),
+    line = Color(0x1FFFFFFF)
+)
 // 液态原版 = 上游 AndroidLiquidGlass Catalog 原版：窗口纯白/纯黑、内容纯黑/纯白
 val LiquidLightPalette = AppPalette(
     isDark = false,
-    accent = Color(0xFF0088FF),
-    accentSoft = Color(0x140088FF),
+    accent = Color(0xFF000000),
+    accentSoft = Color(0x14000000),
     danger = Color(0xFFDC2626),
     surface = Color(0x12000000),
     foreground = Color(0xFF000000),
@@ -144,8 +172,8 @@ val LiquidLightPalette = AppPalette(
 )
 val LiquidDarkPalette = AppPalette(
     isDark = true,
-    accent = Color(0xFF0091FF),
-    accentSoft = Color(0x1F0091FF),
+    accent = Color(0xFFFFFFFF),
+    accentSoft = Color(0x1FFFFFFF),
     danger = Color(0xFFFF7B72),
     surface = Color(0x1FFFFFFF),
     foreground = Color(0xFFFFFFFF),
@@ -155,24 +183,159 @@ val LiquidDarkPalette = AppPalette(
     subtleFill = Color(0x1FFFFFFF),
     line = Color(0xFF2A2A2E)
 )
+// 003 NEU 柔影（app-gallery）
+val NeuPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF5F9DE7),
+    accentSoft = Color(0x145F9DE7),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFE0E8EF),
+    foreground = Color(0xFF516D91),
+    secondary = Color(0xFF7E97B8),
+    barBackground = Color(0xFFE0E8EF),
+    pageBackground = Color(0xFFE0E8EF),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFC3CFDB)
+)
 
+// 004 GLASS 雾面（app-gallery）
+val GlassPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF2879F3),
+    accentSoft = Color(0x142879F3),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFEDF1F6),
+    foreground = Color(0xFF22303F),
+    secondary = Color(0xFF64748B),
+    barBackground = Color(0x8CFFFFFF),
+    pageBackground = Color(0xFFEDF1F6),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFD3E3F8)
+)
 
+// 006 DOODLE 手绘（app-gallery）
+val DoodlePalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF5B8DD9),
+    accentSoft = Color(0x145B8DD9),
+    danger = Color(0xFFE2605C),
+    surface = Color(0xFFF6F1E5),
+    foreground = Color(0xFF444433),
+    secondary = Color(0xFF8A8471),
+    barBackground = Color(0xFFFFFDF7),
+    pageBackground = Color(0xFFF6F1E5),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFF444433)
+)
 
+// 009 LEVER 拨杆（app-gallery）
+val LeverPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF1269EF),
+    accentSoft = Color(0x141269EF),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFDCEBF9),
+    foreground = Color(0xFF085991),
+    secondary = Color(0xFF3D7CA8),
+    barBackground = Color(0xFFB7DFFB),
+    pageBackground = Color(0xFFDCEBF9),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFC2DDF2)
+)
 
+// 032 S11 千禧复兴（app-gallery）
+val Y2kPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF00A8E8),
+    accentSoft = Color(0x1A00A8E8),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFDFF3FE),
+    foreground = Color(0xFF0A2540),
+    secondary = Color(0xFF4A6B8A),
+    barBackground = Color(0xFFFFFFFF),
+    pageBackground = Color(0xFFDFF3FE),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFBFE2F7)
+)
 
+// CRYSTAL 水晶液态（由 Update 按钮复刻 + 水晶液态组件库翻译而来）
+// 主色水晶蓝，卡片半透明白 + 白描边，页面底为竖向四段液态渐变
+val CrystalPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF1668DC),
+    accentSoft = Color(0x141668DC),
+    danger = Color(0xFFDC2626),
+    surface = Color(0xFFEEF2FB),
+    foreground = Color(0xFF1E2A3A),
+    secondary = Color(0xFF64748B),
+    barBackground = Color(0xA6FFFFFF),
+    pageBackground = Color(0xFFEEF2FB),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0xFFD3E3F8)
+)
 
+// GlassChat 玻璃（组件库同款语言）：暗底 + 蓝紫主色 + 半透明白卡
+val GlassChatPalette = AppPalette(
+    isDark = true,
+    accent = Color(0xFF60A5FA),
+    accentSoft = Color(0x1A60A5FA),
+    danger = Color(0xFFDC2626),
+    surface = Color(0x1AFFFFFF),
+    foreground = Color(0xFFFFFFFF),
+    secondary = Color(0x99FFFFFF),
+    barBackground = Color(0xCC100A16),
+    pageBackground = Color(0xFF100A16),
+    subtleFill = Color(0x1F7F7F7F),
+    line = Color(0x33FFFFFF)
+)
 
+// 水晶液态页面底：蓝 → 雾白 → 粉 → 薄荷，四段竖向渐变（与 HTML 组件库一致）
+fun crystalPageBrush(): Brush = Brush.verticalGradient(
+    listOf(Color(0xFFD8E6FB), Color(0xFFEEF2FB), Color(0xFFFDEEF4), Color(0xFFE2F7F0))
+)
 
+// 页面根背景：水晶主题用渐变底，其他主题保持原单色底
+// shui 深色页面底：竖向渐变（上黑下灰），与即存深色背景一致
+fun shuiDarkPageBrush(): Brush = Brush.verticalGradient(
+    listOf(Color(0xFF000000), Color(0xFF434343))
+)
 
+// 即存浅色页面底：底色 + 竖向白→黑各 25% overlay + 底部中心放射白 50% screen 混合。
+fun Modifier.shuiLightPageBg(): Modifier = this
+    .background(Color(0xFFCDDCDC))
+    .drawBehind {
+        drawRect(
+            Brush.verticalGradient(
+                listOf(Color.White.copy(alpha = 0.25f), Color.Black.copy(alpha = 0.25f))
+            )
+        )
+        drawRect(
+            Brush.radialGradient(
+                listOf(Color.White.copy(alpha = 0.50f), Color.Transparent),
+                center = Offset(size.width / 2f, size.height),
+                radius = maxOf(size.width, size.height)
+            ),
+            blendMode = BlendMode.Screen
+        )
+    }
 
-fun Modifier.pageBg(pal: AppPalette): Modifier = background(pal.pageBackground)
+fun Modifier.pageBg(pal: AppPalette): Modifier =
+    if (pal == CrystalPalette) background(crystalPageBrush())
+    else if (pal == DarkPalette) background(shuiDarkPageBrush())
+    else if (pal == LightPalette) shuiLightPageBg()
+    else background(pal.pageBackground)
 
 @Composable
 fun GlassPanel(modifier: Modifier = Modifier, pal: AppPalette, content: @Composable () -> Unit) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(if (isGallerySchemePal(pal)) styleOf(pal).cardShape else RoundedCornerShape(20.dp))
             .background(if (pal.isDark) Color(0x26FFFFFF) else Color(0x8CFFFFFF))
+            .border(
+                if (pal == CrystalPalette) 1.dp else 0.dp,
+                if (pal == CrystalPalette) Color(0xCCFFFFFF) else Color.Transparent,
+                if (isGallerySchemePal(pal)) styleOf(pal).cardShape else RoundedCornerShape(20.dp)
+            )
     ) { content() }
 }
 
@@ -414,18 +577,26 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themeCtx = LocalContext.current
             val themePrefs = remember { themeCtx.getSharedPreferences("landezhaole-theme", Context.MODE_PRIVATE) }
-            LaunchedEffect(Unit) {
-                themePrefs.edit().remove("scheme").apply()
-                loadIconManifest(themeCtx)
-            }
+            LaunchedEffect(Unit) { loadIconManifest(themeCtx) }
             var themeMode by remember { mutableStateOf(runCatching { ThemeMode.valueOf(themePrefs.getString("mode", "SYSTEM") ?: "SYSTEM") }.getOrDefault(ThemeMode.SYSTEM)) }
+            var themeScheme by remember { mutableStateOf(themePrefs.getString("scheme", "default") ?: "default") }
             var uiScale by remember { mutableStateOf(themePrefs.getFloat("scale", 1f)) }
-            val dark = when (themeMode) {
+            val dark = if (themeScheme != "default" && themeScheme != "liquid") false else when (themeMode) {
                 ThemeMode.SYSTEM -> isSystemInDarkTheme()
                 ThemeMode.LIGHT -> false
                 ThemeMode.DARK -> true
             }
-            val pal = if (dark) LiquidDarkPalette else LiquidLightPalette
+            val pal = when (themeScheme) {
+                "neu003" -> NeuPalette
+                "glass004" -> GlassPalette
+                "doodle006" -> DoodlePalette
+                "lever009" -> LeverPalette
+                "y2k032" -> Y2kPalette
+                "crystal" -> CrystalPalette
+                "glasschat" -> GlassChatPalette
+                "liquid" -> if (dark) LiquidDarkPalette else LiquidLightPalette
+                else -> if (dark) DarkPalette else LightPalette
+            }
             MaterialTheme(
                 colorScheme = if (dark) darkColorScheme(
                     primary = pal.accent, background = pal.pageBackground,
@@ -446,6 +617,8 @@ class MainActivity : ComponentActivity() {
                         },
                         themeMode = themeMode,
                         onThemeModeChange = { themeMode = it; themePrefs.edit().putString("mode", it.name).apply() },
+                        themeScheme = themeScheme,
+                        onThemeSchemeChange = { themeScheme = it; themePrefs.edit().putString("scheme", it).apply() },
                         uiScale = uiScale,
                         onUiScaleChange = { uiScale = it; themePrefs.edit().putFloat("scale", it).apply() }
                     )
