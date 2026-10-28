@@ -30,7 +30,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,43 +52,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.kyant.backdrop.drawPlainBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import androidx.compose.ui.zIndex
 
 // ============================================================
 // GlassChat 玻璃原生组件库
 // 语言：极光底 + 渐变着色 + 内高光 + 渐变描边 + 深色投影。
-// 真液态玻璃：经 Backdrop 库渲染（AppShell 根部提供 LayerBackdrop）；库不可用时各样式回落到原有填充。
+// 自包含：只用本工程已有的 Compose 依赖，不加 Haze、不加 AGSL、不改构建配置。
 // 用法：任何页面直接调用，例如 GlassCard { Text("...") }、GlassButton("确定") { }。
 // 注意：本套是固定深色玻璃语言（白字），适合放在极光底或深色底上。
 // ============================================================
-
-/** 真液态玻璃：AppShell 根部提供 LayerBackdrop；为 null 时各玻璃样式回落到现有填充。 */
-val LocalLiquidBackdrop = staticCompositionLocalOf<com.kyant.backdrop.Backdrop?> { null }
-
-/** 真液态玻璃渲染：对根部图层做 vibrancy + 模糊 + 边缘折射，表面再盖一层现有填充色。 */
-@Composable
-fun Modifier.liquidGlass(cornerRadius: Dp, surface: Color): Modifier {
-    val backdrop = LocalLiquidBackdrop.current
-    return if (backdrop != null) {
-        this.clip(RoundedCornerShape(cornerRadius))
-            .drawPlainBackdrop(
-                backdrop = backdrop,
-                shape = { RoundedCornerShape(cornerRadius) },
-                effects = {
-                    vibrancy()
-                    blur(4.dp.toPx())
-                    lens(16.dp.toPx(), 32.dp.toPx())
-                },
-                onDrawSurface = { drawRect(surface) }
-            )
-    } else {
-        this.clip(RoundedCornerShape(cornerRadius)).background(surface)
-    }
-}
 
 /** 玻璃主渐变：按钮、选中态、进度条统一用这条蓝紫渐变。 */
 val GlassAccentGradient: Brush
@@ -154,28 +125,21 @@ fun Modifier.glassBorder(
  */
 // 即存 GlassPanel 的直译：均匀填充、无阴影、无描边、无高光。
 // Compose 没有超椭圆，用圆角近似。
-@Composable
 fun Modifier.shuiGlassStyle(
     cornerRadius: Dp = 20.dp,
     isDark: Boolean = false,
 ): Modifier {
-    val fill = if (isDark) Color(0x26FFFFFF) else Color(0x8CFFFFFF)
-    if (LocalLiquidBackdrop.current != null) return liquidGlass(cornerRadius, fill)
+    val shape = RoundedCornerShape(cornerRadius)
     return this
-        .clip(RoundedCornerShape(cornerRadius))
-        .background(fill)
+        .clip(shape)
+        .background(if (isDark) Color(0x26FFFFFF) else Color(0x8CFFFFFF))
 }
 
-@Composable
 fun Modifier.glassCardStyle(
     cornerRadius: Dp = 20.dp,
     tintAlpha: Float = 0.10f,
     elevation: Dp = 16.dp,
 ): Modifier {
-    if (LocalLiquidBackdrop.current != null) {
-        return liquidGlass(cornerRadius, Color.White.copy(alpha = tintAlpha))
-            .glassBorder(cornerRadius = cornerRadius, width = 1.dp)
-    }
     val shape = RoundedCornerShape(cornerRadius)
     return this
         .shadow(
@@ -315,7 +279,9 @@ fun GlassOutlineButton(
     val shape = RoundedCornerShape(50)
     Box(
         modifier = modifier
-            .liquidGlass(50.dp, Color.White.copy(alpha = 0.10f))
+            .clip(shape)
+            .glassTint(0.10f)
+            .background(glassSheen())
             .glassBorder(cornerRadius = 50.dp, width = 1.dp)
             .clickable(enabled = enabled) { onClick() }
             .padding(horizontal = 24.dp, vertical = 12.dp),
@@ -337,7 +303,9 @@ fun GlassPill(
 ) {
     Box(
         modifier = modifier
-            .liquidGlass(50.dp, Color.White.copy(alpha = 0.14f))
+            .clip(RoundedCornerShape(50))
+            .glassTint(0.14f)
+            .background(glassSheen())
             .glassBorder(cornerRadius = 50.dp, width = 1.dp)
             .padding(horizontal = 18.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center,
@@ -387,7 +355,7 @@ fun GlassChip(
             .clip(shape)
             .then(
                 if (selected) Modifier.background(GlassAccentGradient)
-                else Modifier.liquidGlass(50.dp, Color.White.copy(alpha = 0.10f))
+                else Modifier.glassTint(0.10f).background(glassSheen())
             )
             .glassBorder(cornerRadius = 50.dp, width = 1.dp)
             .clickable { onClick() }
@@ -412,7 +380,9 @@ fun GlassTabs(
 ) {
     Row(
         modifier = modifier
-            .liquidGlass(50.dp, Color.White.copy(alpha = 0.08f))
+            .clip(RoundedCornerShape(50))
+            .glassTint(0.08f)
+            .background(glassSheen())
             .glassBorder(cornerRadius = 50.dp, width = 1.dp)
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -448,7 +418,9 @@ fun GlassTextField(
 ) {
     Box(
         modifier = modifier
-            .liquidGlass(16.dp, Color.White.copy(alpha = 0.10f))
+            .clip(RoundedCornerShape(16.dp))
+            .glassTint(0.10f)
+            .background(glassSheen())
             .glassBorder(cornerRadius = 16.dp, width = 1.dp)
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
@@ -480,7 +452,9 @@ fun GlassSearchField(
 ) {
     Row(
         modifier = modifier
-            .liquidGlass(50.dp, Color.White.copy(alpha = 0.10f))
+            .clip(RoundedCornerShape(50))
+            .glassTint(0.10f)
+            .background(glassSheen())
             .glassBorder(cornerRadius = 50.dp, width = 1.dp)
             .padding(horizontal = 14.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,

@@ -62,7 +62,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -103,8 +102,6 @@ import com.landezhaole.app.ui.cleanupUpdateLeftovers
 import com.landezhaole.app.ui.currentVersionCode
 import com.landezhaole.app.ui.fetchCloudCategories
 import com.landezhaole.app.ui.fetchRemoteVersion
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -242,7 +239,7 @@ fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
 fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
     val capsuleFill = if (pal.isDark) Color(0x24FFFFFF) else Color(0x17000000)
     val barGray = if (pal.isDark) Color(0xFF9A9AA0) else Color(0xFF8A8A8E)
-    val frostedBg = if (pal.isDark) Color(0x991C1C1E) else Color(0x99FFFFFF)
+    val frostedBg = if (pal.isDark) Color(0xCC1C1C1E) else Color(0xCCFFFFFF)
     val glowAlpha = if (pal.isDark) 0.07f else 0.10f
     val tabIcons = listOf(
         R.drawable.ic_tab_home to R.drawable.ic_tab_home_filled,
@@ -281,12 +278,12 @@ fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
         val capsuleLeft = offset - (capsuleWidth - (slot - 12.dp)) / 2
         Box(
             modifier = Modifier.fillMaxWidth().height(63.dp)
-                .liquidGlass(31.5.dp, frostedBg)
+                .clip(RoundedCornerShape(31.5.dp)).background(frostedBg)
         ) {
             Box(
                 modifier = Modifier.align(Alignment.CenterStart)
                     .offset(x = capsuleLeft).width(capsuleWidth).height(51.dp)
-                    .liquidGlass(26.dp, capsuleFill)
+                    .clip(RoundedCornerShape(26.dp)).background(capsuleFill)
             )
             Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                 tabIcons.forEachIndexed { i, (icon, active) ->
@@ -538,11 +535,9 @@ fun AppShell(
         }
     }
 
-    val liquidBackdrop = rememberLayerBackdrop()
-    CompositionLocalProvider(LocalLiquidBackdrop provides liquidBackdrop) {
     Box(modifier = Modifier.fillMaxSize().pageBg(pal)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars).layerBackdrop(liquidBackdrop)) {
+            Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars)) {
                 UiZoom(scale = uiScale) {
                     when {
                         subPage == ShopSubPage.Save -> SubPageWrapper(pal, "省钱小助手", { subPage = ShopSubPage.None }) {
@@ -658,7 +653,8 @@ fun AppShell(
             Box(
                 modifier = Modifier.align(Alignment.TopCenter).padding(top = 16.dp, start = 16.dp, end = 16.dp)
                     .shadow(6.dp, RoundedCornerShape(12.dp))
-                    .liquidGlass(12.dp, pal.barBackground.copy(alpha = 0.85f))
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(pal.barBackground)
                     .border(1.dp, Color(0xFF5EEAD4), RoundedCornerShape(12.dp))
                     .clickable {
                         openUrl(ctx, news[0].u)
@@ -698,7 +694,7 @@ fun AppShell(
         if (showToast) {
             Box(
                 modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp)
-                    .liquidGlass(16.dp, Color(0xD92B2B2B))
+                    .clip(RoundedCornerShape(16.dp)).background(Color(0xFF2B2B2B))
                     .padding(horizontal = 22.dp, vertical = 10.dp)
             ) {
                 Text(toastMsg, color = Color(0xFFFFFDF8), fontSize = 14.sp)
@@ -713,7 +709,6 @@ fun AppShell(
                 SplashContent()
             }
         }
-    }
     }
 }
 
