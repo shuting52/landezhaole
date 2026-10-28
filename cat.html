@@ -43,7 +43,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 <header class="chead"><div class="wrap"><a class="back" href="index.html">← 回导航</a><span class="cat-title" id="ctitle">加载中…</span><span class="cat-count" id="ccount"></span></div></header>
 <main class="wrap"><p class="cat-desc" id="cdesc"></p><div class="tabs" id="tabs"></div><div class="grid" id="grid"></div><p class="empty" id="empty" style="display:none"></p><p class="foot"><a href="index.html">← 回导航</a> · © 2026 懒得找了</p></main>
 <script>
-const saved=localStorage.getItem('landezhaole-theme');if(saved)document.documentElement.dataset.theme=saved;
+const saved=localStorage.getItem('landezhaole-theme');document.documentElement.dataset.theme=(saved==='dark'||saved==='hei'||saved==='yetai-blue-dark'||saved==='yetai-purple-dark')?'dark':'light';
 const AV_COLORS=['#16a34a','#0ea5e9','#8b5cf6','#f59e0b','#ef4444','#ec4899','#14b8e6','#f97316'];
 function avColor(t){let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;return AV_COLORS[h%AV_COLORS.length];}
 function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
