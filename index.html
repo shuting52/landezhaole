@@ -15,6 +15,10 @@
 [data-theme="lan"]{--bg:#EFF6FF;--card:#FFFFFF;--text:#1A1A1A;--muted:#6B7280;--line:#D0DFF5;--green:#1D4ED8;--green-d:#1E40AF;--red:#E70000;--blue:#FFAF02;--orange:#FFAF02}
 [data-theme="hei"]{--bg:#0C0C0C;--card:#1A1A1A;--text:#FFFFFF;--muted:#A1A1AA;--line:#2A2A2A;--green:#FFAF02;--green-d:#E69A00;--red:#FF3B30;--blue:#FFAF02;--orange:#FFAF02}
 [data-theme="clay"]{--bg:#F5F3EE;--card:#FFFFFF;--text:#1A1A1A;--muted:#6B7280;--line:#EAE6DE;--green:#34A853;--green-d:#2E8B47;--red:#EA4335;--blue:#4285F4;--orange:#FBBC05}
+[data-theme="yetai-blue-light"]{--bg:#E3F2FD;--card:rgba(255,255,255,.72);--text:#0D47A1;--muted:#5E7FA8;--line:#BBDEFB;--green:#0D47A1;--green-d:#0A357A;--red:#DC2626;--blue:#1976D2;--orange:#F9A825}
+[data-theme="yetai-blue-dark"]{--bg:#0A1929;--card:rgba(19,42,68,.72);--text:#90CAF9;--muted:#7FA8D0;--line:#1E3A5F;--green:#90CAF9;--green-d:#64B5F6;--red:#FF7B72;--blue:#64B5F6;--orange:#FFCA28}
+[data-theme="yetai-purple-light"]{--bg:#F3E5F5;--card:rgba(255,255,255,.72);--text:#4A148C;--muted:#8A6BA8;--line:#E1BEE7;--green:#4A148C;--green-d:#380A6E;--red:#DC2626;--blue:#7B1FA2;--orange:#F9A825}
+[data-theme="yetai-purple-dark"]{--bg:#160B26;--card:rgba(36,22,64,.72);--text:#CE93D8;--muted:#A88BB8;--line:#3A2358;--green:#CE93D8;--green-d:#BA68C8;--red:#FF7B72;--blue:#BA68C8;--orange:#FFD54F}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .blob{display:none}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) section.cat,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .card,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .searchrow,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .theme-panel,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .share-dialog,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .util-dialog,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .toast-notify{border-radius:0}
 :is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) section.cat,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .searchrow,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .theme-panel,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .share-dialog,:is([data-theme="hong"],[data-theme="huang"],[data-theme="lan"],[data-theme="hei"]) .util-dialog{box-shadow:4px 4px 0 #0c0c0c}
@@ -34,6 +38,7 @@
 [data-theme="clay"] #sideTools button,[data-theme="clay"] #sideTools a{border-radius:18px;box-shadow:0 10px 22px rgba(120,110,90,.25),inset 0 1px 0 rgba(255,255,255,.95)}
 [data-theme="clay"] .toast-notify{border-radius:20px}
 [data-theme="clay"] .searchrow:focus-within{box-shadow:0 14px 30px rgba(120,110,90,.20),inset 0 2px 0 rgba(255,255,255,.95)}
+:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"]) section.cat,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"]) .card,:is([data-theme="yetai-blue-light"],[data-theme="yetai-blue-dark"],[data-theme="yetai-purple-light"],[data-theme="yetai-purple-dark"]) .searchrow{backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
 a{color:inherit;text-decoration:none}
@@ -787,12 +792,12 @@ document.getElementById('q').addEventListener('input',()=>{if(curEngine==='appdl
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(false);});
 document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});
 const sw=document.getElementById('opticTheme');
-const THEMES=[{v:'light',n:'默认',c:'#16a34a',t:'#fff'},{v:'dark',n:'暗夜',c:'#34d399',t:'#fff'},{v:'hong',n:'大红',c:'#E70000',t:'#fff'},{v:'huang',n:'明黄',c:'#FFAF02',t:'#111'},{v:'lan',n:'宝蓝',c:'#1D4ED8',t:'#fff'},{v:'hei',n:'曜黑',c:'#FFAF02',t:'#111'},{v:'clay',n:'黏土',c:'#4285F4',t:'#fff'}];
+const THEMES=[{v:'light',n:'默认',c:'#16a34a',t:'#fff'},{v:'dark',n:'暗夜',c:'#34d399',t:'#fff'},{v:'hong',n:'大红',c:'#E70000',t:'#fff'},{v:'huang',n:'明黄',c:'#FFAF02',t:'#111'},{v:'lan',n:'宝蓝',c:'#1D4ED8',t:'#fff'},{v:'hei',n:'曜黑',c:'#FFAF02',t:'#111'},{v:'clay',n:'黏土',c:'#4285F4',t:'#fff'},{v:'yetai-blue-light',n:'水蓝·浅',c:'#0D47A1',t:'#fff'},{v:'yetai-blue-dark',n:'水蓝·深',c:'#90CAF9',t:'#0A1929'},{v:'yetai-purple-light',n:'暮紫·浅',c:'#4A148C',t:'#fff'},{v:'yetai-purple-dark',n:'暮紫·深',c:'#CE93D8',t:'#160B26'}];
 const themePanel=document.getElementById('themePanel'),themePickBtn=document.getElementById('themePickBtn');
 themePanel.innerHTML=THEMES.map(t=>`<button class="theme-opt" data-v="${t.v}" style="background:${t.c};color:${t.t}" role="menuitem"><span class="layer"></span><span>${t.n}</span></button>`).join('');
-function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='dark'||v==='hei');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function applyTheme(v){document.documentElement.dataset.theme=v;try{localStorage.setItem('landezhaole-theme',v);}catch(e){}sw.checked=(v==='dark'||v==='hei'||v==='yetai-blue-dark'||v==='yetai-purple-dark');themePanel.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 let saved=localStorage.getItem('landezhaole-theme');
-if(['light','dark','hong','huang','lan','hei','clay'].indexOf(saved)<0){saved='light';try{localStorage.setItem('landezhaole-theme','light');}catch(e){}}
+if(['light','dark','hong','huang','lan','hei','clay','yetai-blue-light','yetai-blue-dark','yetai-purple-light','yetai-purple-dark'].indexOf(saved)<0){saved='light';try{localStorage.setItem('landezhaole-theme','light');}catch(e){}}
 if(saved){document.documentElement.dataset.theme=saved;sw.checked=saved==='dark'||saved==='hei';}
 themePanel.querySelectorAll('.theme-opt').forEach(b=>{if(b.dataset.v===document.documentElement.dataset.theme)b.classList.add('on');b.onclick=()=>{applyTheme(b.dataset.v);themePanel.classList.remove('open');themePickBtn.setAttribute('aria-expanded','false');};});
 sw.onchange=()=>{applyTheme(sw.checked?'dark':'light');};
