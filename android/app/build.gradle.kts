@@ -8,7 +8,7 @@ val keystoreFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
 
 android {
     namespace = "com.landezhaole.app"
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         applicationId = "com.landezhaole.app"
         minSdk = 26
