@@ -156,6 +156,33 @@ val DarkPalette = AppPalette(
     subtleFill = Color(0x1FFFFFFF),
     line = Color(0x1FFFFFFF)
 )
+// 液态原版 = 上游 AndroidLiquidGlass Catalog 原版：窗口纯白/纯黑、内容纯黑/纯白
+val LiquidLightPalette = AppPalette(
+    isDark = false,
+    accent = Color(0xFF000000),
+    accentSoft = Color(0x14000000),
+    danger = Color(0xFFDC2626),
+    surface = Color(0x12000000),
+    foreground = Color(0xFF000000),
+    secondary = Color(0xFF6B7280),
+    barBackground = Color(0xFFFFFFFF),
+    pageBackground = Color(0xFFFFFFFF),
+    subtleFill = Color(0x14000000),
+    line = Color(0xFFE5E7EB)
+)
+val LiquidDarkPalette = AppPalette(
+    isDark = true,
+    accent = Color(0xFFFFFFFF),
+    accentSoft = Color(0x1FFFFFFF),
+    danger = Color(0xFFFF7B72),
+    surface = Color(0x1FFFFFFF),
+    foreground = Color(0xFFFFFFFF),
+    secondary = Color(0xFF9CA3AF),
+    barBackground = Color(0xFF000000),
+    pageBackground = Color(0xFF000000),
+    subtleFill = Color(0x1FFFFFFF),
+    line = Color(0xFF2A2A2E)
+)
 // 003 NEU 柔影（app-gallery）
 val NeuPalette = AppPalette(
     isDark = false,
@@ -554,7 +581,7 @@ class MainActivity : ComponentActivity() {
             var themeMode by remember { mutableStateOf(runCatching { ThemeMode.valueOf(themePrefs.getString("mode", "SYSTEM") ?: "SYSTEM") }.getOrDefault(ThemeMode.SYSTEM)) }
             var themeScheme by remember { mutableStateOf(themePrefs.getString("scheme", "default") ?: "default") }
             var uiScale by remember { mutableStateOf(themePrefs.getFloat("scale", 1f)) }
-            val dark = if (themeScheme != "default") false else when (themeMode) {
+            val dark = if (themeScheme != "default" && themeScheme != "liquid") false else when (themeMode) {
                 ThemeMode.SYSTEM -> isSystemInDarkTheme()
                 ThemeMode.LIGHT -> false
                 ThemeMode.DARK -> true
@@ -567,6 +594,7 @@ class MainActivity : ComponentActivity() {
                 "y2k032" -> Y2kPalette
                 "crystal" -> CrystalPalette
                 "glasschat" -> GlassChatPalette
+                "liquid" -> if (dark) LiquidDarkPalette else LiquidLightPalette
                 else -> if (dark) DarkPalette else LightPalette
             }
             MaterialTheme(

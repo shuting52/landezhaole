@@ -129,7 +129,7 @@ val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xF
 // 画廊主题生效时顶栏与品牌红跟主题主色走；默认主题保持电商红
 fun isGallerySchemePal(pal: AppPalette): Boolean =
     pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette || pal == CrystalPalette || pal == GlassChatPalette
-fun isDefaultSchemePal(pal: AppPalette): Boolean = pal == LightPalette || pal == DarkPalette
+fun isDefaultSchemePal(pal: AppPalette): Boolean = pal == LightPalette || pal == DarkPalette || pal == LiquidLightPalette || pal == LiquidDarkPalette
 fun shopBrand(pal: AppPalette): Color = pal.accent
 // 主题组件样式：颜色之外，卡片/Tab/芯片/按钮的形状与阴影也跟主题走
 data class ThemeStyle(
@@ -286,7 +286,7 @@ fun styleOf(pal: AppPalette): ThemeStyle = when (pal) {
         tabBarElevation = 0.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
         tabSelBg = pal.accent.copy(alpha = 0.12f), tabSelText = pal.accent, tabShape = RoundedCornerShape(18.dp),
         chipShape = RoundedCornerShape(18.dp), chipBorderWidth = 1.dp,
-        chipBorderColor = pal.line, chipSelBg = shopBrand(pal), chipSelText = Color.White,
+        chipBorderColor = pal.line, chipSelBg = shopBrand(pal), chipSelText = if (pal == LiquidDarkPalette) Color.Black else Color.White,
         chipSelBorderColor = shopBrand(pal), chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
         buttonShape = RoundedCornerShape(18.dp), buttonBorderWidth = 0.dp,
         buttonBorderColor = Color.Transparent, buttonElevation = 0.dp,
@@ -315,7 +315,7 @@ fun shopBrandGradient(pal: AppPalette): Brush =
     if (pal == GlassChatPalette) GlassAccentGradient
     else if (pal == CrystalPalette) Brush.horizontalGradient(
         listOf(Color(0xFF60A5FA), Color(0xFF1668DC), Color(0xFF7C3AED))
-    ) else if (isGallerySchemePal(pal)) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else if (pal == LightPalette || pal == DarkPalette) Brush.horizontalGradient(listOf(Color(0xFF1257C9), Color(0xFF5AA9FF))) else SHOP_GRADIENT
+    ) else if (isGallerySchemePal(pal) || pal == LiquidLightPalette || pal == LiquidDarkPalette) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else if (pal == LightPalette || pal == DarkPalette) Brush.horizontalGradient(listOf(Color(0xFF1257C9), Color(0xFF5AA9FF))) else SHOP_GRADIENT
 
 val CAT_ICONS = mapOf(
     "cloud_browser" to Icons.Filled.Language, "ai_api" to Icons.Filled.Api,
@@ -1186,7 +1186,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.26" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.27" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1487,7 +1487,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.26" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.27" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
