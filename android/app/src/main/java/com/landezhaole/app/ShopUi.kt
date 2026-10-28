@@ -371,7 +371,7 @@ fun ShopCard(
     val sty = styleOf(pal)
     Box(
         modifier = if (isDefaultSchemePal(pal)) Modifier
-            .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+            .shuiGlassStyle(20.dp, pal.isDark)
             .clickable { onOpen() }
         else Modifier
             .hardShadow(sty.cardShape, sty.cardHardShadow, sty.cardHardShadowColor)
@@ -840,7 +840,7 @@ fun ShopHome(
                 }
                 item {
                     Column(
-                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp).glassCardStyle(20.dp, tintAlpha = 0.14f, elevation = 24.dp).padding(vertical = 4.dp) else Modifier
+                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp).then(if (isDefaultSchemePal(pal)) Modifier.shuiGlassStyle(20.dp, true) else Modifier.glassCardStyle(20.dp, tintAlpha = 0.14f, elevation = 24.dp)).padding(vertical = 4.dp) else Modifier
                     ) {
                         if (glassHome) GlassSectionHeader(title = "站点分类", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp))
                         else ShopSectionTitle("站点分类", "${categories.size} 个分类", pal)
@@ -908,7 +908,7 @@ fun ShopHome(
                                 ) {
                                     Box(
                                         modifier = Modifier.size(96.dp)
-                                            .then(if (glassHome) Modifier.glassCardStyle(12.dp, tintAlpha = 0.14f, elevation = 24.dp) else Modifier.clip(RoundedCornerShape(8.dp)).background(pal.subtleFill)),
+                                            .then(if (glassHome) (if (isDefaultSchemePal(pal)) Modifier.shuiGlassStyle(12.dp, true) else Modifier.glassCardStyle(12.dp, tintAlpha = 0.14f, elevation = 24.dp)) else Modifier.clip(RoundedCornerShape(8.dp)).background(pal.subtleFill)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         SiteIcon(card, 48.dp)
@@ -1016,8 +1016,10 @@ fun ShopCategory(
                     subtitleColor = pal.secondary,
                     arrowTint = pal.secondary,
                     tintAlpha = if (pal.isDark) 0.10f else 0.55f,
+                    shui = isDefaultSchemePal(pal),
+                    shuiDark = pal.isDark,
                     badgeBg = if (pal.isDark) null else Brush.linearGradient(
-                        listOf(pal.accent.copy(alpha = 0.12f), pal.accent.copy(alpha = 0.12f))
+                        listOf(pal.accentSoft, pal.accentSoft)
                     ),
                     badgeTextColor = if (pal.isDark) Color.White else pal.accent
                 )
@@ -1163,7 +1165,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.22" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.23" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1346,7 +1348,7 @@ fun ShopMine(
         }
         Box(
             modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
-                .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+                .shuiGlassStyle(20.dp, pal.isDark)
                 .padding(vertical = 6.dp)
             else Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
                 .clip(RoundedCornerShape(12.dp))
@@ -1375,7 +1377,7 @@ fun ShopMine(
         }
         Box(
             modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(12.dp)
-                .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+                .shuiGlassStyle(20.dp, pal.isDark)
             else Modifier.fillMaxWidth().padding(12.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(pal.barBackground)
@@ -1464,7 +1466,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.22" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.23" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
@@ -1672,7 +1674,7 @@ fun ShopPlayfulPage(pal: AppPalette, showToast: (String) -> Unit) {
 fun PlayPromptCard(pal: AppPalette, catName: String?, item: PromptItem, onCopy: () -> Unit) {
     Column(
         modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
-            .glassCardStyle(20.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+            .shuiGlassStyle(20.dp, pal.isDark)
             .clickable { onCopy() }
             .padding(12.dp)
         else Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)

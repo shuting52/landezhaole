@@ -123,6 +123,18 @@ fun Modifier.glassBorder(
  * 玻璃三件套合一：投影（必须在 clip 之前）+ 裁圆角 + 渐变着色 + 内高光 + 渐变描边。
  * 任何自定义玻璃容器都可以用它，不必重复拼这五层。
  */
+// 即存 GlassPanel 的直译：均匀填充、无阴影、无描边、无高光。
+// Compose 没有超椭圆，用圆角近似。
+fun Modifier.shuiGlassStyle(
+    cornerRadius: Dp = 20.dp,
+    isDark: Boolean = false,
+): Modifier {
+    val shape = RoundedCornerShape(cornerRadius)
+    return this
+        .clip(shape)
+        .background(if (isDark) Color(0x26FFFFFF) else Color(0x8CFFFFFF))
+}
+
 fun Modifier.glassCardStyle(
     cornerRadius: Dp = 20.dp,
     tintAlpha: Float = 0.10f,
@@ -573,10 +585,12 @@ fun GlassListRow(
     badgeAccent: Boolean = false,
     badgeBg: Brush? = null,
     badgeTextColor: Color = Color.White,
+    shui: Boolean = false,
+    shuiDark: Boolean = false,
 ) {
     Row(
         modifier = modifier
-            .glassCardStyle(cornerRadius = 20.dp, tintAlpha = tintAlpha, elevation = 16.dp)
+            .then(if (shui) Modifier.shuiGlassStyle(20.dp, shuiDark) else Modifier.glassCardStyle(cornerRadius = 20.dp, tintAlpha = tintAlpha, elevation = 16.dp))
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,

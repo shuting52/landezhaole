@@ -68,7 +68,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -270,9 +273,29 @@ fun shuiDarkPageBrush(): Brush = Brush.verticalGradient(
     listOf(Color(0xFF000000), Color(0xFF434343))
 )
 
+// 即存浅色页面底：底色 + 竖向白→黑各 25% overlay + 底部中心放射白 50% screen 混合。
+fun Modifier.shuiLightPageBg(): Modifier = this
+    .background(Color(0xFFCDDCDC))
+    .drawBehind {
+        drawRect(
+            Brush.verticalGradient(
+                listOf(Color.White.copy(alpha = 0.25f), Color.Black.copy(alpha = 0.25f))
+            )
+        )
+        drawRect(
+            Brush.radialGradient(
+                listOf(Color.White.copy(alpha = 0.50f), Color.Transparent),
+                center = Offset(size.width / 2f, size.height),
+                radius = maxOf(size.width, size.height)
+            ),
+            blendMode = BlendMode.Screen
+        )
+    }
+
 fun Modifier.pageBg(pal: AppPalette): Modifier =
     if (pal == CrystalPalette) background(crystalPageBrush())
     else if (pal == DarkPalette) background(shuiDarkPageBrush())
+    else if (pal == LightPalette) shuiLightPageBg()
     else background(pal.pageBackground)
 
 @Composable

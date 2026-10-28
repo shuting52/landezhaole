@@ -229,7 +229,6 @@ fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
         )
         Box(
             modifier = Modifier.fillMaxWidth().height(63.dp)
-                .shadow(8.dp, RoundedCornerShape(31.5.dp))
                 .clip(RoundedCornerShape(31.5.dp)).background(pal.barBackground)
         ) {
             Box(
@@ -728,7 +727,7 @@ fun SaveScreen(pal: AppPalette) {
 fun CouponCardView(card: CouponCard, pal: AppPalette, onClick: () -> Unit) {
     Box(
         modifier = if (isDefaultSchemePal(pal)) Modifier
-            .glassCardStyle(14.dp, if (pal.isDark) 0.10f else 0.55f, 8.dp)
+            .shuiGlassStyle(14.dp, pal.isDark)
             .clickable { onClick() }
         else Modifier
             .clip(RoundedCornerShape(14.dp))
