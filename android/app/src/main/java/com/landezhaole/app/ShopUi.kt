@@ -583,22 +583,6 @@ fun ShopHome(
             onEngineJumpConsumed()
         }
     }
-    // 应用下载：输入即自动搜。停 500ms 后搜一次，继续输入会取消上一轮等待；
-    // 站内本来就是边输边滤；网页引擎要点搜索才会跳出去，不自动跳。
-    LaunchedEffect(query, engineIdx) {
-        if (ENGINES[engineIdx].id != "appdl") return@LaunchedEffect
-        val q = query.trim()
-        if (q.isEmpty()) {
-            appResults = null
-            appTotal = 0
-            appError = null
-            return@LaunchedEffect
-        }
-        if (appQuery == q) return@LaunchedEffect
-        delay(500)
-        if (appQuery == query.trim()) return@LaunchedEffect
-        searchAppsNow(q)
-    }
     val isSearching = query.isNotBlank() && engineIdx == 0
     val searchResults: List<SiteCard> = if (isSearching) {
         val low = query.trim().lowercase()
@@ -686,6 +670,22 @@ fun ShopHome(
             val target = String.format(engine.url, URLEncoder.encode(q, "UTF-8"))
             openUrl(ctx, target)
         }
+    }
+    // 应用下载：输入即自动搜。停 500ms 后搜一次，继续输入会取消上一轮等待；
+    // 站内本来就是边输边滤；网页引擎要点搜索才会跳出去，不自动跳。
+    LaunchedEffect(query, engineIdx) {
+        if (ENGINES[engineIdx].id != "appdl") return@LaunchedEffect
+        val q = query.trim()
+        if (q.isEmpty()) {
+            appResults = null
+            appTotal = 0
+            appError = null
+            return@LaunchedEffect
+        }
+        if (appQuery == q) return@LaunchedEffect
+        delay(500)
+        if (appQuery == query.trim()) return@LaunchedEffect
+        searchAppsNow(q)
     }
     val showAppResults = ENGINES[engineIdx].id == "appdl" && appResults != null
 
