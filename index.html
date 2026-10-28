@@ -124,7 +124,18 @@ button{font-family:inherit}
 .qicon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.25)}
 .pt{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle,#fff,#7dd3fc);pointer-events:none;animation:rise .9s ease-out forwards;z-index:3}
 @keyframes rise{to{opacity:0;transform:translateY(-46px) scale(.3)}}
-@media(max-width:640px){.quick-dock{gap:6px;padding:24px 12px 10px;border-radius:18px;overflow-x:auto}.qicon{width:34px;height:34px;font-size:16px;border-radius:10px}}
+@media(max-width:640px){.quick-dock{gap:6px;padding:24px 12px 10px;border-radius:18px;overflow-x:auto}.qicon{width:34px;height:34px;font-size:16px;border-radius:10px}.qicon svg{width:20px;height:20px}}
+.qicon svg{width:26px;height:26px;display:block}
+.dock-modal{position:fixed;inset:0;z-index:210;display:none;background:rgba(0,0,0,.45);padding:24px 12px}
+.dock-modal.show{display:block}
+.dock-window{margin:0 auto;max-width:960px;height:100%;max-height:calc(100vh - 48px);background:var(--card);border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.35);backdrop-filter:blur(12px) saturate(1.3)}
+.dock-win-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);flex:none}
+.dock-win-title{font-size:17px;font-weight:800;color:var(--text)}
+.dock-win-count{font-size:13px;color:var(--muted)}
+.dock-win-close{margin-left:auto;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:20px;line-height:1;cursor:pointer;flex:none}
+.dock-win-body{flex:1;overflow-y:auto;padding:16px}
+.dock-win-sub{font-size:14px;font-weight:800;color:var(--text);margin:16px 4px 8px}
+.dock-win-sub:first-child{margin-top:0}
 section.cat{content-visibility:auto;contain-intrinsic-size:800px;margin:10px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:18px;scroll-margin-top:60px;box-shadow:0 4px 16px rgba(0,0,0,.04);animation:fadeUp .6s ease both}
 .cat-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cat-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 8px var(--blue);animation:none}
@@ -510,10 +521,29 @@ function applyAllCaps(){
    applyRowCap(sec,cat,on?on.dataset.sub:'all');
  });
 }
+const DOCK_ICONS={cloud_browser:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>',ai_api:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',ai_models:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',ai_canvas:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',ai_prompts:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>',tools_magic:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="15" y2="9"/><path d="M18 2l.8 2.2L21 5l-2.2.8L18 8l-.8-2.2L15 5l2.2-.8z"/></svg>',short_drama:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff" stroke="none"/></svg>',movie:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22" y2="12"/></svg>',discounts:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',resources:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'};
+function openDockModal(catId){
+ const cat=DATA.cats.find(c=>c.id===catId);if(!cat)return;
+ document.getElementById('dockWinTitle').textContent=cat.name;
+ document.getElementById('dockWinCount').textContent='共 '+cat.cards.length+' 个站点';
+ const subs=cat.subs.filter(s=>s.id!=='all');
+ const seen=new Set();let html='';
+ subs.forEach(s=>{const list=cat.cards.filter(c=>matchSub(cat,c,s.id));if(!list.length)return;list.forEach(c=>seen.add(c.u));html+='<div class="dock-win-sub">'+esc(s.name)+' · '+list.length+' 个</div><div class="grid">'+list.map(cardHTML).join('')+'</div>';});
+ const rest=cat.cards.filter(c=>!seen.has(c.u));
+ if(rest.length)html+='<div class="dock-win-sub">其他 · '+rest.length+' 个</div><div class="grid">'+rest.map(cardHTML).join('')+'</div>';
+ document.getElementById('dockWinBody').innerHTML=html;
+ document.getElementById('dockModal').classList.add('show');
+ document.body.style.overflow='hidden';
+ if(!window.__dockModalBound){window.__dockModalBound=true;
+  document.getElementById('dockWinClose').onclick=closeDockModal;
+  document.getElementById('dockModal').addEventListener('click',function(e){if(e.target.id==='dockModal')closeDockModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('dockModal').classList.contains('show'))closeDockModal();});}
+}
+function closeDockModal(){document.getElementById('dockModal').classList.remove('show');document.body.style.overflow='';}
 function render(){
  const box=document.getElementById('cats');
  const total=DATA.cats.reduce((n,c)=>n+c.cards.length,0);
- document.getElementById('quickDock').innerHTML=DATA.cats.slice(0,10).map(c=>`<a class="qapp" href="#cat-${c.id}" data-label="${esc(c.name)}" aria-label="${esc(c.name)}"><div class="qicon" style="background:${avColor(c.name)}">${esc(c.name.trim()[0])}</div></a>`).join('');
+ document.getElementById('quickDock').innerHTML=DATA.cats.slice(0,10).map(c=>`<a class="qapp" href="#cat-${c.id}" data-cat="${c.id}" data-label="${esc(c.name)}" aria-label="${esc(c.name)}"><div class="qicon" style="background:${avColor(c.name)}">${DOCK_ICONS[c.id]||esc(c.name.trim()[0])}</div></a>`).join('');
  bindQuickDock();
  box.innerHTML=DATA.cats.map(renderCat).join('');
  showNewSiteToasts();
@@ -571,7 +601,7 @@ function bindQuickDock(){
  dock.addEventListener('mouseleave',resetDock);
  dock.addEventListener('touchmove',function(e){if(e.touches.length){renderDock(e.touches[0].clientX);}}, {passive:true});
  dock.addEventListener('touchend',resetDock);
- apps.forEach(function(a){a.addEventListener('mouseenter',function(){tip.textContent=a.getAttribute('data-label');tip.classList.add('show');});a.addEventListener('click',function(){clearSearch();});});
+ apps.forEach(function(a){a.addEventListener('mouseenter',function(){tip.textContent=a.getAttribute('data-label');tip.classList.add('show');});a.addEventListener('click',function(e){e.preventDefault();clearSearch();openDockModal(a.getAttribute('data-cat'));});});
  function adapt(){if(apps.length>1){const r0=apps[0].getBoundingClientRect(),r1=apps[1].getBoundingClientRect();SIGMA=Math.max(46,(r1.left-r0.left)*0.85);}}
  window.addEventListener('resize',adapt);adapt();
 }
@@ -864,5 +894,6 @@ fetch('data.json').then(r=>r.json()).then(j=>{DATA=j;render();}).catch(()=>{docu
 <div class="toast-notify" id="toastNotify"><div class="tic" id="toastIc">新</div><div><div class="tt" id="toastTt"></div><div class="bd" id="toastBd"></div></div><button class="toast-close" id="toastClose" aria-label="关闭提醒">×</button></div>
 
 <div class="util-overlay" id="utilOverlay"><div class="util-dialog"><h2 id="utilTitle"></h2><div id="utilBody"></div><div class="actions"><button onclick="document.getElementById('utilOverlay').classList.remove('show')">知道了</button></div></div></div>
+<div class="dock-modal" id="dockModal"><div class="dock-window"><div class="dock-win-head"><span class="dock-win-title" id="dockWinTitle"></span><span class="dock-win-count" id="dockWinCount"></span><button class="dock-win-close" id="dockWinClose" aria-label="关闭">×</button></div><div class="dock-win-body" id="dockWinBody"></div></div></div>
 </body>
 </html>
