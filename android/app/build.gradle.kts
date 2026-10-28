@@ -13,8 +13,8 @@ android {
         applicationId = "com.landezhaole.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 44
-        versionName = "1.3.25"
+        versionCode = 45
+        versionName = "1.3.26"
         vectorDrawables { useSupportLibrary = true }
     }
     signingConfigs {
@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.9.2")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
+    implementation("io.github.kyant0:backdrop:1.0.6")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
