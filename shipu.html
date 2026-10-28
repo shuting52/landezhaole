@@ -57,6 +57,8 @@ a{color:inherit;text-decoration:none}
 .vplayer iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vback{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:8px 18px;font-size:13px;cursor:pointer;margin-top:12px}
 .vnote{color:var(--muted);font-size:13px;line-height:1.8}
+.platforms{margin-top:12px;font-size:13px;color:var(--muted);line-height:2}
+.platforms a{color:var(--green);text-decoration:none;font-weight:700}
 @media(max-width:640px){.hero h2{font-size:26px}.hero>img{height:180px}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 </style>
 </head>
@@ -64,7 +66,7 @@ a{color:inherit;text-decoration:none}
 <div class="chead"><div class="wrap"><a class="back" href="index.html">← 回首页</a><h1>食谱 · 今天吃什么</h1><span class="sub">点随机，今晚就吃它</span></div></div>
 <div class="wrap">
 <div class="hero" id="hero">
-<img id="dishImg" alt="">
+<img id="dishImg" alt="" referrerpolicy="no-referrer">
 <div class="kicker">今天吃什么</div>
 <h2 id="dishName"></h2>
 <div class="meta" id="dishMeta"></div>
@@ -195,7 +197,7 @@ function pool(){return DISHES.filter(function(d){return (curCat==="全部"||d.c=
 function refill(){bag=pool().map(function(d,i){return d;});for(var i=bag.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=bag[i];bag[i]=bag[j];bag[j]=t;}}
 function showDish(d){
 document.getElementById('dishName').textContent=d.n;
-var di=document.getElementById('dishImg');var dvs=VIDEOS[d.n]||[];if(dvs.length){di.src=dvs[0].p;di.style.display='block';}else{di.style.display='none';}
+var di=document.getElementById('dishImg');var dvs=VIDEOS[d.n]||[];if(dvs.length){di.dataset.covers=dvs.map(function(v){return v.p;}).join('|');di.dataset.ci=0;di.onerror=function(){var c=di.dataset.covers.split('|');var i=parseInt(di.dataset.ci,10)+1;if(i<c.length){di.dataset.ci=i;di.src=c[i];}else{di.style.display='none';}};di.src=dvs[0].p;di.style.display='block';}else{di.style.display='none';}
 document.getElementById('dishMeta').textContent=d.cuisine+" · "+d.c+" · 约"+d.t+"分钟";
 document.getElementById('dishIng').innerHTML=d.ing.map(function(x){return '<span>'+x+'</span>';}).join('');
 document.getElementById('dishSteps').innerHTML=d.st.map(function(x){return '<li>'+x+'</li>';}).join('');
@@ -206,32 +208,36 @@ function renderPills(){document.getElementById('pills').innerHTML=CATS.map(funct
 document.querySelectorAll('#pills button').forEach(function(b){b.onclick=function(){curCat=b.getAttribute('data-c');bag=[];renderPills();renderList();pickRandom();};});}
 function renderCuisinePills(){document.getElementById('cuisinePills').innerHTML=CUISINES.map(function(c){return '<button type="button" class="'+(c===curCuisine?'on':'')+'" data-c="'+c+'">'+c+'</button>';}).join('');
 document.querySelectorAll('#cuisinePills button').forEach(function(b){b.onclick=function(){curCuisine=b.getAttribute('data-c');bag=[];renderCuisinePills();renderList();pickRandom();};});}
-function renderList(){var list=pool();document.getElementById('list').innerHTML=list.map(function(d){var vs=VIDEOS[d.n]||[];var im=vs.length?'<img src="'+esc(vs[0].p)+'" alt="" loading="lazy">':'';return '<button type="button" class="dish" data-n="'+d.n+'">'+im+'<span class="dt"><b>'+d.n+'</b><div>'+d.cuisine+' · '+d.c+' · 约'+d.t+'分钟</div></span></button>';}).join('');
+function renderList(){var list=pool();document.getElementById('list').innerHTML=list.map(function(d){var vs=VIDEOS[d.n]||[];var im=vs.length?'<img src="'+esc(vs[0].p)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">':'';return '<button type="button" class="dish" data-n="'+d.n+'">'+im+'<span class="dt"><b>'+d.n+'</b><div>'+d.cuisine+' · '+d.c+' · 约'+d.t+'分钟</div></span></button>';}).join('');
 document.querySelectorAll('#list .dish').forEach(function(b){b.onclick=function(){var d=DISHES.filter(function(x){return x.n===b.getAttribute('data-n');})[0];showDish(d);window.scrollTo({top:0,behavior:'smooth'});};});}
 var curDish=null;
 function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function cleanTitle(t){return esc(t.replace(/<[^>]*>/g,''));}
 function searchUrl(name){return 'https://search.bilibili.com/all?keyword='+encodeURIComponent(name+'做法');}
 function douyinUrl(name){return 'https://www.douyin.com/search/'+encodeURIComponent(name+'做法');}
+function kuaishouUrl(name){return 'https://www.kuaishou.com/search/video?searchKey='+encodeURIComponent(name+'做法');}
+function xiguaUrl(name){return 'https://www.ixigua.com/search/'+encodeURIComponent(name+'做法');}
+function xiaohongshuUrl(name){return 'https://www.xiaohongshu.com/search_result?keyword='+encodeURIComponent(name+'做法');}
+function platformRow(name){return '<div class="platforms">去其他平台看'+esc(name)+'做法：<a href="'+douyinUrl(name)+'" target="_blank" rel="noopener">抖音</a> · <a href="'+kuaishouUrl(name)+'" target="_blank" rel="noopener">快手</a> · <a href="'+xiguaUrl(name)+'" target="_blank" rel="noopener">西瓜视频</a> · <a href="'+xiaohongshuUrl(name)+'" target="_blank" rel="noopener">小红书</a></div>';}
 function openVideo(){
 if(!curDish)return;
 var m=document.getElementById('vmodal');
 document.getElementById('vtitle').textContent=curDish.n+' · 视频教程';
 var videos=VIDEOS[curDish.n]||[];
 if(videos.length===0){
-document.getElementById('vbody').innerHTML='<div class="vnote">这道菜暂时没配视频，直接去 B 站看：</div><div class="btns"><a class="btn btn-video" href="'+searchUrl(curDish.n)+'" target="_blank" rel="noopener">去 B 站看'+esc(curDish.n)+'做法</a><a class="btn btn-video" href="'+douyinUrl(curDish.n)+'" target="_blank" rel="noopener">去抖音看'+esc(curDish.n)+'做法</a></div>';
+document.getElementById('vbody').innerHTML='<div class="vnote">这道菜暂时没配视频，直接去 B 站看：</div><div class="btns"><a class="btn btn-video" href="'+searchUrl(curDish.n)+'" target="_blank" rel="noopener">去 B 站看'+esc(curDish.n)+'做法</a></div>'+platformRow(curDish.n);;
 }else{
 var html=videos.map(function(v){
-return '<button type="button" class="vitem" data-bvid="'+esc(v.b)+'"><img src="'+esc(v.p)+'" alt=""><span><span class="vt">'+esc(v.t)+'</span><span class="vm" style="display:block">'+esc(v.a)+' · '+esc(v.d)+'</span></span></button>';
+return '<button type="button" class="vitem" data-bvid="'+esc(v.b)+'"><img src="'+esc(v.p)+'" alt="" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'"><span><span class="vt">'+esc(v.t)+'</span><span class="vm" style="display:block">'+esc(v.a)+' · '+esc(v.d)+'</span></span></button>';
 }).join('');
-html+='<div class="btns"><a class="btn btn-video" href="'+searchUrl(curDish.n)+'" target="_blank" rel="noopener">更多视频，去 B 站看</a><a class="btn btn-video" href="'+douyinUrl(curDish.n)+'" target="_blank" rel="noopener">去抖音看'+esc(curDish.n)+'做法</a></div>';
+html+='<div class="btns"><a class="btn btn-video" href="'+searchUrl(curDish.n)+'" target="_blank" rel="noopener">更多视频，去 B 站看</a></div>'+platformRow(curDish.n);;
 document.getElementById('vbody').innerHTML=html;
 document.querySelectorAll('#vbody .vitem').forEach(function(b){b.onclick=function(){showPlayer(b.getAttribute('data-bvid'));};});
 }
 m.classList.add('open');
 }
 function showPlayer(bvid){
-document.getElementById('vbody').innerHTML='<div class="vplayer"><iframe src="https://player.bilibili.com/player.html?bvid='+esc(bvid)+'&page=1&high_quality=1" allowfullscreen allow="autoplay; fullscreen"></iframe></div><div class="vnote">点一下画面开始播放；如果一直黑屏，点下面去 B 站看原片。</div><div class="btns"><a class="btn btn-video" href="https://www.bilibili.com/video/'+esc(bvid)+'" target="_blank" rel="noopener">去 B 站看这个视频</a><a class="btn btn-video" href="'+douyinUrl(curDish.n)+'" target="_blank" rel="noopener">去抖音看做法</a><button class="vback" type="button" id="vbackBtn">← 返回选片</button></div>';
+document.getElementById('vbody').innerHTML='<div class="vplayer"><iframe src="https://player.bilibili.com/player.html?bvid='+esc(bvid)+'&page=1&high_quality=1" allowfullscreen allow="autoplay; fullscreen"></iframe></div><div class="vnote">点一下画面开始播放；如果一直黑屏，点下面去 B 站看原片。</div><div class="btns"><a class="btn btn-video" href="https://www.bilibili.com/video/'+esc(bvid)+'" target="_blank" rel="noopener">去 B 站看这个视频</a><button class="vback" type="button" id="vbackBtn">← 返回选片</button></div>'+platformRow(curDish.n);
 document.getElementById('vbackBtn').onclick=function(){openVideo();};
 }
 function closeVideo(){document.getElementById('vmodal').classList.remove('open');document.getElementById('vbody').innerHTML='';}
