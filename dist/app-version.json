@@ -1,7 +1,7 @@
 {
-  "versionCode": 46,
-  "versionName": "1.3.27",
-  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.27-release.apk",
-  "sha256": "f665dd70a532283a1e5fd45ab983555466adbddad5e0d393560c4bca756803d7",
-  "notes": "优化：新增液态原版主题——上游 AndroidLiquidGlass 原版黑白配色（纯白底+纯黑字 / 纯黑底+纯白字），跟随深浅开关；底栏、卡片、行、搜索框继续走真液态玻璃\n删除：无\n增加：主题风格新增液态原版 1 套"
+  "versionCode": 47,
+  "versionName": "1.3.28",
+  "apkUrl": "https://raw.githubusercontent.com/shuting52/landezhaole/main/dist/landezhaole-v1.3.28-release.apk",
+  "sha256": "7e17329510e21b61c0abe7009151c4bd72c19e96f489cf803a6d06a4425f4abe",
+  "notes": "优化：去掉真液态玻璃渲染，底栏、卡片、行、搜索框回到磨砂半透明；液态原版主题配色保留\n删除：真液态玻璃渲染（Backdrop 库）\n增加：无"
 }
