@@ -54,7 +54,9 @@ a{color:inherit;text-decoration:none}
 .vitem .vt{font-size:14px;font-weight:700;line-height:1.4}
 .vitem .vm{color:var(--muted);font-size:12px;margin-top:4px}
 .vplayer{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000}
-.vplayer iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vplayer a{position:absolute;inset:0;display:block}
+.vplayer img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px}
 .vback{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:8px 18px;font-size:13px;cursor:pointer;margin-top:12px}
 .vnote{color:var(--muted);font-size:13px;line-height:1.8}
 .platforms{margin-top:12px;font-size:13px;color:var(--muted);line-height:2}
@@ -237,7 +239,9 @@ document.querySelectorAll('#vbody .vitem').forEach(function(b){b.onclick=functio
 m.classList.add('open');
 }
 function showPlayer(bvid){
-document.getElementById('vbody').innerHTML='<div class="vplayer"><iframe src="https://player.bilibili.com/player.html?bvid='+esc(bvid)+'&page=1&high_quality=1" allowfullscreen allow="autoplay; fullscreen"></iframe></div><div class="vnote">点一下画面开始播放；如果一直黑屏，点下面去 B 站看原片。</div><div class="btns"><a class="btn btn-video" href="https://www.bilibili.com/video/'+esc(bvid)+'" target="_blank" rel="noopener">去 B 站看这个视频</a><button class="vback" type="button" id="vbackBtn">← 返回选片</button></div>'+platformRow(curDish.n);
+var vs=VIDEOS[curDish.n]||[];var v=vs.filter(function(x){return x.b===bvid;})[0]||vs[0]||{p:'',t:curDish.n};
+var im=v.p?'<img src="'+esc(v.p)+'" alt="" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'"><span class="vplay">▶</span>':'<span class="vplay">▶</span>';
+document.getElementById('vbody').innerHTML='<div class="vplayer"><a href="https://www.bilibili.com/video/'+esc(bvid)+'" target="_blank" rel="noopener">'+im+'</a></div><div class="vnote">点一下封面去 B 站看这个视频；也可以去其他平台看。</div><div class="btns"><a class="btn btn-video" href="https://www.bilibili.com/video/'+esc(bvid)+'" target="_blank" rel="noopener">去 B 站看这个视频</a><button class="vback" type="button" id="vbackBtn">← 返回选片</button></div>'+platformRow(curDish.n);
 document.getElementById('vbackBtn').onclick=function(){openVideo();};
 }
 function closeVideo(){document.getElementById('vmodal').classList.remove('open');document.getElementById('vbody').innerHTML='';}
