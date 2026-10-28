@@ -1016,7 +1016,10 @@ fun ShopCategory(
                     subtitleColor = pal.secondary,
                     arrowTint = pal.secondary,
                     tintAlpha = if (pal.isDark) 0.10f else 0.55f,
-                    badgeAccent = !pal.isDark
+                    badgeBg = if (pal.isDark) null else Brush.linearGradient(
+                        listOf(pal.accent.copy(alpha = 0.12f), pal.accent.copy(alpha = 0.12f))
+                    ),
+                    badgeTextColor = if (pal.isDark) Color.White else pal.accent
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -1160,7 +1163,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.21" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.22" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1461,7 +1464,7 @@ fun ShopMine(
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.21" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.22" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center

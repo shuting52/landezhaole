@@ -72,9 +72,9 @@ val GlassAccentGradient: Brush
 private fun Modifier.glassTint(tintAlpha: Float): Modifier = this.background(
     Brush.linearGradient(
         colors = listOf(
-            Color.White.copy(alpha = (tintAlpha * 1.5f).coerceAtMost(1f)),
-            Color.White.copy(alpha = (tintAlpha * 0.45f).coerceAtMost(1f)),
-            Color.White.copy(alpha = (tintAlpha * 1.1f).coerceAtMost(1f)),
+            Color.White.copy(alpha = (tintAlpha * 1.15f).coerceAtMost(1f)),
+            Color.White.copy(alpha = (tintAlpha * 0.95f).coerceAtMost(1f)),
+            Color.White.copy(alpha = (tintAlpha * 1.05f).coerceAtMost(1f)),
         )
     )
 )
@@ -312,18 +312,20 @@ fun GlassBadge(
     text: String,
     modifier: Modifier = Modifier,
     accent: Boolean = false,
+    bg: Brush? = null,
+    textColor: Color = Color.White,
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(if (accent) GlassAccentGradient else Brush.linearGradient(
+            .background(bg ?: if (accent) GlassAccentGradient else Brush.linearGradient(
                 listOf(Color.White.copy(alpha = 0.22f), Color.White.copy(alpha = 0.08f))
             ))
             .glassBorder(cornerRadius = 50.dp, width = 1.dp)
             .padding(horizontal = 10.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text = text, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+        Text(text = text, color = textColor, fontSize = 11.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -569,6 +571,8 @@ fun GlassListRow(
     arrowTint: Color = Color.White.copy(alpha = 0.6f),
     tintAlpha: Float = 0.10f,
     badgeAccent: Boolean = false,
+    badgeBg: Brush? = null,
+    badgeTextColor: Color = Color.White,
 ) {
     Row(
         modifier = modifier
@@ -600,7 +604,7 @@ fun GlassListRow(
         }
         if (badge != null) {
             Spacer(modifier = Modifier.width(8.dp))
-            GlassBadge(text = badge, accent = badgeAccent)
+            GlassBadge(text = badge, accent = badgeAccent, bg = badgeBg, textColor = badgeTextColor)
         }
         Spacer(modifier = Modifier.width(4.dp))
         Icon(
