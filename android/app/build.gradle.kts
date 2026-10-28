@@ -1,13 +1,14 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 // 签名密钥文件路径（CI 上由 Secrets 还原，本地没有时为 null，不挂签名）
 val keystoreFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
 
 android {
     namespace = "com.landezhaole.app"
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.landezhaole.app"
         minSdk = 26
@@ -39,7 +40,6 @@ android {
         }
     }
     buildFeatures { compose = true }
-    composeOptions { kotlinCompilerExtensionVersion = "1.5.10" }
     packaging {
         resources {
             pickFirsts += "META-INF/kotlin-project-structure-metadata.json"
@@ -52,7 +52,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-        freeCompilerArgs += listOf("-P", "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true")
     }
 }
 dependencies {
@@ -61,7 +60,7 @@ dependencies {
         implementation("androidx.collection:collection-ktx:1.4.4")
         implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
     }
-    val composeBom = platform("androidx.compose:compose-bom:2024.10.00")
+    val composeBom = platform("androidx.compose:compose-bom:2025.12.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
     implementation("androidx.core:core-ktx:1.13.1")
