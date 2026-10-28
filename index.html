@@ -81,7 +81,8 @@ button{font-family:inherit}
 .stat{display:inline-block;margin-top:12px;background:var(--card);border:1px solid var(--line);color:var(--green-d);border-radius:20px;padding:4px 18px;font-size:12px;font-weight:700}
 .searchbox{max-width:680px;margin:10px auto 0;position:relative;text-align:center}
 .bulb{position:fixed;top:28px;right:14px;z-index:98;display:block;text-decoration:none;cursor:pointer}
-.bulb svg{display:block;height:120px;transform-origin:center top;animation:swing_31 1.3s ease-in-out infinite alternate;fill:#ef4444}
+.bulb svg{display:block;height:120px;transform-origin:center top;animation:swing_31 1.3s ease-in-out infinite alternate;fill:var(--green)}
+.bulb svg text{fill:var(--green)}
 @keyframes swing_31{0%{transform:rotate(18deg)}100%{transform:rotate(-18deg)}}
 @media(max-width:640px){.bulb{top:28px;right:14px}.bulb svg{height:72px}}
 #splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .5s;cursor:pointer}
@@ -288,23 +289,23 @@ footer .fbrand{font-size:18px;font-weight:800;color:var(--green);margin-bottom:6
 @media(min-width:1400px){#rankCard{display:block}}
 #rankCard .cards{position:relative;height:100px;transition-duration:0.5s;background:none;overflow:hidden}
 #rankCard .cards:hover{height:180px}
-#rankCard .cards:hover .outlinePage{box-shadow:0 10px 15px #b1985e}
+#rankCard .cards:hover .outlinePage{box-shadow:0 10px 15px rgba(0,0,0,.18)}
 #rankCard .cards:hover .detailPage{display:flex}
-#rankCard .outlinePage{position:relative;background:linear-gradient(45deg,#fffbf0,#ffdd87);width:200px;height:100px;border-radius:18px;transition-duration:0.5s;z-index:2}
-#rankCard .detailPage{position:relative;display:none;width:200px;height:80px;background:white;top:-14px;z-index:1;transition-duration:1s;border-radius:0 0 18px 18px;overflow:hidden;align-items:flex-start;justify-content:flex-start}
-#rankCard .splitLine{position:absolute;width:130px;height:7px;top:66px;background-image:linear-gradient(to right,transparent 10%,#ffe8a0 20%,#f7b733 50%,#ffe8a0 70%,transparent 90%);z-index:1}
+#rankCard .outlinePage{position:relative;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(12px) saturate(1.3);width:200px;height:100px;border-radius:18px;transition-duration:0.5s;z-index:2}
+#rankCard .detailPage{position:relative;display:none;width:200px;height:80px;background:var(--card);border:1px solid var(--line);border-top:0;top:-14px;z-index:1;transition-duration:1s;border-radius:0 0 18px 18px;overflow:hidden;align-items:flex-start;justify-content:flex-start}
+#rankCard .splitLine{position:absolute;width:130px;height:7px;top:66px;background-image:linear-gradient(to right,transparent 10%,var(--green) 20%,var(--green) 50%,var(--green) 70%,transparent 90%);z-index:1}
 #rankCard .trophy{position:absolute;right:0px;top:2px;z-index:2}
-#rankCard .ranking_number{position:relative;color:#ffc64b;font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;font-weight:700;font-size:52px;left:14px;padding:0;margin:0;top:-3px}
-#rankCard .ranking_word{position:relative;font-size:26px;color:#424c50}
+#rankCard .ranking_number{position:relative;color:var(--green);font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;font-weight:700;font-size:52px;left:14px;padding:0;margin:0;top:-3px}
+#rankCard .ranking_word{position:relative;font-size:26px;color:var(--text)}
 #rankCard .userAvatar{position:absolute;bottom:4px;left:14px;border-radius:50%}
-#rankCard .userName{position:relative;font-weight:600;color:#6b7578;left:40px;font-size:13px;top:-1px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+#rankCard .userName{position:relative;font-weight:600;color:var(--muted);left:40px;font-size:13px;top:-1px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
 #rankCard .medals{position:absolute;top:10px;right:3px}
 #rankCard .gradesBox{position:relative;height:44px;top:4px;margin-right:6px;margin-left:10px}
 #rankCard .gradesIcon{position:absolute;top:4px}
-#rankCard .gradesBoxLabel{position:relative;display:block;margin:8px 0 0 44px;color:#424c50;letter-spacing:3px;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:11px}
-#rankCard .gradesBoxNum{position:relative;font-family:Arial,Helvetica,sans-serif;display:block;font-size:16px;font-weight:800;margin:0 0 0 44px;color:#ea9518;top:-2px}
-#rankCard .rank-total{position:absolute;bottom:5px;left:10px;font-size:11px;color:#6b7578;margin:0}
-#rankCard .rank-total b{color:#ea9518}
+#rankCard .gradesBoxLabel{position:relative;display:block;margin:8px 0 0 44px;color:var(--text);letter-spacing:3px;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:11px}
+#rankCard .gradesBoxNum{position:relative;font-family:Arial,Helvetica,sans-serif;display:block;font-size:16px;font-weight:800;margin:0 0 0 44px;color:var(--green);top:-2px}
+#rankCard .rank-total{position:absolute;bottom:5px;left:10px;font-size:11px;color:var(--muted);margin:0}
+#rankCard .rank-total b{color:var(--green)}
 #rankCard .slide-in-top{animation:slide-in-top 1s cubic-bezier(0.65,0.05,0.36,1) both}
 @keyframes slide-in-top{0%{transform:translateY(-100px);opacity:0}100%{transform:translateY(0);opacity:1}}
 
