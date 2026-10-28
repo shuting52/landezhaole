@@ -12,6 +12,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +28,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -67,13 +72,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.graphicsLayer
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -193,8 +202,14 @@ fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
                 .border(sty.tabBarBorderWidth, sty.tabBarBorderColor, sty.tabBarShape)
                 .padding(6.dp)
         ) {
-            listOf("🏠" to "首页", "🗂️" to "分类", "💰" to "省钱小助手", "👤" to "我的").forEachIndexed { i, (emoji, label) ->
+            listOf(
+                R.drawable.ic_tab_home to R.drawable.ic_tab_home_filled,
+                R.drawable.ic_tab_grid to R.drawable.ic_tab_grid_filled,
+                R.drawable.ic_tab_wallet to R.drawable.ic_tab_wallet_filled,
+                R.drawable.ic_tab_person to R.drawable.ic_tab_person_filled,
+            ).forEachIndexed { i, (icon, active) ->
                 val sel = tab == i
+                val label = listOf("首页", "分类", "省钱小助手", "我的")[i]
                 Box(
                     modifier = Modifier.weight(1f).clip(sty.tabShape)
                         .background(if (sel) sty.tabSelBg else Color.Transparent)
@@ -202,7 +217,12 @@ fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(emoji, fontSize = 22.sp)
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = if (sel) active else icon),
+                            contentDescription = null,
+                            tint = if (sel) sty.tabSelText else pal.secondary,
+                            modifier = Modifier.size(22.dp)
+                        )
                         Text(label, fontSize = 11.sp, color = if (sel) sty.tabSelText else pal.secondary)
                     }
                 }
@@ -211,41 +231,100 @@ fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
     }
 }
 
-// 悬浮磨砂胶囊底栏：对标 shuiyingongju 非玻璃栏（高 63、半径 31.5、边距 18、距底 20，选中磨砂胶囊 26，滑动 220ms）
+// 液态玻璃底栏：对标 shuiyingongju 玻璃栏交互（高 63、半径 31.5、边距 18、距底 20，
+// 选中胶囊 26；点选时胶囊弹簧滑过去、中途拉伸再回弹，选中图标弹一下，按下有柔光）。
+// 图标是 SVG 矢量（未选中描边版 / 选中填充版各一），未选中用底栏专用中性灰。
+// Compose 没有液态玻璃渲染器，磨砂用半透明底近似；真背景模糊做不出来。
 @Composable
 fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
     val capsuleFill = if (pal.isDark) Color(0x24FFFFFF) else Color(0x17000000)
-    val items = listOf("🏠" to "首页", "🗂️" to "分类", "💰" to "省钱小助手", "👤" to "我的")
+    val barGray = if (pal.isDark) Color(0xFF9A9AA0) else Color(0xFF8A8A8E)
+    val frostedBg = if (pal.isDark) Color(0xCC1C1C1E) else Color(0xCCFFFFFF)
+    val glowAlpha = if (pal.isDark) 0.07f else 0.10f
+    val tabIcons = listOf(
+        R.drawable.ic_tab_home to R.drawable.ic_tab_home_filled,
+        R.drawable.ic_tab_grid to R.drawable.ic_tab_grid_filled,
+        R.drawable.ic_tab_wallet to R.drawable.ic_tab_wallet_filled,
+        R.drawable.ic_tab_person to R.drawable.ic_tab_person_filled,
+    )
+    val tabLabels = listOf("首页", "分类", "省钱小助手", "我的")
+    val sources = remember { List(4) { MutableInteractionSource() } }
+    val pops = remember { List(4) { Animatable(1f) } }
+    val stretch = remember { Animatable(0f) }
+    var firstTab by remember { mutableStateOf(true) }
+    LaunchedEffect(tab) {
+        if (firstTab) {
+            firstTab = false
+            return@LaunchedEffect
+        }
+        launch {
+            stretch.animateTo(1f, tween(150, easing = EaseOut))
+            stretch.animateTo(0f, spring(dampingRatio = 0.55f, stiffness = 380f))
+        }
+        pops[tab].snapTo(0.7f)
+        pops[tab].animateTo(1f, spring(dampingRatio = 0.5f, stiffness = 500f))
+    }
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth().navigationBarsPadding()
             .padding(horizontal = 18.dp).padding(bottom = 20.dp, top = 8.dp)
     ) {
         val slot = maxWidth / 4
-        val targetOffset = 6.dp + slot * tab
         val offset by animateDpAsState(
-            targetValue = targetOffset,
-            animationSpec = tween(220, easing = EaseOut),
+            targetValue = 6.dp + slot * tab,
+            animationSpec = spring(dampingRatio = 0.72f, stiffness = 320f),
             label = "capsuleSlide"
         )
+        val capsuleWidth = (slot - 12.dp) + 32.dp * stretch.value
+        val capsuleLeft = offset - (capsuleWidth - (slot - 12.dp)) / 2
         Box(
             modifier = Modifier.fillMaxWidth().height(63.dp)
-                .clip(RoundedCornerShape(31.5.dp)).background(pal.barBackground)
+                .clip(RoundedCornerShape(31.5.dp)).background(frostedBg)
         ) {
             Box(
                 modifier = Modifier.align(Alignment.CenterStart)
-                    .offset(x = offset).width(slot - 12.dp).height(51.dp)
+                    .offset(x = capsuleLeft).width(capsuleWidth).height(51.dp)
                     .clip(RoundedCornerShape(26.dp)).background(capsuleFill)
             )
             Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                items.forEachIndexed { i, (emoji, label) ->
+                tabIcons.forEachIndexed { i, (icon, active) ->
+                    val sel = tab == i
+                    val pressed by sources[i].collectIsPressedAsState()
+                    val glow by animateFloatAsState(
+                        targetValue = if (pressed) glowAlpha else 0f,
+                        label = "tabGlow"
+                    )
                     Box(
                         modifier = Modifier.weight(1f).fillMaxHeight()
-                            .clickable { goTab(i) },
+                            .clickable(
+                                interactionSource = sources[i],
+                                indication = null
+                            ) { goTab(i) },
                         contentAlignment = Alignment.Center
                     ) {
+                        if (glow > 0.001f) {
+                            Box(
+                                modifier = Modifier.size(56.dp)
+                                    .background(
+                                        Brush.radialGradient(
+                                            listOf(Color.White.copy(alpha = glow), Color.Transparent)
+                                        ),
+                                        CircleShape
+                                    )
+                            )
+                        }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(emoji, fontSize = 22.sp)
-                            Text(label, fontSize = 11.sp, color = if (tab == i) pal.foreground else pal.secondary)
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = if (sel) active else icon),
+                                contentDescription = null,
+                                tint = if (sel) pal.foreground else barGray,
+                                modifier = Modifier.size(24.dp)
+                                    .graphicsLayer(scaleX = pops[i].value, scaleY = pops[i].value)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                tabLabels[i], fontSize = 10.sp, fontWeight = FontWeight.Medium,
+                                color = if (sel) pal.foreground else barGray
+                            )
                         }
                     }
                 }
@@ -257,7 +336,8 @@ fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
 @Composable
 fun RowScope.ShopNavItem(
     pal: AppPalette,
-    emoji: String,
+    icon: Int,
+    active: Int,
     label: String,
     selected: Boolean,
     badge: Int?,
@@ -268,7 +348,11 @@ fun RowScope.ShopNavItem(
         onClick = onClick,
         icon = {
             Box(contentAlignment = Alignment.Center) {
-                Text(emoji, fontSize = 22.sp)
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = if (selected) active else icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
                 if (badge != null) {
                     Box(
                         modifier = Modifier.align(Alignment.TopEnd).offset(x = 10.dp, y = (-6).dp)
@@ -554,10 +638,10 @@ fun AppShell(
                     containerColor = pal.barBackground,
                     contentColor = pal.foreground
                 ) {
-                    ShopNavItem(pal, "🏠", "首页", tab == 0, null) { goTab(0) }
-                    ShopNavItem(pal, "🗂️", "分类", tab == 1, null) { goTab(1) }
-                    ShopNavItem(pal, "💰", "省钱小助手", tab == 2, null) { goTab(2) }
-                    ShopNavItem(pal, "👤", "我的", tab == 3, null) { goTab(3) }
+                    ShopNavItem(pal, R.drawable.ic_tab_home, R.drawable.ic_tab_home_filled, "首页", tab == 0, null) { goTab(0) }
+                    ShopNavItem(pal, R.drawable.ic_tab_grid, R.drawable.ic_tab_grid_filled, "分类", tab == 1, null) { goTab(1) }
+                    ShopNavItem(pal, R.drawable.ic_tab_wallet, R.drawable.ic_tab_wallet_filled, "省钱小助手", tab == 2, null) { goTab(2) }
+                    ShopNavItem(pal, R.drawable.ic_tab_person, R.drawable.ic_tab_person_filled, "我的", tab == 3, null) { goTab(3) }
                 }
             }
         }

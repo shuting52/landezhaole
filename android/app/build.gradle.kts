@@ -12,8 +12,8 @@ android {
         applicationId = "com.landezhaole.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 43
-        versionName = "1.3.24"
+        versionCode = 44
+        versionName = "1.3.25"
         vectorDrawables { useSupportLibrary = true }
     }
     signingConfigs {
