@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
@@ -56,9 +55,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -69,6 +65,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -95,6 +92,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.landezhaole.app.ui.RemoteVersion
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
 import com.landezhaole.app.ui.ThemeMode
 import com.landezhaole.app.ui.UiZoom
 import com.landezhaole.app.ui.UpdateDialog
@@ -186,55 +189,12 @@ fun SubPageWrapper(
     }
 }
 
-// 画廊主题的底部 Tab 栏：悬浮胶囊，形状/边框/阴影/选中 pill 全部跟主题走（默认主题仍用系统 NavigationBar）
-@Composable
-fun GalleryTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
-    val sty = styleOf(pal)
-    Box(
-        modifier = Modifier.fillMaxWidth().navigationBarsPadding()
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .hardShadow(sty.tabBarShape, sty.tabBarHardShadow, sty.tabBarHardShadowColor)
-                .clip(sty.tabBarShape)
-                .background(sty.tabBarBg)
-                .border(sty.tabBarBorderWidth, sty.tabBarBorderColor, sty.tabBarShape)
-                .padding(6.dp)
-        ) {
-            listOf(
-                R.drawable.ic_tab_home to R.drawable.ic_tab_home_filled,
-                R.drawable.ic_tab_grid to R.drawable.ic_tab_grid_filled,
-                R.drawable.ic_tab_wallet to R.drawable.ic_tab_wallet_filled,
-                R.drawable.ic_tab_person to R.drawable.ic_tab_person_filled,
-            ).forEachIndexed { i, (icon, active) ->
-                val sel = tab == i
-                val label = listOf("首页", "分类", "省钱小助手", "我的")[i]
-                Box(
-                    modifier = Modifier.weight(1f).clip(sty.tabShape)
-                        .background(if (sel) sty.tabSelBg else Color.Transparent)
-                        .clickable { goTab(i) }.padding(vertical = 6.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = if (sel) active else icon),
-                            contentDescription = null,
-                            tint = if (sel) sty.tabSelText else pal.secondary,
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Text(label, fontSize = 11.sp, color = if (sel) sty.tabSelText else pal.secondary)
-                    }
-                }
-            }
-        }
-    }
-}
 
 // 液态玻璃底栏：对标 shuiyingongju 玻璃栏交互（高 63、半径 31.5、边距 18、距底 20，
 // 选中胶囊 26；点选时胶囊弹簧滑过去、中途拉伸再回弹，选中图标弹一下，按下有柔光）。
 // 图标是 SVG 矢量（未选中描边版 / 选中填充版各一），未选中用底栏专用中性灰。
-// Compose 没有液态玻璃渲染器，磨砂用半透明底近似；真背景模糊做不出来。
+// 底栏本体走 Backdrop 2.0.1 真液态玻璃（vibrancy + blur 8dp + lens 24/24，取上游 LiquidBottomTabs 配方）；
+// 选中胶囊滑动拉伸、图标弹一下、按下柔光仍保留。
 @Composable
 fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
     val capsuleFill = if (pal.isDark) Color(0x24FFFFFF) else Color(0x17000000)
@@ -276,9 +236,22 @@ fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
         )
         val capsuleWidth = (slot - 12.dp) + 32.dp * stretch.value
         val capsuleLeft = offset - (capsuleWidth - (slot - 12.dp)) / 2
+        val liquidBackdrop = LocalLiquidBackdrop.current
+        val barFill = if (pal.isDark) Color(0xFF121212).copy(alpha = 0.4f) else Color(0xFFFAFAFA).copy(alpha = 0.4f)
         Box(
             modifier = Modifier.fillMaxWidth().height(63.dp)
-                .clip(RoundedCornerShape(31.5.dp)).background(frostedBg)
+                .then(
+                    if (liquidBackdrop != null) Modifier.drawBackdrop(
+                        backdrop = liquidBackdrop,
+                        shape = { RoundedCornerShape(31.5.dp) },
+                        effects = {
+                            vibrancy()
+                            blur(8.dp.toPx())
+                            lens(24.dp.toPx(), 24.dp.toPx())
+                        },
+                        onDrawSurface = { drawRect(barFill) }
+                    ) else Modifier.clip(RoundedCornerShape(31.5.dp)).background(frostedBg)
+                )
         ) {
             Box(
                 modifier = Modifier.align(Alignment.CenterStart)
@@ -333,48 +306,6 @@ fun CapsuleTabBar(pal: AppPalette, tab: Int, goTab: (Int) -> Unit) {
     }
 }
 
-@Composable
-fun RowScope.ShopNavItem(
-    pal: AppPalette,
-    icon: Int,
-    active: Int,
-    label: String,
-    selected: Boolean,
-    badge: Int?,
-    onClick: () -> Unit
-) {
-    NavigationBarItem(
-        selected = selected,
-        onClick = onClick,
-        icon = {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = if (selected) active else icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                if (badge != null) {
-                    Box(
-                        modifier = Modifier.align(Alignment.TopEnd).offset(x = 10.dp, y = (-6).dp)
-                            .size(16.dp).clip(CircleShape).background(shopBrand(pal)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            if (badge > 99) "99+" else badge.toString(),
-                            color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-        },
-        label = { Text(label) },
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = shopBrand(pal),
-            selectedTextColor = shopBrand(pal),
-            indicatorColor = shopBrand(pal).copy(alpha = 0.12f)
-        )
-    )
-}
 
 @Composable
 fun AppShell(
@@ -383,8 +314,6 @@ fun AppShell(
     onToggleDark: () -> Unit,
     themeMode: ThemeMode,
     onThemeModeChange: (ThemeMode) -> Unit,
-    themeScheme: String,
-    onThemeSchemeChange: (String) -> Unit,
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit
 ) {
@@ -535,7 +464,13 @@ fun AppShell(
         }
     }
 
+    val backdrop = rememberLayerBackdrop()
+    CompositionLocalProvider(
+        LocalLiquidBackdrop provides backdrop,
+        LocalLiquidIsDark provides dark
+    ) {
     Box(modifier = Modifier.fillMaxSize().pageBg(pal)) {
+        Box(modifier = Modifier.fillMaxSize().layerBackdrop(backdrop)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars)) {
                 UiZoom(scale = uiScale) {
@@ -616,7 +551,6 @@ fun AppShell(
                         else -> ShopMine(
                             pal = pal, dark = dark, onToggleDark = onToggleDark,
                             themeMode = themeMode, onThemeModeChange = onThemeModeChange,
-                            themeScheme = themeScheme, onThemeSchemeChange = onThemeSchemeChange,
                             uiScale = uiScale, onUiScaleChange = onUiScaleChange,
                             todayClicks = todayClicks,
                             totalSites = total, catCount = categories.size,
@@ -629,21 +563,8 @@ fun AppShell(
                     }
                 }
             }
-            if (isGallerySchemePal(pal)) {
-                GalleryTabBar(pal = pal, tab = tab, goTab = { goTab(it) })
-            } else if (isDefaultSchemePal(pal)) {
-                CapsuleTabBar(pal = pal, tab = tab, goTab = { goTab(it) })
-            } else {
-                NavigationBar(
-                    containerColor = pal.barBackground,
-                    contentColor = pal.foreground
-                ) {
-                    ShopNavItem(pal, R.drawable.ic_tab_home, R.drawable.ic_tab_home_filled, "首页", tab == 0, null) { goTab(0) }
-                    ShopNavItem(pal, R.drawable.ic_tab_grid, R.drawable.ic_tab_grid_filled, "分类", tab == 1, null) { goTab(1) }
-                    ShopNavItem(pal, R.drawable.ic_tab_wallet, R.drawable.ic_tab_wallet_filled, "省钱小助手", tab == 2, null) { goTab(2) }
-                    ShopNavItem(pal, R.drawable.ic_tab_person, R.drawable.ic_tab_person_filled, "我的", tab == 3, null) { goTab(3) }
-                }
-            }
+            CapsuleTabBar(pal = pal, tab = tab, goTab = { goTab(it) })
+        }
         }
         if (pendingUpdate != null) {
             UpdateDialog(version = pendingUpdate!!, pal = pal, onDismiss = { pendingUpdate = null })
@@ -709,6 +630,7 @@ fun AppShell(
                 SplashContent()
             }
         }
+    }
     }
 }
 
@@ -810,13 +732,8 @@ fun SaveScreen(pal: AppPalette) {
 @Composable
 fun CouponCardView(card: CouponCard, pal: AppPalette, onClick: () -> Unit) {
     Box(
-        modifier = if (isDefaultSchemePal(pal)) Modifier
-            .shuiGlassStyle(14.dp, pal.isDark)
-            .clickable { onClick() }
-        else Modifier
-            .clip(RoundedCornerShape(14.dp))
-            .background(pal.barBackground)
-            .border(1.dp, pal.line, RoundedCornerShape(14.dp))
+        modifier = Modifier
+            .liquidGlassStyle(14.dp, pal.isDark)
             .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

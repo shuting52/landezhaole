@@ -13,8 +13,8 @@ android {
         applicationId = "com.landezhaole.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 47
-        versionName = "1.3.28"
+        versionCode = 48
+        versionName = "1.3.29"
         vectorDrawables { useSupportLibrary = true }
     }
     signingConfigs {
@@ -78,4 +78,5 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("io.github.kyant0:backdrop:2.0.1")
 }

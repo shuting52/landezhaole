@@ -30,6 +30,12 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.drawPlainBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,11 +61,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 
 // ============================================================
-// GlassChat 玻璃原生组件库
-// 语言：极光底 + 渐变着色 + 内高光 + 渐变描边 + 深色投影。
-// 自包含：只用本工程已有的 Compose 依赖，不加 Haze、不加 AGSL、不改构建配置。
+// 液态玻璃组件库（Backdrop 2.0.1 真液态玻璃渲染）
 // 用法：任何页面直接调用，例如 GlassCard { Text("...") }、GlassButton("确定") { }。
-// 注意：本套是固定深色玻璃语言（白字），适合放在极光底或深色底上。
+// 玻璃面统一走 liquidGlassStyle；按钮/药丸/芯片的蓝紫渐变是组件语言，不是主题。
 // ============================================================
 
 /** 玻璃主渐变：按钮、选中态、进度条统一用这条蓝紫渐变。 */
@@ -119,106 +123,47 @@ fun Modifier.glassBorder(
     )
 }
 
-/**
- * 玻璃三件套合一：投影（必须在 clip 之前）+ 裁圆角 + 渐变着色 + 内高光 + 渐变描边。
- * 任何自定义玻璃容器都可以用它，不必重复拼这五层。
- */
-// 即存 GlassPanel 的直译：均匀填充、无阴影、无描边、无高光。
-// Compose 没有超椭圆，用圆角近似。
-fun Modifier.shuiGlassStyle(
+// ---- 液态玻璃（Backdrop 2.0.1）----
+// 根部 AppShell 用一个 LayerBackdrop 录下整页内容；每个玻璃面用 drawPlainBackdrop
+// 从录好的层里采样：vibrancy（饱和 1.5）+ blur 4dp + lens 16/32（取上游 GlassPlayground 配方），
+// 再盖一层上游容器色（浅 FAFAFA 40% / 深 121212 40%）保证文字可读。
+// 不在 Provider 内使用时（例如独立窗口的弹窗）退化为纯色填充，不会崩。
+val LocalLiquidBackdrop = staticCompositionLocalOf<LayerBackdrop?> { null }
+val LocalLiquidIsDark = staticCompositionLocalOf { false }
+
+@Composable
+fun Modifier.liquidGlassStyle(
     cornerRadius: Dp = 20.dp,
-    isDark: Boolean = false,
+    isDark: Boolean = LocalLiquidIsDark.current,
 ): Modifier {
-    val shape = RoundedCornerShape(cornerRadius)
-    return this
-        .clip(shape)
-        .background(if (isDark) Color(0x26FFFFFF) else Color(0x8CFFFFFF))
+    val backdrop = LocalLiquidBackdrop.current
+    val fill = if (isDark) Color(0xFF121212).copy(alpha = 0.4f) else Color(0xFFFAFAFA).copy(alpha = 0.4f)
+    return if (backdrop == null) {
+        this.clip(RoundedCornerShape(cornerRadius)).background(fill)
+    } else {
+        this.drawPlainBackdrop(
+            backdrop = backdrop,
+            shape = { RoundedCornerShape(cornerRadius) },
+            effects = {
+                vibrancy()
+                blur(4.dp.toPx())
+                lens(16.dp.toPx(), 32.dp.toPx())
+            },
+            onDrawSurface = { drawRect(fill) }
+        )
+    }
 }
 
+/**
+ * 玻璃容器：2.0.1 真液态玻璃。旧的 tintAlpha/elevation 参数已不再起作用，
+ * 保留签名只是为了不改各处调用；想调圆角只传 cornerRadius。
+ */
+@Composable
 fun Modifier.glassCardStyle(
     cornerRadius: Dp = 20.dp,
     tintAlpha: Float = 0.10f,
     elevation: Dp = 16.dp,
-): Modifier {
-    val shape = RoundedCornerShape(cornerRadius)
-    return this
-        .shadow(
-            elevation = elevation, shape = shape, clip = false,
-            ambientColor = Color.Black.copy(alpha = 0.30f),
-            spotColor = Color.Black.copy(alpha = 0.55f),
-        )
-        .clip(shape)
-        .glassTint(tintAlpha)
-        .background(glassSheen())
-        .glassBorder(cornerRadius = cornerRadius, width = 1.dp)
-}
-
-/** 极光底：暗底 + 四色光斑 + 弧形光带 + 底部压暗，玻璃组件的标配背景。 */
-@Composable
-fun GlassAuroraBackground(modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .fillMaxSize()
-            .background(Color(0xFF100A16))
-            .drawBehind {
-                val w = size.width
-                val h = size.height
-                drawRect(
-                    Brush.linearGradient(
-                        colors = listOf(Color(0xFF1B1030), Color(0xFF3A1E52), Color(0xFF6E293C)),
-                        start = Offset.Zero,
-                        end = Offset(w, h),
-                    )
-                )
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(Color(0xFFFF9B4A).copy(alpha = 0.80f), Color.Transparent),
-                        center = Offset(w * 0.14f, h * 0.30f), radius = h * 0.28f,
-                    ),
-                    radius = h * 0.28f, center = Offset(w * 0.14f, h * 0.30f),
-                )
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(Color(0xFF3FD2E8).copy(alpha = 0.55f), Color.Transparent),
-                        center = Offset(w * 0.98f, h * 0.08f), radius = h * 0.22f,
-                    ),
-                    radius = h * 0.22f, center = Offset(w * 0.98f, h * 0.08f),
-                )
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(Color(0xFFFF5A8A).copy(alpha = 0.42f), Color.Transparent),
-                        center = Offset(w * 0.86f, h * 0.60f), radius = h * 0.24f,
-                    ),
-                    radius = h * 0.24f, center = Offset(w * 0.86f, h * 0.60f),
-                )
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(Color(0xFF43E0A0).copy(alpha = 0.30f), Color.Transparent),
-                        center = Offset(w * 0.30f, h * 0.88f), radius = h * 0.22f,
-                    ),
-                    radius = h * 0.22f, center = Offset(w * 0.30f, h * 0.88f),
-                )
-                drawArc(
-                    color = Color.White.copy(alpha = 0.07f),
-                    startAngle = 195f, sweepAngle = 130f, useCenter = false,
-                    topLeft = Offset(w * 0.30f, -h * 0.12f), size = Size(w * 1.25f, h * 0.95f),
-                    style = Stroke(width = 1.5.dp.toPx(), cap = StrokeCap.Round),
-                )
-                drawArc(
-                    color = Color.White.copy(alpha = 0.05f),
-                    startAngle = 200f, sweepAngle = 120f, useCenter = false,
-                    topLeft = Offset(w * 0.42f, h * 0.02f), size = Size(w * 1.05f, h * 0.78f),
-                    style = Stroke(width = 1.dp.toPx(), cap = StrokeCap.Round),
-                )
-                drawRect(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color(0xFF0A0610).copy(alpha = 0.70f)),
-                        startY = h * 0.45f, endY = h,
-                    )
-                )
-            }
-    )
-}
+): Modifier = liquidGlassStyle(cornerRadius)
 
 /** 玻璃卡片：最常用的容器，点按可选。 */
 @Composable
@@ -585,12 +530,11 @@ fun GlassListRow(
     badgeAccent: Boolean = false,
     badgeBg: Brush? = null,
     badgeTextColor: Color = Color.White,
-    shui: Boolean = false,
     shuiDark: Boolean = false,
 ) {
     Row(
         modifier = modifier
-            .then(if (shui) Modifier.shuiGlassStyle(20.dp, shuiDark) else Modifier.glassCardStyle(cornerRadius = 20.dp, tintAlpha = tintAlpha, elevation = 16.dp))
+            .then(Modifier.liquidGlassStyle(20.dp, shuiDark))
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,

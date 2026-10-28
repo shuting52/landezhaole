@@ -126,10 +126,6 @@ import kotlinx.coroutines.launch
 val SHOP_RED = Color(0xFFF53D2D)
 val SHOP_GRADIENT = Brush.horizontalGradient(listOf(Color(0xFFF53D2D), Color(0xFFFF7733)))
 
-// 画廊主题生效时顶栏与品牌红跟主题主色走；默认主题保持电商红
-fun isGallerySchemePal(pal: AppPalette): Boolean =
-    pal == NeuPalette || pal == GlassPalette || pal == DoodlePalette || pal == LeverPalette || pal == Y2kPalette || pal == CrystalPalette || pal == GlassChatPalette
-fun isDefaultSchemePal(pal: AppPalette): Boolean = pal == LightPalette || pal == DarkPalette || pal == LiquidLightPalette || pal == LiquidDarkPalette
 fun shopBrand(pal: AppPalette): Color = pal.accent
 // 主题组件样式：颜色之外，卡片/Tab/芯片/按钮的形状与阴影也跟主题走
 data class ThemeStyle(
@@ -166,133 +162,21 @@ data class ThemeStyle(
     val buttonGradient: Boolean
 )
 
-private fun darken(c: Color, f: Float): Color = Color(c.red * f, c.green * f, c.blue * f, c.alpha)
-
-private fun wobShape(a: Dp, b: Dp, c: Dp, d: Dp): Shape =
-    RoundedCornerShape(topStart = a, topEnd = b, bottomEnd = c, bottomStart = d)
-
-fun styleOf(pal: AppPalette): ThemeStyle = when (pal) {
-    NeuPalette -> ThemeStyle(
-        cardShape = RoundedCornerShape(24.dp), cardBorderWidth = 2.dp,
-        cardBorderColor = Color(0x55FFFFFF), cardElevation = 6.dp,
-        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
-        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = pal.pageBackground,
-        tabBarBorderWidth = 2.dp, tabBarBorderColor = Color(0x55FFFFFF),
-        tabBarElevation = 6.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
-        tabSelBg = pal.accentSoft, tabSelText = pal.accent, tabShape = RoundedCornerShape(22.dp),
-        chipShape = RoundedCornerShape(32.dp), chipBorderWidth = 2.dp,
-        chipBorderColor = Color(0x55FFFFFF), chipSelBg = pal.accentSoft, chipSelText = pal.accent,
-        chipSelBorderColor = Color(0x55FFFFFF), chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
-        buttonShape = RoundedCornerShape(40.dp), buttonBorderWidth = 2.dp,
-        buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 4.dp,
-        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = false
-    )
-    GlassPalette -> ThemeStyle(
-        cardShape = RoundedCornerShape(20.dp), cardBorderWidth = 1.dp,
-        cardBorderColor = Color(0x8CFFFFFF), cardElevation = 8.dp,
-        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
-        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = Color(0x66FFFFFF),
-        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0x8CFFFFFF),
-        tabBarElevation = 8.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
-        tabSelBg = Color(0xA6FFFFFF), tabSelText = pal.accent, tabShape = RoundedCornerShape(22.dp),
-        chipShape = RoundedCornerShape(32.dp), chipBorderWidth = 1.dp,
-        chipBorderColor = Color(0x8CFFFFFF), chipSelBg = pal.accent, chipSelText = Color.White,
-        chipSelBorderColor = pal.accent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
-        buttonShape = RoundedCornerShape(8.dp), buttonBorderWidth = 0.dp,
-        buttonBorderColor = Color.Transparent, buttonElevation = 4.dp,
-        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = false
-    )
-    DoodlePalette -> ThemeStyle(
-        cardShape = wobShape(26.dp, 32.dp, 24.dp, 30.dp), cardBorderWidth = 3.dp,
-        cardBorderColor = pal.foreground, cardElevation = 0.dp,
-        cardHardShadow = 4.dp, cardHardShadowColor = Color(0x29444433),
-        tabBarShape = wobShape(30.dp, 36.dp, 28.dp, 38.dp), tabBarBg = pal.surface,
-        tabBarBorderWidth = 3.dp, tabBarBorderColor = pal.foreground,
-        tabBarElevation = 0.dp, tabBarHardShadow = 4.dp, tabBarHardShadowColor = Color(0x29444433),
-        tabSelBg = pal.foreground, tabSelText = pal.surface, tabShape = wobShape(20.dp, 24.dp, 18.dp, 22.dp),
-        chipShape = wobShape(16.dp, 20.dp, 14.dp, 18.dp), chipBorderWidth = 2.dp,
-        chipBorderColor = pal.foreground, chipSelBg = pal.foreground, chipSelText = pal.surface,
-        chipSelBorderColor = pal.foreground, chipHardShadow = 2.dp, chipHardShadowColor = Color(0x21444433),
-        buttonShape = wobShape(24.dp, 30.dp, 22.dp, 28.dp), buttonBorderWidth = 2.dp,
-        buttonBorderColor = pal.foreground, buttonElevation = 0.dp,
-        buttonHardShadow = 3.dp, buttonHardShadowColor = Color(0x24444433), buttonGradient = false
-    )
-    LeverPalette -> ThemeStyle(
-        cardShape = RoundedCornerShape(18.dp), cardBorderWidth = 0.dp,
-        cardBorderColor = Color.Transparent, cardElevation = 0.dp,
-        cardHardShadow = 3.dp, cardHardShadowColor = Color(0xFFB9D2E6),
-        tabBarShape = RoundedCornerShape(50), tabBarBg = Color.White,
-        tabBarBorderWidth = 0.dp, tabBarBorderColor = Color.Transparent,
-        tabBarElevation = 0.dp, tabBarHardShadow = 3.dp, tabBarHardShadowColor = darken(pal.accent, 0.75f),
-        tabSelBg = pal.accent, tabSelText = Color.White, tabShape = RoundedCornerShape(50),
-        chipShape = RoundedCornerShape(50), chipBorderWidth = 2.dp,
-        chipBorderColor = pal.accent, chipSelBg = pal.accent, chipSelText = Color.White,
-        chipSelBorderColor = pal.accent, chipHardShadow = 3.dp, chipHardShadowColor = darken(pal.accent, 0.75f),
-        buttonShape = RoundedCornerShape(16.dp), buttonBorderWidth = 0.dp,
-        buttonBorderColor = Color.Transparent, buttonElevation = 0.dp,
-        buttonHardShadow = 4.dp, buttonHardShadowColor = darken(pal.accent, 0.75f), buttonGradient = false
-    )
-    Y2kPalette -> ThemeStyle(
-        cardShape = RoundedCornerShape(24.dp), cardBorderWidth = 1.dp,
-        cardBorderColor = Color(0xCCFFFFFF), cardElevation = 8.dp,
-        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
-        tabBarShape = RoundedCornerShape(26.dp), tabBarBg = Color(0xE0FFFFFF),
-        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0xCCFFFFFF),
-        tabBarElevation = 8.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
-        tabSelBg = pal.accent.copy(alpha = 0.15f), tabSelText = pal.accent, tabShape = RoundedCornerShape(20.dp),
-        chipShape = RoundedCornerShape(50), chipBorderWidth = 1.dp,
-        chipBorderColor = pal.accent.copy(alpha = 0.35f), chipSelBg = pal.accent, chipSelText = Color.White,
-        chipSelBorderColor = Color.Transparent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
-        buttonShape = RoundedCornerShape(22.dp), buttonBorderWidth = 0.dp,
-        buttonBorderColor = Color.Transparent, buttonElevation = 6.dp,
-        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
-    )
-    CrystalPalette -> ThemeStyle(
-        cardShape = RoundedCornerShape(22.dp), cardBorderWidth = 1.dp,
-        cardBorderColor = Color(0xCCFFFFFF), cardElevation = 8.dp,
-        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
-        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = Color(0x66FFFFFF),
-        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0xCCFFFFFF),
-        tabBarElevation = 8.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
-        tabSelBg = pal.accent, tabSelText = Color.White, tabShape = RoundedCornerShape(50),
-        chipShape = RoundedCornerShape(50), chipBorderWidth = 1.dp,
-        chipBorderColor = Color(0xCCFFFFFF), chipSelBg = pal.accent, chipSelText = Color.White,
-        chipSelBorderColor = pal.accent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
-        buttonShape = RoundedCornerShape(50), buttonBorderWidth = 1.dp,
-        buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 4.dp,
-        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
-    )
-    GlassChatPalette -> ThemeStyle(
-        cardShape = RoundedCornerShape(20.dp), cardBorderWidth = 1.dp,
-        cardBorderColor = Color(0xCCFFFFFF), cardElevation = 16.dp,
-        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
-        tabBarShape = RoundedCornerShape(32.dp), tabBarBg = Color(0x33FFFFFF),
-        tabBarBorderWidth = 1.dp, tabBarBorderColor = Color(0xCCFFFFFF),
-        tabBarElevation = 16.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
-        tabSelBg = pal.accent, tabSelText = Color.White, tabShape = RoundedCornerShape(50),
-        chipShape = RoundedCornerShape(50), chipBorderWidth = 1.dp,
-        chipBorderColor = Color(0xCCFFFFFF), chipSelBg = pal.accent, chipSelText = Color.White,
-        chipSelBorderColor = pal.accent, chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
-        buttonShape = RoundedCornerShape(50), buttonBorderWidth = 1.dp,
-        buttonBorderColor = Color(0x80FFFFFF), buttonElevation = 8.dp,
-        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = true
-    )
-    else -> ThemeStyle(
-        cardShape = RoundedCornerShape(12.dp), cardBorderWidth = 1.dp,
-        cardBorderColor = pal.line, cardElevation = 0.dp,
-        cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
-        tabBarShape = RoundedCornerShape(0.dp), tabBarBg = pal.barBackground,
-        tabBarBorderWidth = 0.dp, tabBarBorderColor = Color.Transparent,
-        tabBarElevation = 0.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
-        tabSelBg = pal.accent.copy(alpha = 0.12f), tabSelText = pal.accent, tabShape = RoundedCornerShape(18.dp),
-        chipShape = RoundedCornerShape(18.dp), chipBorderWidth = 1.dp,
-        chipBorderColor = pal.line, chipSelBg = shopBrand(pal), chipSelText = if (pal == LiquidDarkPalette) Color.Black else Color.White,
-        chipSelBorderColor = shopBrand(pal), chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
-        buttonShape = RoundedCornerShape(18.dp), buttonBorderWidth = 0.dp,
-        buttonBorderColor = Color.Transparent, buttonElevation = 0.dp,
-        buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = false
-    )
-}
+fun styleOf(pal: AppPalette): ThemeStyle = ThemeStyle(
+    cardShape = RoundedCornerShape(12.dp), cardBorderWidth = 1.dp,
+    cardBorderColor = pal.line, cardElevation = 0.dp,
+    cardHardShadow = 0.dp, cardHardShadowColor = Color.Transparent,
+    tabBarShape = RoundedCornerShape(0.dp), tabBarBg = pal.barBackground,
+    tabBarBorderWidth = 0.dp, tabBarBorderColor = Color.Transparent,
+    tabBarElevation = 0.dp, tabBarHardShadow = 0.dp, tabBarHardShadowColor = Color.Transparent,
+    tabSelBg = pal.accent.copy(alpha = 0.12f), tabSelText = pal.accent, tabShape = RoundedCornerShape(18.dp),
+    chipShape = RoundedCornerShape(18.dp), chipBorderWidth = 1.dp,
+    chipBorderColor = pal.line, chipSelBg = shopBrand(pal), chipSelText = Color.White,
+    chipSelBorderColor = shopBrand(pal), chipHardShadow = 0.dp, chipHardShadowColor = Color.Transparent,
+    buttonShape = RoundedCornerShape(18.dp), buttonBorderWidth = 0.dp,
+    buttonBorderColor = Color.Transparent, buttonElevation = 0.dp,
+    buttonHardShadow = 0.dp, buttonHardShadowColor = Color.Transparent, buttonGradient = false
+)
 
 // 实心偏移阴影：画在裁剪之外，放在 clip 之前才不会被裁掉（006 手绘 / 009 玩具的硬阴影）
 fun Modifier.hardShadow(shape: Shape, offset: Dp, color: Color): Modifier = this.then(
@@ -311,11 +195,7 @@ fun Modifier.hardShadow(shape: Shape, offset: Dp, color: Color): Modifier = this
     }
 )
 
-fun shopBrandGradient(pal: AppPalette): Brush =
-    if (pal == GlassChatPalette) GlassAccentGradient
-    else if (pal == CrystalPalette) Brush.horizontalGradient(
-        listOf(Color(0xFF60A5FA), Color(0xFF1668DC), Color(0xFF7C3AED))
-    ) else if (isGallerySchemePal(pal) || pal == LiquidLightPalette || pal == LiquidDarkPalette) Brush.horizontalGradient(listOf(pal.accent, pal.accent)) else if (pal == LightPalette || pal == DarkPalette) Brush.horizontalGradient(listOf(Color(0xFF1257C9), Color(0xFF5AA9FF))) else SHOP_GRADIENT
+fun shopBrandGradient(pal: AppPalette): Brush = Brush.horizontalGradient(listOf(pal.accent, pal.accent))
 
 val CAT_ICONS = mapOf(
     "cloud_browser" to Icons.Filled.Language, "ai_api" to Icons.Filled.Api,
@@ -371,15 +251,8 @@ fun ShopCard(
 ) {
     val sty = styleOf(pal)
     Box(
-        modifier = if (isDefaultSchemePal(pal)) Modifier
-            .shuiGlassStyle(20.dp, pal.isDark)
-            .clickable { onOpen() }
-        else Modifier
-            .hardShadow(sty.cardShape, sty.cardHardShadow, sty.cardHardShadowColor)
-            .shadow(sty.cardElevation, sty.cardShape)
-            .clip(sty.cardShape)
-            .background(pal.barBackground)
-            .border(sty.cardBorderWidth, sty.cardBorderColor, sty.cardShape)
+        modifier = Modifier
+            .liquidGlassStyle(20.dp, pal.isDark)
             .clickable { onOpen() }
     ) {
         Column {
@@ -563,7 +436,6 @@ fun ShopHome(
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val glassHome = pal.isDark
     val glowAngle = rememberGlowAngle()
     val glowBrush = remember(glowAngle) { rotatingGlowBrush(glowAngle) }
     var query by remember { mutableStateOf("") }
@@ -705,50 +577,13 @@ fun ShopHome(
                         fontWeight = FontWeight.Black, letterSpacing = 1.sp
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    if (glassHome) {
-                        GlassSearchField(
-                            value = query,
-                            onValueChange = { query = it },
-                            placeholder = "搜本站资源",
-                            modifier = Modifier.weight(1f).border(2.dp, glowBrush, RoundedCornerShape(50)),
-                            onSearch = { doSearch() }
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier.weight(1f).height(36.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(Color.White)
-                                .border(2.dp, glowBrush, RoundedCornerShape(20.dp))
-                                .padding(horizontal = 12.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("🔍", fontSize = 13.sp)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Box(modifier = Modifier.weight(1f)) {
-                                    BasicTextField(
-                                        value = query,
-                                        onValueChange = { query = it },
-                                        singleLine = true,
-                                        textStyle = TextStyle(fontSize = 13.sp, color = pal.foreground),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        decorationBox = { inner ->
-                                            if (query.isEmpty()) {
-                                                Text("搜本站资源", fontSize = 13.sp, color = Color(0xFF999999))
-                                            }
-                                            inner()
-                                        }
-                                    )
-                                }
-                                if (query.isNotEmpty()) {
-                                    Text(
-                                        "搜索", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = shopBrand(pal),
-                                        modifier = Modifier.clickable { doSearch() }.padding(start = 6.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    GlassSearchField(
+                        value = query,
+                        onValueChange = { query = it },
+                        placeholder = "搜本站资源",
+                        modifier = Modifier.weight(1f).border(2.dp, glowBrush, RoundedCornerShape(50)),
+                        onSearch = { doSearch() }
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -760,9 +595,9 @@ fun ShopHome(
                         Box(
                             modifier = Modifier
                                 .then(
-                                    if (glassHome && !sel) Modifier.glassCardStyle(16.dp, elevation = 0.dp)
+                                    if (!sel) Modifier.liquidGlassStyle(16.dp, pal.isDark)
                                     else Modifier.clip(RoundedCornerShape(16.dp))
-                                        .background(if (sel) Color.White else Color.White.copy(alpha = 0.25f))
+                                        .background(Color.White)
                                 )
                                 .clickable { engineIdx = idx }
                                 .padding(horizontal = 14.dp, vertical = 5.dp),
@@ -861,10 +696,9 @@ fun ShopHome(
                 }
                 item {
                     Column(
-                        modifier = if (glassHome) Modifier.fillMaxWidth().padding(horizontal = 12.dp).then(if (isDefaultSchemePal(pal)) Modifier.shuiGlassStyle(20.dp, true) else Modifier.glassCardStyle(20.dp, tintAlpha = 0.14f, elevation = 24.dp)).padding(vertical = 4.dp) else Modifier
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).liquidGlassStyle(20.dp, pal.isDark).padding(vertical = 4.dp)
                     ) {
-                        if (glassHome) GlassSectionHeader(title = "站点分类", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp))
-                        else ShopSectionTitle("站点分类", "${categories.size} 个分类", pal)
+                        GlassSectionHeader(title = "站点分类", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), color = pal.foreground, actionColor = pal.secondary)
                         val gridCats = if (gridExpanded) categories else categories.take(10)
                         for (row in gridCats.chunked(5)) {
                             Row(
@@ -915,8 +749,7 @@ fun ShopHome(
                 }
                 item {
                     Column {
-                        if (glassHome) GlassSectionHeader(title = "热门站点", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), actionText = "更多", onAction = onOpenHotMore)
-                        else ShopSectionTitle("热门站点", "更多", pal, onSmallClick = onOpenHotMore)
+                        GlassSectionHeader(title = "热门站点", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), actionText = "更多", onAction = onOpenHotMore, color = pal.foreground, actionColor = pal.secondary)
                         Row(
                             modifier = Modifier.horizontalScroll(rememberScrollState())
                                 .padding(horizontal = 12.dp),
@@ -929,7 +762,7 @@ fun ShopHome(
                                 ) {
                                     Box(
                                         modifier = Modifier.size(96.dp)
-                                            .then(if (glassHome) (if (isDefaultSchemePal(pal)) Modifier.shuiGlassStyle(12.dp, true) else Modifier.glassCardStyle(12.dp, tintAlpha = 0.14f, elevation = 24.dp)) else Modifier.clip(RoundedCornerShape(8.dp)).background(pal.subtleFill)),
+                                            .liquidGlassStyle(12.dp, pal.isDark),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         SiteIcon(card, 48.dp)
@@ -961,8 +794,7 @@ fun ShopHome(
                 }
                 item {
                     Column {
-                        if (glassHome) GlassSectionHeader(title = "猜你喜欢", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), actionText = "更多", onAction = onOpenGuessMore)
-                        else ShopSectionTitle("猜你喜欢", "更多", pal, onSmallClick = onOpenGuessMore)
+                        GlassSectionHeader(title = "猜你喜欢", modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp), actionText = "更多", onAction = onOpenGuessMore, color = pal.foreground, actionColor = pal.secondary)
                         for (row in guess.chunked(2)) {
                             Column {
                                 Row(
@@ -1037,7 +869,6 @@ fun ShopCategory(
                     subtitleColor = pal.secondary,
                     arrowTint = pal.secondary,
                     tintAlpha = if (pal.isDark) 0.10f else 0.55f,
-                    shui = isDefaultSchemePal(pal),
                     shuiDark = pal.isDark,
                     badgeBg = if (pal.isDark) null else Brush.linearGradient(
                         listOf(pal.accentSoft, pal.accentSoft)
@@ -1186,7 +1017,7 @@ fun ShopMessages(
         ) { showToast(if (newCards.isEmpty()) "暂无新站点" else "本周新增 ${newCards.size} 个站点") },
         ShopMsg(
             "🔄", "当前版本",
-            "当前版本 " + (if (versionName.isBlank()) "1.3.28" else versionName) + " · 点此检查更新",
+            "当前版本 " + (if (versionName.isBlank()) "1.3.29" else versionName) + " · 点此检查更新",
             "", false
         ) { onCheckUpdate() },
         ShopMsg(
@@ -1307,8 +1138,6 @@ fun ShopMine(
     onToggleDark: () -> Unit,
     themeMode: ThemeMode,
     onThemeModeChange: (ThemeMode) -> Unit,
-    themeScheme: String,
-    onThemeSchemeChange: (String) -> Unit,
     uiScale: Float,
     onUiScaleChange: (Float) -> Unit,
     todayClicks: Int,
@@ -1330,7 +1159,6 @@ fun ShopMine(
     if (showTheme) {
         ThemeAppearanceScreen(
             pal = pal, mode = themeMode, onModeChange = onThemeModeChange,
-            scheme = themeScheme, onSchemeChange = onThemeSchemeChange,
             uiScale = uiScale, onUiScaleChange = onUiScaleChange, onBack = { showTheme = false }
         )
         return
@@ -1368,13 +1196,8 @@ fun ShopMine(
             }
         }
         Box(
-            modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
-                .shuiGlassStyle(20.dp, pal.isDark)
-                .padding(vertical = 6.dp)
-            else Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(pal.barBackground)
-                .border(1.dp, pal.line, RoundedCornerShape(12.dp))
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(top = 12.dp)
+                .liquidGlassStyle(20.dp, pal.isDark)
                 .padding(vertical = 6.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -1397,12 +1220,8 @@ fun ShopMine(
             }
         }
         Box(
-            modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(12.dp)
-                .shuiGlassStyle(20.dp, pal.isDark)
-            else Modifier.fillMaxWidth().padding(12.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(pal.barBackground)
-                .border(1.dp, pal.line, RoundedCornerShape(12.dp))
+            modifier = Modifier.fillMaxWidth().padding(12.dp)
+                .liquidGlassStyle(20.dp, pal.isDark)
         ) {
             Column {
                 MineRow(
@@ -1481,13 +1300,13 @@ fun ShopMine(
                 )
                 Divider(color = pal.line)
                 MineRow(
-                    icon = Icons.Filled.Palette, iconTint = Color(0xFFEC4899), label = "主题",
+                    icon = Icons.Filled.Palette, iconTint = Color(0xFFEC4899), label = "外观",
                     pal = pal, onClick = { showTheme = true }
                 )
             }
         }
         Text(
-            "当前版本 " + (if (versionName.isBlank()) "1.3.28" else versionName),
+            "当前版本 " + (if (versionName.isBlank()) "1.3.29" else versionName),
             fontSize = 12.sp, color = pal.secondary,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             textAlign = TextAlign.Center
@@ -1694,13 +1513,8 @@ fun ShopPlayfulPage(pal: AppPalette, showToast: (String) -> Unit) {
 @Composable
 fun PlayPromptCard(pal: AppPalette, catName: String?, item: PromptItem, onCopy: () -> Unit) {
     Column(
-        modifier = if (isDefaultSchemePal(pal)) Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
-            .shuiGlassStyle(20.dp, pal.isDark)
-            .clickable { onCopy() }
-            .padding(12.dp)
-        else Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(pal.barBackground)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
+            .liquidGlassStyle(20.dp, pal.isDark)
             .clickable { onCopy() }
             .padding(12.dp)
     ) {
