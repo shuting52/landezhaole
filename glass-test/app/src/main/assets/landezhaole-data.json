@@ -1159,6 +1159,14 @@
    ],
    "cards": [
     {
+     "t": "Onepin",
+     "u": "https://onepin.ai/",
+     "d": "地址、价格、日期都读对的AI配音，免费1000积分",
+     "b": "NEW",
+     "s": "creative",
+     "f": "onep"
+    },
+    {
      "t": "Ashna AI · GPT 6 Astra",
      "u": "https://app.ashna.ai/chat/6ad80c78ae3df20b5368eb8b?agent=gpt-6-astra",
      "d": "GPT 6 Astra 智能对话助手",
@@ -3855,6 +3863,14 @@
     }
    ],
    "cards": [
+    {
+     "t": "SkillzBench",
+     "u": "https://skillzbench.com/",
+     "d": "免费给AI Skill做安全扫描与实测评分，再决定给不给Agent用",
+     "b": "NEW",
+     "s": "skill",
+     "f": "skil"
+    },
     {
      "t": "AIART.PICS",
      "u": "https://aiart.pics/",
@@ -11638,6 +11654,46 @@
    ],
    "cards": [
     {
+     "t": "Dageno",
+     "u": "https://dageno.ai/",
+     "d": "免费查品牌在AI搜索里的露出与竞品，不用绑卡",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "dage"
+    },
+    {
+     "t": "Tubenaut",
+     "u": "https://tubenaut.com/",
+     "d": "免注册、完全免费的AI工具与网页小工具合集",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "tube"
+    },
+    {
+     "t": "ReSO AI",
+     "u": "https://resollm.ai/",
+     "d": "查品牌在ChatGPT、Perplexity与AI概览里的露出，免费基线报告",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "reso"
+    },
+    {
+     "t": "Lumiko",
+     "u": "https://lumiko.dev/",
+     "d": "Chrome录屏自动跟随光标缩放剪辑，免费不限时长、1440p导出",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "lumi"
+    },
+    {
+     "t": "OpenSEO",
+     "u": "https://openseo.so/",
+     "d": "开源Ahrefs/Semrush平替，关键词、外链与站点审计，可接MCP",
+     "b": "NEW",
+     "s": "web_tool",
+     "f": "open"
+    },
+    {
      "t": "DeepSeek",
      "u": "https://chat.deepseek.com/",
      "d": "深度求索开创性推理与代码大模型",
@@ -15064,6 +15120,14 @@
    ],
    "cards": [
     {
+     "t": "Idealab.ai",
+     "u": "https://idealab.ai/",
+     "d": "120万个可搜的免费商业点子库，按需求、技术与市场打分",
+     "b": "NEW",
+     "s": "side_hustle",
+     "f": "idea"
+    },
+    {
      "t": "看片神器",
      "u": "https://追剧.cc",
      "d": "海量影视资源极速秒播随身影院",
@@ -15772,6 +15836,30 @@
     }
    ],
    "cards": [
+    {
+     "t": "Velozity",
+     "u": "https://getvelozity.com/",
+     "d": "人和Agent同处一间多人AI办公室，有免费版",
+     "b": "NEW",
+     "s": "tools_all",
+     "f": "veloz"
+    },
+    {
+     "t": "GenPage 3.0",
+     "u": "https://genpage.ai/",
+     "d": "AI生成并个性化优化落地页，按营销活动定制页面",
+     "b": "NEW",
+     "s": "tools_all",
+     "f": "genp"
+    },
+    {
+     "t": "IrisGo",
+     "u": "https://irisgo.ai/",
+     "d": "演示一次就自动跑重复工作的AI操作系统，Beta免费",
+     "b": "NEW",
+     "s": "tools_all",
+     "f": "iris"
+    },
     {
      "t": "CakeGrowth(联盟营销)",
      "u": "https://cakegrowth.cn/",
@@ -18601,6 +18689,30 @@
    ],
    "cards": [
     {
+     "t": "Retriever AI",
+     "u": "https://rtrvr.ai/",
+     "d": "免费浏览器Agent，免API Key，帮你跑找线索、填表等网页杂活",
+     "b": "NEW",
+     "s": "agent",
+     "f": "retr"
+    },
+    {
+     "t": "Busabase",
+     "u": "https://busabase.com/",
+     "d": "给AI Agent用的开源数据库+工作区，改动带审核与历史，可自托管免费",
+     "b": "NEW",
+     "s": "agent",
+     "f": "busa"
+    },
+    {
+     "t": "Rill Browser",
+     "u": "https://rill.love/",
+     "d": "把当前网页一键变成Claude Code/Codex任务的AI浏览器，免费",
+     "b": "NEW",
+     "s": "agent",
+     "f": "rill"
+    },
+    {
      "t": "秒悟Meoo",
      "u": "https://meoo.com/",
      "d": "新一代智能体应用开发与知识增强生产力平台",
@@ -20709,6 +20821,14 @@
     }
    ],
    "cards": [
+    {
+     "t": "Spira Maxima",
+     "u": "https://spira.ai/",
+     "d": "脚本转成可直接发布的社媒视频，含主持人、字幕、B-roll与音乐",
+     "b": "NEW",
+     "s": "shengcheng",
+     "f": "spira"
+    },
     {
      "t": "Boba",
      "u": "https://www.boba.video/",

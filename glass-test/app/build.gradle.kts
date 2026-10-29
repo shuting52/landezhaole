@@ -12,13 +12,32 @@ android {
         applicationId = "com.landezhaole.glasstest"
         minSdk = 23
         targetSdk = 37
-        versionCode = 4
-        versionName = "1.3.0"
+        versionCode = 5
+        versionName = "2.0.0"
+    }
+
+    // 固定签名：CI 里用 GitHub Secrets 的 keystore 编 release 包，V1 + V2 + V3 全开。
+    // 本地没有 KEYSTORE_PATH 时不设 release 签名，编出来就是 debug 包，不影响 CI。
+    signingConfigs {
+        if (System.getenv("KEYSTORE_PATH") != null) {
+            create("release") {
+                storeFile = file(System.getenv("KEYSTORE_PATH"))
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     buildFeatures {
@@ -32,7 +51,6 @@ dependencies {
     implementation(compose.ui)
     implementation(compose.foundation)
     implementation(compose.animation)
-    // 真液态玻璃：Kyant0/AndroidLiquidGlass 的 Backdrop 库，见上传的 2.0.1 安卓完整代码
-    implementation("io.github.kyant0:backdrop-android:2.0.1")
-    implementation("io.github.kyant0:shapes:1.2.1")
+    implementation(platform("androidx.compose:compose-bom:2025.10.00"))
+    implementation("androidx.compose.material3:material3")
 }

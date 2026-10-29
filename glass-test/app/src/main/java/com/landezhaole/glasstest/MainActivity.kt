@@ -2,702 +2,1143 @@ package com.landezhaole.glasstest
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kyant.backdrop.backdrops.LayerBackdrop
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
-import com.kyant.backdrop.highlight.Highlight
-import com.kyant.shapes.Capsule
-import com.kyant.shapes.RoundedRectangle
+import androidx.core.content.pm.PackageInfoCompat
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
-// 懒得找了 · 液态玻璃测试版 v1.3.0
-// 液态玻璃：Kyant0/AndroidLiquidGlass Backdrop 2.0.1，rememberLayerBackdrop +
-//   layerBackdrop（背景层）+ drawBackdrop（玻璃组件），vibrancy + blur + lens。
-// 数据：CF Pages 项目 landezhaole 的 data.json 原样内置，21 分类 / 2603 站点 / 174 NEW。
-// 主题：landezhaole.pages.dev 当前的 Libraries 浅深两套，翻译成 Kotlin 颜色，
-//   浅：底 #fdfdfd / 文 #0d0d0d / 次 #6c6c6c / 强调 #0073e5
-//   深：底 #121212 / 文 #ffffff / 次 #cacaca / 强调 #55cfff
-// 原生 Kotlin + Compose，没有 WebView，没有 HTML。设置用 SharedPreferences 持久化。
+// 懒得找了 · 网站原样版 v2.0.0
+// 按 https://landezhaole.pages.dev/ 原样写：顶栏 + logo + 9 个搜索源 + 快捷图标行 +
+// 分段网格（2 列，首屏每段 7 张 + → 查看更多进分类页）+ 右侧悬浮栏 + 左下 + 工具菜单。
+// 子页：ChatGPT 玩法（89 类 / 703 条，点卡片复制）、食谱（100 道，搜索 / 用时筛 / 随机一桌 / 收藏 / 购物清单）、
+// 省钱小助手（3 Tab / 22 张券卡）。主题：Libraries 浅深两套。
+// 原生 Kotlin + Compose，没有 WebView，没有 HTML。更新：启动读仓库 app-version.json，
+// 版本号比已装高就自动弹窗，更新内容按“优化 / 删除 / 增加”三段写。
 
-private object Libraries {
+private object Lib {
     val lightBg = Color(0xFFFDFDFD)
+    val lightCard = Color(0xFFFFFFFF)
     val lightText = Color(0xFF0D0D0D)
     val lightMuted = Color(0xFF6C6C6C)
+    val lightLine = Color(0x0F000000)
+    val lightTabBar = Color(0xFFF1F1F1)
     val lightAccent = Color(0xFF0073E5)
     val darkBg = Color(0xFF121212)
+    val darkCard = Color(0xFF181818)
     val darkText = Color(0xFFFFFFFF)
     val darkMuted = Color(0xFFCACACA)
+    val darkLine = Color(0x14FFFFFF)
+    val darkTabBar = Color(0x0DFFFFFF)
     val darkAccent = Color(0xFF55CFFF)
 }
 
 private const val PREFS = "glass_test_prefs"
+private const val VERSION_URL =
+    "https://raw.githubusercontent.com/shuting52/landezhaole/main/glass-test/app-version.json"
+private const val APK_URL =
+    "https://raw.githubusercontent.com/shuting52/landezhaole/main/glass-test/app-debug.apk"
+private const val SITE_URL = "https://landezhaole.pages.dev/"
+
+private data class Engine(val id: String, val name: String, val url: String?)
+private val ENGINES = listOf(
+    Engine("site", "站内", null),
+    Engine("bing", "必应", "https://cn.bing.com/search?q="),
+    Engine("baidu", "百度", "https://www.baidu.com/s?wd="),
+    Engine("bilibili", "B站", "https://search.bilibili.com/all?keyword="),
+    Engine("baidupan", "百度网盘", "https://wangpan.xin/search?keyword="),
+    Engine("alipan", "阿里云盘", "https://v2pan.com/search?q="),
+    Engine("quarkpan", "夸克网盘", "https://www.kkso.cc/search?kw="),
+    Engine("google", "谷歌", "https://www.google.com/search?q="),
+    Engine("appdl", "应用下载", "https://appteka.store/search?q="),
+)
+
+private fun openUrl(context: Context, url: String) {
+    try {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    } catch (_: Exception) {
+        Toast.makeText(context, "打不开这个链接", Toast.LENGTH_SHORT).show()
+    }
+}
+
+private fun hostOf(url: String): String = try {
+    Uri.parse(url).host?.removePrefix("www.") ?: ""
+} catch (_: Exception) { "" }
+
+/** 站点图标：先用 data.json 的 i，失败依次走谷歌 favicon → 站点 apple-touch-icon → favicon.ico，全部失败用首字头像。 */
+private val iconCache = mutableStateMapOf<String, Bitmap?>()
+
+@Composable
+private fun SiteIcon(site: Site, size: Int = 44) {
+    val key = site.iconUrl.ifEmpty { "google:${hostOf(site.url)}" }
+    val bmp = iconCache[key]
+    if (bmp == null && !iconCache.containsKey(key)) {
+        LaunchedEffect(key) {
+            iconCache[key] = loadIconBitmap(site)
+        }
+    }
+    if (bmp != null) {
+        Image(
+            bitmap = bmp.asImageBitmap(), contentDescription = null,
+            modifier = Modifier.size(size.dp).clip(RoundedCornerShape(10.dp)),
+            contentScale = ContentScale.Crop,
+        )
+    } else {
+        Box(
+            modifier = Modifier.size(size.dp).clip(RoundedCornerShape(10.dp))
+                .background(Color(avColorHex(site.title))),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                site.title.firstOrNull()?.toString() ?: "🔍", color = Color.White,
+                fontSize = 20.sp, fontWeight = FontWeight.Bold,
+            )
+        }
+    }
+}
+
+private suspend fun loadIconBitmap(site: Site): Bitmap? = withContext(Dispatchers.IO) {
+    val host = hostOf(site.url)
+    val candidates = buildList {
+        if (site.iconUrl.isNotEmpty()) add(site.iconUrl)
+        if (host.isNotEmpty()) {
+            add("https://www.google.com/s2/favicons?domain=$host&sz=128")
+            add("https://$host/apple-touch-icon.png")
+            add("https://$host/favicon.ico")
+        }
+    }
+    for (u in candidates) {
+        try {
+            val conn = URL(u).openConnection() as HttpURLConnection
+            conn.connectTimeout = 4000
+            conn.readTimeout = 4000
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0")
+            if (conn.responseCode !in 200..299) continue
+            val bmp = BitmapFactory.decodeStream(conn.inputStream) ?: continue
+            if (bmp.width < 16 && u.contains("google.com")) continue
+            return@withContext bmp
+        } catch (_: Exception) {
+            continue
+        }
+    }
+    null
+}
+
+private data class UpdateInfo(
+    val code: Int, val name: String, val opt: String, val del: String, val add: String,
+)
+
+private suspend fun fetchUpdate(): UpdateInfo? = withContext(Dispatchers.IO) {
+    try {
+        val conn = URL(VERSION_URL).openConnection() as HttpURLConnection
+        conn.connectTimeout = 5000
+        conn.readTimeout = 5000
+        if (conn.responseCode !in 200..299) return@withContext null
+        val text = conn.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val root = JSONObject(text)
+        val changes = root.optJSONObject("changes")
+        UpdateInfo(
+            root.optInt("versionCode", 0), root.optString("versionName"),
+            changes?.optString("优化") ?: "", changes?.optString("删除") ?: "",
+            changes?.optString("增加") ?: "",
+        )
+    } catch (_: Exception) {
+        null
+    }
+}
+
+private fun installedCode(context: Context): Int = try {
+    val info = context.packageManager.getPackageInfo(context.packageName, 0)
+    PackageInfoCompat.getLongVersionCode(info).toInt()
+} catch (_: Exception) { 0 }
+
+private sealed class Page {
+    data object Home : Page()
+    data object Prompts : Page()
+    data object Recipes : Page()
+    data object Sq : Page()
+    data object Settings : Page()
+    data class Category(val id: String) : Page()
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { GlassTestApp() }
+        setContent { AppRoot() }
     }
 
     @Composable
-    private fun GlassTestApp() {
+    private fun AppRoot() {
         val context = LocalContext.current
         val prefs = remember { context.getSharedPreferences(PREFS, Context.MODE_PRIVATE) }
         val cats = remember { loadSiteData(context) }
+        val prompts = remember { loadPrompts(context) }
+        val dishes = remember { loadDishes(context) }
+        val sq = remember { loadSq(context) }
         val systemDark = isSystemInDarkTheme()
+        var themeMode by remember { mutableStateOf(prefs.getInt("theme_mode", 0)) }
+        val dark = when (themeMode) { 1 -> true; 2 -> systemDark; else -> false }
+        val bg = if (dark) Lib.darkBg else Lib.lightBg
+        val card = if (dark) Lib.darkCard else Lib.lightCard
+        val text = if (dark) Lib.darkText else Lib.lightText
+        val muted = if (dark) Lib.darkMuted else Lib.lightMuted
+        val line = if (dark) Lib.darkLine else Lib.lightLine
+        val tabBar = if (dark) Lib.darkTabBar else Lib.lightTabBar
+        val accent = if (dark) Lib.darkAccent else Lib.lightAccent
 
-        // ---- 设置（持久化，界面缩放默认 50%，按用户要求）----
-        var themeMode by remember { mutableStateOf(prefs.getInt("theme_mode", 0)) } // 0浅 1深 2跟随系统
-        var scale by remember { mutableStateOf(prefs.getFloat("scale", 0.5f)) } // 界面缩放，默认 50%
-        var bottomStyle by remember { mutableStateOf(prefs.getInt("bottom_style", 0)) } // 0液态玻璃 1磨砂 2纯色
-        var bottomMode by remember { mutableStateOf(prefs.getInt("bottom_mode", 0)) } // 0胶囊 Dock 1整宽底栏
-        var showDesc by remember { mutableStateOf(prefs.getBoolean("show_desc", true)) }
-        var showBadge by remember { mutableStateOf(prefs.getBoolean("show_badge", true)) }
-        var sortByName by remember { mutableStateOf(prefs.getBoolean("sort_name", false)) }
+        var stack by remember { mutableStateOf<List<Page>>(listOf(Page.Home)) }
+        fun go(p: Page) { stack = stack + p }
+        fun back() { if (stack.size > 1) stack = stack.dropLast(1) }
+        BackHandler(enabled = stack.size > 1) { back() }
+        val page = stack.last()
+
         var favorites by remember {
             mutableStateOf(prefs.getStringSet("fav_urls", emptySet())?.toSet() ?: emptySet())
         }
-
-        fun saveTheme(v: Int) { themeMode = v; prefs.edit().putInt("theme_mode", v).apply() }
-        fun saveScale(v: Float) { scale = v; prefs.edit().putFloat("scale", v).apply() }
-        fun saveBottom(v: Int) { bottomStyle = v; prefs.edit().putInt("bottom_style", v).apply() }
-        fun saveBottomMode(v: Int) { bottomMode = v; prefs.edit().putInt("bottom_mode", v).apply() }
-        fun saveShowDesc(v: Boolean) { showDesc = v; prefs.edit().putBoolean("show_desc", v).apply() }
-        fun saveShowBadge(v: Boolean) { showBadge = v; prefs.edit().putBoolean("show_badge", v).apply() }
-        fun saveSort(v: Boolean) { sortByName = v; prefs.edit().putBoolean("sort_name", v).apply() }
         fun toggleFav(url: String) {
             favorites = if (favorites.contains(url)) favorites - url else favorites + url
             prefs.edit().putStringSet("fav_urls", favorites).apply()
         }
-        fun clearFavs() { favorites = emptySet(); prefs.edit().putStringSet("fav_urls", emptySet()).apply() }
-
-        val isDark = when (themeMode) { 1 -> true; 2 -> systemDark; else -> false }
-        val bg = if (isDark) Libraries.darkBg else Libraries.lightBg
-        val text = if (isDark) Libraries.darkText else Libraries.lightText
-        val muted = if (isDark) Libraries.darkMuted else Libraries.lightMuted
-        val accent = if (isDark) Libraries.darkAccent else Libraries.lightAccent
-
-        // ---- 浏览状态 ----
-        var page by remember { mutableStateOf(0) } // 0首页 1收藏 2设置
-        var query by remember { mutableStateOf("") }
-        var catIndex by remember { mutableStateOf(-1) }
-        var subId by remember { mutableStateOf("all") }
-        var badgeFilter by remember { mutableStateOf("") } // ""全部 NEW HOT
-        var detail by remember { mutableStateOf<Pair<String, Site>?>(null) }
-
-        val totalSites = remember(cats) { cats.sumOf { it.sites.size } }
-        val totalNew = remember(cats) { cats.sumOf { c -> c.sites.count { it.badge == "NEW" } } }
-        val totalHot = remember(cats) { cats.sumOf { c -> c.sites.count { it.badge == "HOT" } } }
-
-        val shown: List<Pair<String, Site>> = remember(cats, query, catIndex, subId, badgeFilter, page, favorites, sortByName) {
-            val q = query.trim()
-            val result = ArrayList<Pair<String, Site>>()
-            val pool = when {
-                page == 1 -> cats // 收藏：先全量再按收藏过滤
-                q.isNotEmpty() -> cats
-                catIndex >= 0 && catIndex < cats.size -> listOf(cats[catIndex])
-                else -> cats
-            }
-            for (cat in pool) {
-                for (site in cat.sites) {
-                    if (page == 1 && !favorites.contains(site.url)) continue
-                    if (q.isEmpty() && page != 1) {
-                        if (badgeFilter.isNotEmpty() && site.badge != badgeFilter) continue
-                        if (catIndex >= 0 && subId != "all" && site.sub != subId) continue
-                    }
-                    if (q.isNotEmpty()) {
-                        val hit = site.title.contains(q, ignoreCase = true) ||
-                            site.desc.contains(q, ignoreCase = true) ||
-                            site.url.contains(q, ignoreCase = true)
-                        if (!hit) continue
-                    }
-                    result.add(cat.name to site)
+        var detailSite by remember { mutableStateOf<Site?>(null) }
+        var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
+        var updateChecked by remember { mutableStateOf(false) }
+        var skipCode by remember { mutableStateOf(prefs.getInt("skip_update_code", 0)) }
+        val scope = rememberCoroutineScope()
+        fun checkUpdate(manual: Boolean) {
+            scope.launch {
+                val info = fetchUpdate()
+                if (info != null && info.code > installedCode(context) && info.code != skipCode) {
+                    updateInfo = info
+                } else if (manual) {
+                    Toast.makeText(context, "已是最新版本", Toast.LENGTH_SHORT).show()
                 }
             }
-            if (sortByName) result.sortBy { it.second.title }
-            result
+        }
+        if (!updateChecked) {
+            updateChecked = true
+            checkUpdate(false)
         }
 
-        val backdrop = rememberLayerBackdrop()
-        val clipboard = LocalClipboardManager.current
-        val baseDensity = LocalDensity.current
-        // 界面缩放：按比例缩放 dp 与 sp，50% 时一屏能看更多内容，玻璃模糊也同步缩放。
-        // 外层 Box 让底栏和详情弹窗叠在缩放内容上面，而不是并排摆放。
-        Box(Modifier.fillMaxSize()) {
-            CompositionLocalProvider(
-            LocalDensity provides Density(baseDensity.density * scale, baseDensity.fontScale * scale)
-        ) {
-            Box(Modifier.fillMaxSize()) {
-                // 背景层：必须带 layerBackdrop，玻璃才能采样它
-                Box(Modifier.fillMaxSize().layerBackdrop(backdrop)) {
-                    Box(Modifier.fillMaxSize().background(bg))
-                    // 背景必须铺满整屏且色彩分明，玻璃折射才看得出来；位置按屏幕比例算，
-                    // 界面缩放 50% 时也不会跑到左上角去。
-                    Blob(Color(0xFF0073E5), 0.0f, 0.0f, 360.dp)
-                    Blob(Color(0xFF55CFFF), 0.68f, 0.04f, 320.dp)
-                    Blob(Color(0xFFF59E0B), 0.08f, 0.32f, 340.dp)
-                    Blob(Color(0xFF7C4DFF), 0.62f, 0.48f, 320.dp)
-                    Blob(Color(0xFF22C55E), 0.0f, 0.68f, 300.dp)
-                    Blob(Color(0xFFEC4899), 0.65f, 0.82f, 340.dp)
+        Box(modifier = Modifier.fillMaxSize().background(bg)) {
+            when (page) {
+                is Page.Home -> HomePage(
+                    cats, favorites, text, muted, line, tabBar, accent, card, bg,
+                    onCategory = { go(Page.Category(it)) },
+                    onPrompts = { go(Page.Prompts) },
+                    onRecipes = { go(Page.Recipes) },
+                    onSq = { go(Page.Sq) },
+                    onSettings = { go(Page.Settings) },
+                    onSite = { openUrl(context, it.url) },
+                    onSiteDetail = { detailSite = it },
+                    onTheme = {
+                        themeMode = when (themeMode) { 0 -> 1; 1 -> 2; else -> 0 }
+                        prefs.edit().putInt("theme_mode", themeMode).apply()
+                    },
+                )
+                is Page.Category -> {
+                    val cat = cats.firstOrNull { it.id == page.id }
+                    if (cat != null) CategoryPage(
+                        cat, text, muted, line, tabBar, accent, card,
+                        onBack = { back() },
+                        onSite = { openUrl(context, it.url) },
+                        onSiteDetail = { detailSite = it },
+                    ) else back()
                 }
-
-                if (page == 2) {
-                    SettingsPage(
-                        backdrop = backdrop, text = text, muted = muted, accent = accent,
-                        themeMode = themeMode, onTheme = ::saveTheme,
-                        scale = scale, onScale = ::saveScale,
-                        bottomStyle = bottomStyle, onBottom = ::saveBottom,
-                        bottomMode = bottomMode, onBottomMode = ::saveBottomMode,
-                        showDesc = showDesc, onShowDesc = ::saveShowDesc,
-                        showBadge = showBadge, onShowBadge = ::saveShowBadge,
-                        sortByName = sortByName, onSort = ::saveSort,
-                        favCount = favorites.size, onClearFavs = ::clearFavs,
-                        totalCats = cats.size, totalSites = totalSites, totalNew = totalNew,
-                        onBack = { page = 0 },
-                    )
-                } else {
-                    // 顶部固定区：搜索、分类、子类、排序一排三个，全部固定在顶部，
-                    // 不随卡片列表滚动，滚到底也能看到，不会像之前那样滚走找不到。
-                    Column(
-                        Modifier.fillMaxSize().padding(horizontal = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(14.dp),
-                    ) {
-                        Spacer(Modifier.height(48.dp))
-                        GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                            Txt("懒得找了 · 玻璃测试", size = 22, bold = true, color = text)
-                            Spacer(Modifier.height(4.dp))
-                            Txt("Backdrop 2.0.1 真液态玻璃 · 数据来自 CF 项目 landezhaole", color = muted)
-                            Spacer(Modifier.height(8.dp))
-                            Txt(
-                                "${cats.size} 个分类 · $totalSites 个站点 · $totalNew 个 NEW · $totalHot 个 HOT · ${favorites.size} 个收藏 · v1.3.0",
-                                color = muted,
-                            )
-                            Spacer(Modifier.height(12.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                GlassButton(backdrop, "界面 ${ (scale * 100).toInt() }%", accent, solid = true) { page = 2 }
-                                GlassButton(backdrop, if (isDark) "深色 ✓" else "浅色 ✓", accent) {
-                                    saveTheme(if (isDark) 0 else 1)
-                                }
-                            }
-                        }
-                        Box(
-                            Modifier.fillMaxWidth()
-                                .drawBackdrop(
-                                    backdrop = backdrop,
-                                    shape = { Capsule() },
-                                    effects = {
-                                        vibrancy()
-                                        blur(6f.dp.toPx())
-                                        lens(20f.dp.toPx(), 40f.dp.toPx())
-                                    },
-                                    highlight = { Highlight.Plain },
-                                )
-                                .padding(horizontal = 20.dp, vertical = 14.dp),
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(Modifier.weight(1f)) {
-                                    BasicTextField(
-                                        value = query,
-                                        onValueChange = { query = it },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textStyle = TextStyle(color = text, fontSize = 15.sp),
-                                        decorationBox = { inner ->
-                                            Box {
-                                                inner()
-                                                if (query.isEmpty()) {
-                                                    BasicText(
-                                                        "搜站点名 / 介绍 / 链接…",
-                                                        style = TextStyle(color = muted, fontSize = 15.sp),
-                                                    )
-                                                }
-                                            }
-                                        },
-                                    )
-                                }
-                                if (query.isNotEmpty()) {
-                                    Box(Modifier.clickable { query = "" }.padding(4.dp)) {
-                                        Txt("清空", size = 14, color = accent)
-                                    }
-                                }
-                            }
-                        }
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            item {
-                                GlassButton(backdrop, if (catIndex == -1) "全部 ✓" else "全部", accent, solid = catIndex == -1) {
-                                    catIndex = -1; subId = "all"; page = 0
-                                }
-                            }
-                            items(cats.size) { i ->
-                                val short = cats[i].name.substringBefore(" ·")
-                                GlassButton(backdrop, if (catIndex == i) "$short ✓" else short, accent, solid = catIndex == i) {
-                                    catIndex = i; subId = "all"; page = 0
-                                }
-                            }
-                        }
-                        if (catIndex >= 0 && cats[catIndex].subs.isNotEmpty()) {
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                items(cats[catIndex].subs.size) { j ->
-                                    val sub = cats[catIndex].subs[j]
-                                    GlassButton(backdrop, if (subId == sub.id) "${sub.name} ✓" else sub.name, accent, solid = subId == sub.id) {
-                                        subId = sub.id
-                                    }
-                                }
-                            }
-                            if (cats[catIndex].desc.isNotBlank()) Txt(cats[catIndex].desc, color = muted)
-                        }
-                        // 排序：一排三个，固定在顶部
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                            GlassButton(backdrop, if (badgeFilter.isEmpty()) "默认 ✓" else "默认", accent, solid = badgeFilter.isEmpty()) { badgeFilter = "" }
-                            GlassButton(backdrop, if (badgeFilter == "NEW") "只看 NEW ✓" else "只看 NEW", accent, solid = badgeFilter == "NEW") { badgeFilter = "NEW" }
-                            GlassButton(backdrop, if (badgeFilter == "HOT") "只看 HOT ✓" else "只看 HOT", accent, solid = badgeFilter == "HOT") { badgeFilter = "HOT" }
-                        }
-                        Txt(
-                            when {
-                                page == 1 -> "收藏 · ${shown.size} 条，点卡片看详情"
-                                query.isNotEmpty() -> "搜索“$query” · ${shown.size} 条（全部结果，不截断）"
-                                catIndex >= 0 -> "${cats[catIndex].name} · ${shown.size} 条"
-                                else -> "全部 · ${shown.size} 条（不截断）"
-                            },
-                            color = muted,
-                        )
-                        LazyColumn(
-                            Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(14.dp),
-                        ) {
-                            items(shown.size) { i ->
-                                val (catName, site) = shown[i]
-                                val isFav = favorites.contains(site.url)
-                                GlassCard(backdrop, Modifier.fillMaxWidth(), onClick = { detail = catName to site }) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Box(
-                                            Modifier.size(36.dp).clip(CircleShape)
-                                                .background(accent.copy(alpha = 0.18f)),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            Txt(site.title.take(1).ifBlank { "站" }, size = 16, bold = true, color = accent)
-                                        }
-                                        Spacer(Modifier.width(10.dp))
-                                        Column(Modifier.weight(1f)) {
-                                            Txt(site.title, size = 16, bold = true, color = text, maxLines = 1)
-                                            if (showDesc && site.desc.isNotBlank()) Txt(site.desc, color = muted, maxLines = 2)
-                                        }
-                                        if (showBadge && site.badge.isNotBlank()) {
-                                            Spacer(Modifier.width(8.dp))
-                                            Txt(site.badge, size = 12, bold = true, color = accent)
-                                        }
-                                        Spacer(Modifier.width(8.dp))
-                                        Box(Modifier.clickable { toggleFav(site.url) }.padding(4.dp)) {
-                                            Txt(if (isFav) "★" else "☆", size = 20, bold = true, color = accent)
-                                        }
-                                    }
-                                    Spacer(Modifier.height(4.dp))
-                                    Txt(site.url, size = 12, color = accent, maxLines = 1)
-                                    Txt(catName, size = 12, color = muted, maxLines = 1)
-                                }
-                            }
-                            item { Spacer(Modifier.height(240.dp)) }
-                        }
-                    }
-                }
-                // 底栏在缩放容器外面，见下面（外层 Box 在这里不关，底栏和弹窗都叠在它里面）
-                }
+                is Page.Prompts -> PromptsPage(
+                    prompts, text, muted, line, accent, card, onBack = { back() },
+                )
+                is Page.Recipes -> RecipesPage(
+                    dishes, text, muted, line, tabBar, accent, card, onBack = { back() },
+                )
+                is Page.Sq -> SqPage(
+                    sq, text, muted, line, tabBar, accent, card, onBack = { back() },
+                )
+                is Page.Settings -> SettingsPage(
+                    themeMode, cats, text, muted, line, accent, card,
+                    onTheme = { v -> themeMode = v; prefs.edit().putInt("theme_mode", v).apply() },
+                    onCheckUpdate = { checkUpdate(true) },
+                    onClearFav = {
+                        favorites = emptySet()
+                        prefs.edit().putStringSet("fav_urls", emptySet()).apply()
+                        Toast.makeText(context, "收藏已清空", Toast.LENGTH_SHORT).show()
+                    },
+                    onBack = { back() },
+                )
             }
 
-        // 底栏：一排三个（首页 / 收藏 / 设置），不跟随界面缩放，字号正常；
-        // 贴在系统导航栏上方，不会被系统三键导航栏盖住；玻璃上加一层主题底色，
-        // 在白色卡片上也能看清，不再像截图里那样淡到看不见。
-        BottomBar(
-            backdrop = backdrop, accent = accent, text = text, muted = muted,
-            isDark = isDark, mode = bottomMode,
-            style = bottomStyle, page = page,
-            onHome = { page = 0; catIndex = -1; subId = "all" },
-            onFav = { page = 1 },
-            onSettings = { page = 2 },
-        )
+            detailSite?.let { site ->
+                val clipboard = LocalClipboardManager.current
+                AlertDialog(
+                    onDismissRequest = { detailSite = null },
+                    title = { Text(site.title, color = text, fontWeight = FontWeight.Bold) },
+                    text = {
+                        Column {
+                            Text(site.desc, color = muted, fontSize = 13.sp)
+                            Spacer(Modifier.height(8.dp))
+                            Text(site.url, color = accent, fontSize = 12.sp)
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { openUrl(context, site.url); detailSite = null }) {
+                            Text("打开", color = accent)
+                        }
+                    },
+                    dismissButton = {
+                        Row {
+                            TextButton(onClick = {
+                                clipboard.setText(AnnotatedString(site.url))
+                                Toast.makeText(context, "链接已复制", Toast.LENGTH_SHORT).show()
+                            }) { Text("复制链接", color = muted) }
+                            TextButton(onClick = { toggleFav(site.url) }) {
+                                Text(if (favorites.contains(site.url)) "取消收藏" else "收藏", color = muted)
+                            }
+                            TextButton(onClick = {
+                                val send = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, "${site.title} ${site.url}")
+                                }
+                                context.startActivity(Intent.createChooser(send, "分享"))
+                            }) { Text("分享", color = muted) }
+                        }
+                    },
+                    containerColor = card,
+                )
+            }
 
-        // 站点详情弹窗（不缩放，字号正常）
-        detail?.let { (catName, site) ->
+            updateInfo?.let { info ->
+                AlertDialog(
+                    onDismissRequest = { updateInfo = null },
+                    title = { Text("发现新版本 ${info.name}", color = text, fontWeight = FontWeight.Bold) },
+                    text = {
+                        Column {
+                            if (info.opt.isNotEmpty()) Text("优化：${info.opt}", color = text, fontSize = 13.sp)
+                            if (info.del.isNotEmpty()) Text("删除：${info.del}", color = text, fontSize = 13.sp)
+                            if (info.add.isNotEmpty()) Text("增加：${info.add}", color = text, fontSize = 13.sp)
+                            if (info.opt.isEmpty() && info.del.isEmpty() && info.add.isEmpty())
+                                Text("有新版本可用，点更新下载安装。", color = muted, fontSize = 13.sp)
+                            Spacer(Modifier.height(8.dp))
+                            Text("下载后点安装即可直接覆盖，不用卸载旧版本。", color = muted, fontSize = 12.sp)
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { openUrl(context, APK_URL); updateInfo = null }) {
+                            Text("立即更新", color = accent, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    dismissButton = {
+                        Row {
+                            TextButton(onClick = {
+                                skipCode = info.code
+                                prefs.edit().putInt("skip_update_code", info.code).apply()
+                                updateInfo = null
+                            }) { Text("不再提示此版本", color = muted) }
+                            TextButton(onClick = { updateInfo = null }) {
+                                Text("稍后再说", color = muted)
+                            }
+                        }
+                    },
+                    containerColor = card,
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun SiteCard(
+    site: Site, text: Color, muted: Color, line: Color, card: Color,
+    onOpen: () -> Unit, onDetail: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+            .border(1.dp, line, RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(14.dp))
+            .background(card)
+            .combinedClickable(onClick = onOpen, onLongClick = onDetail)
+            .padding(12.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SiteIcon(site)
+            Spacer(Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(site.title, color = text, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Spacer(Modifier.height(2.dp))
+                Text(site.desc, color = muted, fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
+        }
+        // 网站同款彩虹角标：没有 badge 时显示“精选”
+        val badge = site.badge.ifEmpty { "精选" }
+        Box(
+            modifier = Modifier.align(Alignment.TopEnd)
+                .background(Color(0xFFEF4444), RoundedCornerShape(999.dp))
+                .padding(horizontal = 7.dp, vertical = 2.dp),
+        ) {
+            Text(badge, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+        }
+    }
+}
+
+@Composable
+private fun SectionGrid(
+    sites: List<Site>, text: Color, muted: Color, line: Color, card: Color,
+    limit: Int, onOpen: (Site) -> Unit, onDetail: (Site) -> Unit, onMore: (() -> Unit)?,
+) {
+    val shown = if (onMore != null && sites.size > limit) sites.take(limit) else sites
+    val rows = shown.chunked(2)
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        for (row in rows) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                for (site in row) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        SiteCard(site, text, muted, line, card, { onOpen(site) }, { onDetail(site) })
+                    }
+                }
+                if (row.size == 1) Spacer(Modifier.weight(1f))
+            }
+        }
+        if (onMore != null && sites.size > limit) {
             Box(
-                Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.45f))
-                    .clickable { detail = null },
+                modifier = Modifier.fillMaxWidth().height(56.dp)
+                    .border(1.5.dp, Color(0xFF6B7280), RoundedCornerShape(14.dp))
+                    .clip(RoundedCornerShape(14.dp)).clickable { onMore() }
+                    .padding(12.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                GlassCard(backdrop, Modifier.fillMaxWidth().padding(horizontal = 24.dp), onClick = {}) {
-                    Txt(site.title, size = 20, bold = true, color = text)
-                    Spacer(Modifier.height(6.dp))
-                    if (site.desc.isNotBlank()) Txt(site.desc, color = muted)
-                    Spacer(Modifier.height(8.dp))
-                    Txt(site.url, size = 13, color = accent)
-                    Txt(catName, size = 12, color = muted)
-                    if (site.badge.isNotBlank()) Txt("角标：${site.badge}", size = 12, color = accent)
-                    Spacer(Modifier.height(14.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GlassButton(backdrop, "打开", accent, solid = true) {
-                            if (site.url.isNotBlank()) {
-                                try { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(site.url))) } catch (_: Exception) {}
-                            }
-                            detail = null
-                        }
-                        GlassButton(backdrop, "复制链接", accent) {
-                            clipboard.setText(AnnotatedString(site.url))
-                            detail = null
-                        }
-                        GlassButton(backdrop, "分享", accent) {
-                            val send = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, "${site.title} ${site.url}")
-                            }
-                            try { context.startActivity(Intent.createChooser(send, "分享站点")) } catch (_: Exception) {}
-                            detail = null
-                        }
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GlassButton(backdrop, if (favorites.contains(site.url)) "已收藏 ★" else "收藏 ☆", accent, solid = favorites.contains(site.url)) {
-                            toggleFav(site.url)
-                        }
-                        GlassButton(backdrop, "关闭", accent) { detail = null }
-                    }
-                }
+                Text("→ 查看更多", color = text, fontSize = 14.sp, fontWeight = FontWeight.Bold)
             }
         }
-        }
     }
+}
 
-    @Composable
-    private fun SettingsPage(
-        backdrop: LayerBackdrop, text: Color, muted: Color, accent: Color,
-        themeMode: Int, onTheme: (Int) -> Unit,
-        scale: Float, onScale: (Float) -> Unit,
-        bottomStyle: Int, onBottom: (Int) -> Unit,
-        bottomMode: Int, onBottomMode: (Int) -> Unit,
-        showDesc: Boolean, onShowDesc: (Boolean) -> Unit,
-        showBadge: Boolean, onShowBadge: (Boolean) -> Unit,
-        sortByName: Boolean, onSort: (Boolean) -> Unit,
-        favCount: Int, onClearFavs: () -> Unit,
-        totalCats: Int, totalSites: Int, totalNew: Int,
-        onBack: () -> Unit,
+@Composable
+private fun PillRow(
+    items: List<String>, selected: Int, onSelect: (Int) -> Unit,
+    tabBar: Color, card: Color, text: Color, muted: Color,
+) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth().background(tabBar, RoundedCornerShape(999.dp)).padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        LazyColumn(
-            Modifier.fillMaxSize().padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-        ) {
-            item { Spacer(Modifier.height(48.dp)) }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("设置", size = 22, bold = true, color = text)
-                    Spacer(Modifier.height(4.dp))
-                    Txt("改完立即生效，退出再进也保留", color = muted)
-                    Spacer(Modifier.height(12.dp))
-                    GlassButton(backdrop, "← 回首页", accent, solid = true) { onBack() }
-                }
-            }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("主题", size = 16, bold = true, color = text)
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GlassButton(backdrop, if (themeMode == 0) "浅色 ✓" else "浅色", accent, solid = themeMode == 0) { onTheme(0) }
-                        GlassButton(backdrop, if (themeMode == 1) "深色 ✓" else "深色", accent, solid = themeMode == 1) { onTheme(1) }
-                        GlassButton(backdrop, if (themeMode == 2) "跟随系统 ✓" else "跟随系统", accent, solid = themeMode == 2) { onTheme(2) }
-                    }
-                    Spacer(Modifier.height(4.dp))
-                    Txt("浅深两套都取自 landezhaole.pages.dev 的 Libraries 主题", color = muted)
-                }
-            }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("界面缩放", size = 16, bold = true, color = text)
-                    Spacer(Modifier.height(4.dp))
-                    Txt("当前 ${(scale * 100).toInt()}% · 字、卡片、间距都按这个比例缩放", color = muted)
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f).forEach { v ->
-                            GlassButton(backdrop, if (scale == v) "${(v * 100).toInt()}% ✓" else "${(v * 100).toInt()}%", accent, solid = scale == v) { onScale(v) }
-                        }
-                    }
-                    Spacer(Modifier.height(4.dp))
-                    Txt("50% 时一屏能看更多站点和分类；觉得小了随时切回 100%", color = muted)
-                }
-            }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("底栏效果", size = 16, bold = true, color = text)
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GlassButton(backdrop, if (bottomStyle == 0) "液态玻璃 ✓" else "液态玻璃", accent, solid = bottomStyle == 0) { onBottom(0) }
-                        GlassButton(backdrop, if (bottomStyle == 1) "磨砂 ✓" else "磨砂", accent, solid = bottomStyle == 1) { onBottom(1) }
-                        GlassButton(backdrop, if (bottomStyle == 2) "纯色 ✓" else "纯色", accent, solid = bottomStyle == 2) { onBottom(2) }
-                    }
-                    Spacer(Modifier.height(4.dp))
-                    Txt("液态玻璃 = 折射 + 模糊；磨砂 = 只模糊不折射；纯色 = 不用玻璃，直接用主题底色", color = muted)
-                }
-            }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("底栏样式", size = 16, bold = true, color = text)
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GlassButton(backdrop, if (bottomMode == 0) "胶囊 Dock ✓" else "胶囊 Dock", accent, solid = bottomMode == 0) { onBottomMode(0) }
-                        GlassButton(backdrop, if (bottomMode == 1) "整宽底栏 ✓" else "整宽底栏", accent, solid = bottomMode == 1) { onBottomMode(1) }
-                    }
-                    Spacer(Modifier.height(4.dp))
-                    Txt("胶囊 Dock = 悬浮在底部的圆角胶囊，折射最明显；整宽底栏 = 贴底一整条", color = muted)
-                }
-            }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("显示与排序", size = 16, bold = true, color = text)
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ToggleRow("显示介绍", showDesc, accent, text) { onShowDesc(it) }
-                        ToggleRow("显示角标", showBadge, accent, text) { onShowBadge(it) }
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GlassButton(backdrop, if (!sortByName) "默认顺序 ✓" else "默认顺序", accent, solid = !sortByName) { onSort(false) }
-                        GlassButton(backdrop, if (sortByName) "按名称排序 ✓" else "按名称排序", accent, solid = sortByName) { onSort(true) }
-                    }
-                }
-            }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("收藏", size = 16, bold = true, color = text)
-                    Spacer(Modifier.height(4.dp))
-                    Txt("当前 $favCount 个收藏，存在本机，卸载会丢", color = muted)
-                    Spacer(Modifier.height(8.dp))
-                    GlassButton(backdrop, "清空收藏", accent) { onClearFavs() }
-                }
-            }
-            item {
-                GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                    Txt("关于", size = 16, bold = true, color = text)
-                    Spacer(Modifier.height(4.dp))
-                    Txt("懒得找了 · 玻璃测试 v1.3.0（versionCode 4）", color = muted)
-                    Txt("包名 com.landezhaole.glasstest · 可与主 App 共存", color = muted)
-                    Txt("Backdrop 2.0.1 · 数据 $totalCats 分类 / $totalSites 站点 / $totalNew NEW", color = muted)
-                    Txt("原生 Kotlin + Compose，无 WebView", color = muted)
-                }
-            }
-            item { Spacer(Modifier.height(240.dp)) }
-        }
-    }
-
-    @Composable
-    private fun ToggleRow(label: String, value: Boolean, accent: Color, text: Color, onChange: (Boolean) -> Unit) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Txt(label, size = 14, color = text)
-            Spacer(Modifier.width(8.dp))
+        items(items.size) { i ->
+            val on = i == selected
             Box(
-                Modifier.size(52.dp, 28.dp).clip(RoundedRectangle(14.dp))
-                    .background(if (value) accent else Color.Gray.copy(alpha = 0.4f))
-                    .clickable { onChange(!value) },
-                contentAlignment = if (value) Alignment.CenterEnd else Alignment.CenterStart,
+                modifier = Modifier
+                    .background(if (on) card else Color.Transparent, RoundedCornerShape(999.dp))
+                    .clickable { onSelect(i) }.padding(horizontal = 14.dp, vertical = 4.dp),
             ) {
-                Box(Modifier.size(22.dp).clip(CircleShape).background(Color.White))
+                Text(items[i], color = if (on) text else muted, fontSize = 12.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Normal)
             }
         }
     }
+}
 
-    @Composable
-    private fun BottomBar(
-        backdrop: LayerBackdrop, accent: Color, text: Color, muted: Color,
-        isDark: Boolean, mode: Int,
-        style: Int, page: Int,
-        onHome: () -> Unit, onFav: () -> Unit, onSettings: () -> Unit,
-    ) {
-        // 不在缩放容器里：dp/sp 按正常尺寸，50% 缩放也不会把底栏字缩到看不见。
-        // 底部留 80dp，把底栏顶到系统导航栏上方，不被三键导航栏盖住。
-        Box(
-            Modifier.fillMaxSize().padding(bottom = 80.dp),
-            contentAlignment = Alignment.BottomCenter,
-        ) {
-            val barBg = if (isDark) Libraries.darkBg else Libraries.lightBg
-            val glassModifier: Modifier = when {
-                style == 2 -> Modifier.background(barBg.copy(alpha = 0.97f))
-                mode == 0 -> Modifier.drawBackdrop(
-                    backdrop = backdrop,
-                    shape = { Capsule() },
-                    effects = {
-                        vibrancy()
-                        blur(if (style == 0) 6f.dp.toPx() else 8f.dp.toPx())
-                        if (style == 0) lens(20f.dp.toPx(), 40f.dp.toPx())
-                    },
-                    highlight = { Highlight.Plain },
-                    onDrawSurface = { drawRect(barBg.copy(alpha = 0.62f)) },
-                )
-                else -> Modifier.drawBackdrop(
-                    backdrop = backdrop,
-                    shape = { RoundedRectangle(0.dp) },
-                    effects = {
-                        vibrancy()
-                        blur(if (style == 0) 6f.dp.toPx() else 8f.dp.toPx())
-                        if (style == 0) lens(20f.dp.toPx(), 40f.dp.toPx())
-                    },
-                    highlight = { Highlight.Plain },
-                    onDrawSurface = { drawRect(barBg.copy(alpha = 0.62f)) },
-                )
+@Composable
+private fun HomePage(
+    cats: List<SiteCategory>, favorites: Set<String>,
+    text: Color, muted: Color, line: Color, tabBar: Color, accent: Color, card: Color, bg: Color,
+    onCategory: (String) -> Unit, onPrompts: () -> Unit, onRecipes: () -> Unit, onSq: () -> Unit,
+    onSettings: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit, onTheme: () -> Unit,
+) {
+    val context = LocalContext.current
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    var engineIdx by remember { mutableStateOf(0) }
+    var query by remember { mutableStateOf("") }
+    var siteQuery by remember { mutableStateOf("") }
+    var fanOpen by remember { mutableStateOf(false) }
+    var qrTitle by remember { mutableStateOf<String?>(null) }
+    val today = LocalDate.now()
+    val weekday = today.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.CHINESE)
+    val dateText = "${today.monthValue}月${today.dayOfMonth}日$weekday"
+    val total = cats.sumOf { it.sites.size }
+    val searchResults = if (siteQuery.isBlank()) emptyList() else
+        cats.flatMap { it.sites }.filter {
+            it.title.contains(siteQuery, ignoreCase = true) || it.desc.contains(siteQuery, ignoreCase = true)
+        }
+    val favSites = cats.flatMap { it.sites }.filter { favorites.contains(it.url) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
+            item {
+                Spacer(Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("懒得找了 · 免费资源导航", color = text, fontSize = 13.sp)
+                    Spacer(Modifier.width(8.dp))
+                    Text(dateText, color = muted, fontSize = 12.sp)
+                    Spacer(Modifier.weight(1f))
+                    TextButton(onClick = { openUrl(context, APK_URL) }) { Text("下载 Android App", color = accent, fontSize = 12.sp) }
+                    TextButton(onClick = onTheme) { Text("主题", color = text, fontSize = 12.sp) }
+                }
+                Spacer(Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(R.drawable.logo), contentDescription = null,
+                        modifier = Modifier.size(64.dp).clip(CircleShape),
+                        contentScale = ContentScale.Crop,
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text("懒得找了.", color = text, fontSize = 34.sp, fontWeight = FontWeight.Black)
+                    Spacer(Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier.border(1.5.dp, accent, RoundedCornerShape(10.dp))
+                            .clickable { onPrompts() }.padding(horizontal = 10.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center,
+                    ) { Text("ChatGPT玩法", color = accent, fontSize = 12.sp, fontWeight = FontWeight.Bold) }
+                }
+                Spacer(Modifier.height(14.dp))
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    items(ENGINES.size) { i ->
+                        val on = i == engineIdx
+                        Box(
+                            modifier = Modifier
+                                .background(if (on) accent else Color.Transparent, RoundedCornerShape(999.dp))
+                                .clickable { engineIdx = i }.padding(horizontal = 12.dp, vertical = 5.dp),
+                        ) {
+                            Text(ENGINES[i].name, color = if (on) Color.White else muted, fontSize = 12.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Normal)
+                        }
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                Row {
+                    BasicTextField(
+                        value = query, onValueChange = { query = it },
+                        modifier = Modifier.weight(1f).background(card, RoundedCornerShape(12.dp))
+                            .border(1.dp, line, RoundedCornerShape(12.dp)).padding(horizontal = 12.dp, vertical = 12.dp),
+                        singleLine = true,
+                        decorationBox = { inner ->
+                            if (query.isEmpty()) Text(
+                                if (engineIdx == 0) "搜本站资源，或切到必应 / 百度 / B站 / 网盘 / 谷歌搜全网…"
+                                else if (ENGINES[engineIdx].id == "appdl") "搜应用名，直接下载 APK…" else "搜全网：${ENGINES[engineIdx].name}",
+                                color = muted, fontSize = 13.sp, maxLines = 1,
+                            )
+                            inner()
+                        },
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            val q = query.trim()
+                            if (q.isEmpty()) return@Button
+                            val eng = ENGINES[engineIdx]
+                            if (eng.url == null) siteQuery = q
+                            else openUrl(context, eng.url + URLEncoder.encode(q, "UTF-8"))
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = accent),
+                        shape = RoundedCornerShape(12.dp),
+                    ) { Text("搜索", color = Color.White, fontWeight = FontWeight.Bold) }
+                }
+                Spacer(Modifier.height(14.dp))
+                // 快捷图标行：前 10 个分类，点开进分类页（网站是弹层，App 里是分类页）
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    items(cats.take(10)) { cat ->
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable { onCategory(cat.id) }) {
+                            Box(
+                                modifier = Modifier.size(44.dp).clip(CircleShape)
+                                    .background(Color(avColorHex(cat.name)).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(cat.name.first().toString(), color = Color(avColorHex(cat.name)), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            }
+                            Spacer(Modifier.height(4.dp))
+                            Text(cat.name.take(4), color = muted, fontSize = 11.sp, maxLines = 1)
+                        }
+                    }
+                }
+                Spacer(Modifier.height(14.dp))
             }
-            val barModifier = if (mode == 0) {
-                glassModifier.padding(horizontal = 12.dp, vertical = 10.dp)
-            } else {
-                glassModifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp)
-            }
-            Box(barModifier) {
-                Row(
-                    if (mode == 0) Modifier else Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    BottomItem("首页", page == 0, accent, text) { onHome() }
-                    BottomItem("收藏", page == 1, accent, text) { onFav() }
-                    BottomItem("设置", page == 2, accent, text) { onSettings() }
+            if (siteQuery.isNotBlank()) {
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(18.dp))
+                            .border(1.dp, line, RoundedCornerShape(18.dp)).padding(16.dp),
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.size(10.dp).clip(CircleShape).background(accent))
+                            Spacer(Modifier.width(8.dp))
+                            Text("站内搜索结果", color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.width(8.dp))
+                            Text("${searchResults.size} 个结果", color = muted, fontSize = 12.sp)
+                            Spacer(Modifier.weight(1f))
+                            TextButton(onClick = { siteQuery = ""; query = "" }) { Text("清空搜索", color = accent, fontSize = 12.sp) }
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        if (searchResults.isEmpty()) {
+                            Text("没找到相关资源，换个关键词试试", color = muted, fontSize = 13.sp)
+                        } else {
+                            SectionGrid(searchResults, text, muted, line, card, Int.MAX_VALUE, onSite, onSiteDetail, null)
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
                 }
             }
+            if (favSites.isNotEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(18.dp))
+                            .border(1.dp, line, RoundedCornerShape(18.dp)).padding(16.dp),
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.size(10.dp).clip(CircleShape).background(accent))
+                            Spacer(Modifier.width(8.dp))
+                            Text("我的收藏", color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.width(8.dp))
+                            Text("${favSites.size} 个站点", color = muted, fontSize = 12.sp)
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        SectionGrid(favSites, text, muted, line, card, Int.MAX_VALUE, onSite, onSiteDetail, null)
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+            }
+            items(cats.size) { ci ->
+                val cat = cats[ci]
+                var subIdx by remember(cat.id) { mutableStateOf(0) }
+                val sub = cat.subs.getOrNull(subIdx)
+                val filtered = if (sub == null || sub.id == "all") cat.sites else {
+                    if (cat.id == "ai_api") {
+                        val map = mapOf(
+                            "official" to listOf("openai", "google", "anthropic", "aliyun", "baidu", "tencent", "volc", "zhipu", "moonshot", "deepseek", "minimax", "step", "xfyun", "huawei", "baichuan", "yi", "kunlun", "jimeng", "github", "perplexity"),
+                            "aggregate" to listOf("openrouter", "groq", "together", "replicate", "huggingface", "api2d", "gptapi", "closeai", "pandora", "oneapi", "newapi"),
+                            "cloud" to listOf("cloudflare", "azure", "aws", "gcp"),
+                        )
+                        cat.sites.filter { (map[sub.id] ?: emptyList()).contains(it.sub) }
+                    } else cat.sites.filter { it.sub == sub.id }
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(18.dp))
+                        .border(1.dp, line, RoundedCornerShape(18.dp)).padding(16.dp),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(Modifier.size(10.dp).clip(CircleShape).background(accent))
+                        Spacer(Modifier.width(8.dp))
+                        Text(cat.name, color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.width(8.dp))
+                        Box(Modifier.background(tabBar, RoundedCornerShape(12.dp)).padding(horizontal = 10.dp, vertical = 1.dp)) {
+                            Text("${cat.sites.size} 个站点", color = muted, fontSize = 12.sp)
+                        }
+                    }
+                    if (cat.desc.isNotEmpty()) {
+                        Spacer(Modifier.height(4.dp))
+                        Text(cat.desc, color = muted, fontSize = 12.sp)
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    if (cat.subs.isNotEmpty()) {
+                        PillRow(cat.subs.map { it.name }, subIdx, { subIdx = it }, tabBar, card, text, muted)
+                        Spacer(Modifier.height(12.dp))
+                    }
+                    SectionGrid(filtered, text, muted, line, card, 7, onSite, onSiteDetail) {
+                        onCategory(cat.id)
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+            item {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+                    Text("本站为免费资源导航，所有外链归原站所有 · 链接失效欢迎反馈", color = muted, fontSize = 12.sp, textAlign = TextAlign.Center)
+                    Spacer(Modifier.height(4.dp))
+                    Text("© 2026 懒得找了 · 共 $total 个站点", color = muted, fontSize = 12.sp)
+                    TextButton(onClick = onSettings) { Text("设置 / 检查更新", color = accent, fontSize = 12.sp) }
+                }
+                Spacer(Modifier.height(80.dp))
+            }
         }
-    }
-
-    @Composable
-    private fun BottomItem(label: String, active: Boolean, accent: Color, text: Color, onClick: () -> Unit) {
-        Box(
-            Modifier
-                .clip(RoundedRectangle(20.dp))
-                .background(if (active) accent.copy(alpha = 0.18f) else Color.Transparent)
-                .clickable { onClick() }
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            contentAlignment = Alignment.Center,
+        // 右侧悬浮栏：网站同款 ↑ 分享 省 食谱 ↓
+        Column(
+            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // 未选中也用正文色，不用 muted 灰，在白卡片上才看得清
-            Txt(label, size = 16, bold = active, color = if (active) accent else text)
+            for ((label, act) in listOf(
+                "↑" to { scope.launch { listState.scrollToItem(0) } },
+                "分享" to {
+                    val send = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"; putExtra(Intent.EXTRA_TEXT, "懒得找了 · 免费资源导航 $SITE_URL")
+                    }
+                    context.startActivity(Intent.createChooser(send, "分享本站"))
+                },
+                "省" to onSq,
+                "食谱" to onRecipes,
+                "↓" to { scope.launch { listState.scrollToItem(listState.layoutInfo.totalItemsCount - 1) } },
+            )) {
+                Box(
+                    modifier = Modifier.size(40.dp).clip(CircleShape).background(card)
+                        .border(1.dp, line, CircleShape).clickable { act() },
+                    contentAlignment = Alignment.Center,
+                ) { Text(label, color = if (label == "省") accent else text, fontSize = if (label == "分享") 11.sp else 14.sp, fontWeight = FontWeight.Bold) }
+            }
         }
-    }
-
-    @Composable
-    private fun Blob(color: Color, fx: Float, fy: Float, sizeDp: androidx.compose.ui.unit.Dp) {
-        // 按屏幕宽高比例定位：缩放 50% 时 dp 单位变了，固定 360/640 会把色块挤到左上角。
-        BoxWithConstraints(Modifier.fillMaxSize()) {
-            Box(
-                Modifier
-                    .offset(x = maxWidth * fx - sizeDp * 0.5f, y = maxHeight * fy - sizeDp * 0.5f)
-                    .size(sizeDp)
-                    .background(Brush.radialGradient(listOf(color, Color.Transparent)), CircleShape)
+        // 左下 + 工具菜单：网站同款扇形菜单
+        Column(modifier = Modifier.align(Alignment.BottomStart).padding(12.dp)) {
+            if (fanOpen) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    for ((label, act) in listOf(
+                        "关于网站" to { qrTitle = "关于网站" },
+                        "微信打赏" to { qrTitle = "微信打赏" },
+                        "QQ好友" to { qrTitle = "QQ好友" },
+                        "支付宝打赏" to { qrTitle = "支付宝打赏" },
+                        "最新Q群" to { openUrl(context, "https://qm.qq.com/q/vsaFRiPuO4") },
+                    )) {
+                        Button(onClick = { fanOpen = false; act() }, colors = ButtonDefaults.buttonColors(containerColor = card), shape = RoundedCornerShape(999.dp)) {
+                            Text(label, color = text, fontSize = 12.sp)
+                        }
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+            FloatingActionButton(onClick = { fanOpen = !fanOpen }, containerColor = card, contentColor = accent) {
+                Text(if (fanOpen) "×" else "＋", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+        qrTitle?.let { title ->
+            AlertDialog(
+                onDismissRequest = { qrTitle = null },
+                title = { Text(title, color = text, fontWeight = FontWeight.Bold) },
+                text = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (title == "关于网站") {
+                            Text("懒得找了 · 免费资源导航，共 $total 个站点。\n\n本站为免费资源导航，所有外链归原站所有。", color = muted, fontSize = 13.sp)
+                        } else {
+                            val file = when (title) {
+                                "微信打赏" -> "qr-wechat.jpg"
+                                "QQ好友" -> "qr-qq.jpg"
+                                else -> "qr-alipay.jpg"
+                            }
+                            val bmp = remember(file) {
+                                try {
+                                    BitmapFactory.decodeStream(context.assets.open(file))
+                                } catch (_: Exception) { null }
+                            }
+                            if (bmp != null) Image(bmp.asImageBitmap(), null, modifier = Modifier.size(200.dp), contentScale = ContentScale.Fit)
+                            Text(
+                                when (title) {
+                                    "微信打赏" -> "微信扫一扫，支持一下"
+                                    "QQ好友" -> "QQ扫一扫，加我好友"
+                                    else -> "支付宝扫一扫，支持一下"
+                                }, color = muted, fontSize = 13.sp,
+                            )
+                        }
+                    }
+                },
+                confirmButton = { TextButton(onClick = { qrTitle = null }) { Text("知道了", color = accent) } },
+                containerColor = card,
             )
         }
     }
+}
 
-    @Composable
-    private fun Txt(
-        text: String, size: Int = 14, bold: Boolean = false, color: Color,
-        maxLines: Int = Int.MAX_VALUE,
-    ) {
-        BasicText(
-            text,
-            style = TextStyle(
-                color = color, fontSize = size.sp,
-                fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
-            ),
-            maxLines = maxLines,
-            overflow = TextOverflow.Ellipsis,
+@Composable
+private fun CategoryPage(
+    cat: SiteCategory, text: Color, muted: Color, line: Color, tabBar: Color, accent: Color, card: Color,
+    onBack: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit,
+) {
+    var subIdx by remember { mutableStateOf(0) }
+    val sub = cat.subs.getOrNull(subIdx)
+    val filtered = if (sub == null || sub.id == "all") cat.sites else cat.sites.filter { it.sub == sub.id }
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onBack) { Text("← 回导航", color = accent, fontWeight = FontWeight.Bold) }
+            Text(cat.name, color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.width(8.dp))
+            Text("${cat.sites.size} 个站点", color = muted, fontSize = 12.sp)
+        }
+        if (cat.desc.isNotEmpty()) Text(cat.desc, color = muted, fontSize = 12.sp, modifier = Modifier.padding(start = 12.dp))
+        Spacer(Modifier.height(12.dp))
+        if (cat.subs.isNotEmpty()) PillRow(cat.subs.map { it.name }, subIdx, { subIdx = it }, tabBar, card, text, muted)
+        Spacer(Modifier.height(12.dp))
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            items(filtered.chunked(2).size) { ri ->
+                val row = filtered.chunked(2)[ri]
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    for (site in row) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            SiteCard(site, text, muted, line, card, { onSite(site) }, { onSiteDetail(site) })
+                        }
+                    }
+                    if (row.size == 1) Spacer(Modifier.weight(1f))
+                }
+            }
+            item { Spacer(Modifier.height(24.dp)) }
+        }
+    }
+}
+
+@Composable
+private fun PromptsPage(
+    prompts: List<PromptCategory>, text: Color, muted: Color, line: Color, accent: Color, card: Color,
+    onBack: () -> Unit,
+) {
+    val context = LocalContext.current
+    val clipboard = LocalClipboardManager.current
+    var query by remember { mutableStateOf("") }
+    var catIdx by remember { mutableStateOf(0) }
+    val cat = prompts.getOrNull(catIdx)
+    val list = (cat?.prompts ?: emptyList()).filter {
+        query.isBlank() || it.key.contains(query, ignoreCase = true) || it.desc.contains(query, ignoreCase = true)
+    }
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onBack) { Text("← 回导航", color = accent, fontWeight = FontWeight.Bold) }
+            Text("ChatGPT 玩法", color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.width(8.dp))
+            Text("${prompts.size} 类 / ${prompts.sumOf { it.prompts.size }} 条", color = muted, fontSize = 12.sp)
+        }
+        Spacer(Modifier.height(8.dp))
+        BasicTextField(
+            value = query, onValueChange = { query = it },
+            modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(12.dp))
+                .border(1.dp, line, RoundedCornerShape(12.dp)).padding(horizontal = 12.dp, vertical = 12.dp),
+            singleLine = true,
+            decorationBox = { inner ->
+                if (query.isEmpty()) Text("搜玩法名称或说明，点卡片复制", color = muted, fontSize = 13.sp)
+                inner()
+            },
+        )
+        Spacer(Modifier.height(12.dp))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            items(prompts.size) { i ->
+                val on = i == catIdx
+                Box(
+                    modifier = Modifier
+                        .background(if (on) accent else Color.Transparent, RoundedCornerShape(999.dp))
+                        .clickable { catIdx = i }.padding(horizontal = 12.dp, vertical = 5.dp),
+                ) { Text(prompts[i].name, color = if (on) Color.White else muted, fontSize = 12.sp) }
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            items(list.size) { i ->
+                val p = list[i]
+                Column(
+                    modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(14.dp))
+                        .border(1.dp, line, RoundedCornerShape(14.dp)).clickable {
+                            clipboard.setText(AnnotatedString(p.desc))
+                            Toast.makeText(context, "玩法说明已复制", Toast.LENGTH_SHORT).show()
+                        }.padding(14.dp),
+                ) {
+                    Text(p.key, color = text, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(2.dp))
+                    Text(p.desc, color = muted, fontSize = 12.sp)
+                }
+            }
+            item { Spacer(Modifier.height(24.dp)) }
+        }
+    }
+}
+
+@Composable
+private fun RecipesPage(
+    dishes: List<Dish>, text: Color, muted: Color, line: Color, tabBar: Color, accent: Color, card: Color,
+    onBack: () -> Unit,
+) {
+    val context = LocalContext.current
+    val clipboard = LocalClipboardManager.current
+    var query by remember { mutableStateOf("") }
+    var timeIdx by remember { mutableStateOf(0) }
+    var catIdx by remember { mutableStateOf(0) }
+    var detail by remember { mutableStateOf<Dish?>(null) }
+    var shopping by remember { mutableStateOf<List<String>>(emptyList()) }
+    var showShopping by remember { mutableStateOf(false) }
+    val cats = listOf("全部") + dishes.map { it.cat }.distinct()
+    val filtered = dishes.filter { d ->
+        (catIdx == 0 || d.cat == cats[catIdx]) &&
+        (timeIdx == 0 || d.minutes <= listOf(999, 15, 30, 60)[timeIdx]) &&
+        (query.isBlank() || d.name.contains(query) || d.ingredients.any { it.contains(query) })
+    }
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onBack) { Text("← 回导航", color = accent, fontWeight = FontWeight.Bold) }
+            Text("食谱 · 今天吃什么", color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.weight(1f))
+            Button(
+                onClick = {
+                    if (filtered.isNotEmpty()) detail = filtered.random()
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = accent),
+                shape = RoundedCornerShape(999.dp),
+            ) { Text("随机一桌菜", color = Color.White, fontSize = 12.sp) }
+        }
+        Spacer(Modifier.height(8.dp))
+        BasicTextField(
+            value = query, onValueChange = { query = it },
+            modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(12.dp))
+                .border(1.dp, line, RoundedCornerShape(12.dp)).padding(horizontal = 12.dp, vertical = 12.dp),
+            singleLine = true,
+            decorationBox = { inner ->
+                if (query.isEmpty()) Text("搜菜名或食材", color = muted, fontSize = 13.sp)
+                inner()
+            },
+        )
+        Spacer(Modifier.height(8.dp))
+        PillRow(listOf("全部", "≤15分钟", "≤30分钟", "≤60分钟"), timeIdx, { timeIdx = it }, tabBar, card, text, muted)
+        Spacer(Modifier.height(8.dp))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            items(cats.size) { i ->
+                val on = i == catIdx
+                Box(
+                    modifier = Modifier
+                        .background(if (on) accent else Color.Transparent, RoundedCornerShape(999.dp))
+                        .clickable { catIdx = i }.padding(horizontal = 12.dp, vertical = 5.dp),
+                ) { Text(cats[i], color = if (on) Color.White else muted, fontSize = 12.sp) }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Row {
+            Text("${filtered.size} 道菜", color = muted, fontSize = 12.sp)
+            Spacer(Modifier.weight(1f))
+            if (shopping.isNotEmpty()) TextButton(onClick = { showShopping = true }) {
+                Text("购物清单（${shopping.size}）", color = accent, fontSize = 12.sp)
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            items(filtered.size) { i ->
+                val d = filtered[i]
+                Column(
+                    modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(14.dp))
+                        .border(1.dp, line, RoundedCornerShape(14.dp)).clickable { detail = d }.padding(14.dp),
+                ) {
+                    Text(d.name, color = text, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(2.dp))
+                    Text("${d.cat} · ${d.cuisine} · ${d.minutes}分钟 · ${dishDifficulty(d)} · ${dishSpiciness(d)} · ${dishServings(d)}", color = muted, fontSize = 12.sp)
+                }
+            }
+            item { Spacer(Modifier.height(24.dp)) }
+        }
+    }
+    detail?.let { d ->
+        AlertDialog(
+            onDismissRequest = { detail = null },
+            title = { Text(d.name, color = text, fontWeight = FontWeight.Bold) },
+            text = {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    Text("${d.cat} · ${d.cuisine} · ${d.minutes}分钟 · ${dishDifficulty(d)} · ${dishSpiciness(d)} · ${dishServings(d)}（参考）", color = muted, fontSize = 12.sp)
+                    Spacer(Modifier.height(10.dp))
+                    Text("食材", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(d.ingredients.joinToString("、"), color = text, fontSize = 13.sp)
+                    Spacer(Modifier.height(10.dp))
+                    Text("步骤", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    d.steps.forEachIndexed { i, s -> Text("${i + 1}. $s", color = text, fontSize = 13.sp) }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    shopping = (shopping + d.ingredients).distinct()
+                    Toast.makeText(context, "已加入购物清单", Toast.LENGTH_SHORT).show()
+                }) { Text("加入购物清单", color = accent) }
+            },
+            dismissButton = {
+                TextButton(onClick = { detail = null }) { Text("关闭", color = muted) }
+            },
+            containerColor = card,
         )
     }
-
-    @Composable
-    private fun GlassCard(
-        backdrop: LayerBackdrop, modifier: Modifier = Modifier,
-        onClick: (() -> Unit)? = null, content: @Composable () -> Unit,
-    ) {
-        Box(
-            modifier
-                .drawBackdrop(
-                    backdrop = backdrop,
-                    shape = { RoundedRectangle(24.dp) },
-                    effects = {
-                        vibrancy()
-                        blur(6f.dp.toPx())
-                        lens(24f.dp.toPx(), 48f.dp.toPx())
-                    },
-                    highlight = { Highlight.Plain },
-                )
-                .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-                .padding(16.dp),
-        ) { Column { content() } }
+    if (showShopping) {
+        AlertDialog(
+            onDismissRequest = { showShopping = false },
+            title = { Text("购物清单", color = text, fontWeight = FontWeight.Bold) },
+            text = {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    shopping.forEach { Text("· $it", color = text, fontSize = 13.sp) }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    clipboard.setText(AnnotatedString(shopping.joinToString("\n")))
+                    Toast.makeText(context, "购物清单已复制", Toast.LENGTH_SHORT).show()
+                    showShopping = false
+                }) { Text("一键复制", color = accent) }
+            },
+            dismissButton = {
+                TextButton(onClick = { shopping = emptyList(); showShopping = false }) { Text("清空", color = muted) }
+            },
+            containerColor = card,
+        )
     }
+}
 
-    @Composable
-    private fun GlassButton(
-        backdrop: LayerBackdrop, text: String, accent: Color,
-        solid: Boolean = false, onClick: () -> Unit,
-    ) {
-        Box(
-            Modifier
-                .drawBackdrop(
-                    backdrop = backdrop,
-                    shape = { Capsule() },
-                    effects = {
-                        vibrancy()
-                        blur(3f.dp.toPx())
-                        lens(16f.dp.toPx(), 32f.dp.toPx())
-                    },
-                    highlight = { Highlight.Plain },
-                    onDrawSurface = {
-                        if (solid) drawRect(accent.copy(alpha = 0.85f))
-                    },
-                )
-                .clickable { onClick() }
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Txt(text, size = 14, bold = solid, color = if (solid) Color.White else accent)
+@Composable
+private fun SqPage(
+    sq: SqData, text: Color, muted: Color, line: Color, tabBar: Color, accent: Color, card: Color,
+    onBack: () -> Unit,
+) {
+    val context = LocalContext.current
+    var tabIdx by remember { mutableStateOf(0) }
+    var filterIdx by remember { mutableStateOf(0) }
+    val tab = sq.tabs.getOrNull(tabIdx)
+    val filters = tab?.filters ?: emptyList()
+    val filter = filters.getOrNull(filterIdx)?.first ?: "all"
+    val list = sq.cards.filter { c ->
+        c.tab == tabIdx && (filter == "all" || c.tagClasses.contains(filter))
+    }
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onBack) { Text("← 回导航", color = accent, fontWeight = FontWeight.Bold) }
+            Text("省钱小助手", color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.width(8.dp))
+            Text("领券 · 出行 · 生活", color = muted, fontSize = 12.sp)
         }
+        Spacer(Modifier.height(12.dp))
+        if (tab != null) {
+            PillRow(sq.tabs.map { it.name }, tabIdx, { tabIdx = it; filterIdx = 0 }, tabBar, card, text, muted)
+            Spacer(Modifier.height(8.dp))
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                items(filters.size) { i ->
+                    val on = i == filterIdx
+                    Box(
+                        modifier = Modifier
+                            .background(if (on) accent else Color.Transparent, RoundedCornerShape(999.dp))
+                            .clickable { filterIdx = i }.padding(horizontal = 12.dp, vertical = 5.dp),
+                    ) { Text(filters[i].second, color = if (on) Color.White else muted, fontSize = 12.sp) }
+                }
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            items(list.size) { i ->
+                val c = list[i]
+                Column(
+                    modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(14.dp))
+                        .border(1.dp, line, RoundedCornerShape(14.dp)).clickable { openUrl(context, c.href) }.padding(14.dp),
+                ) {
+                    Text(c.title, color = text, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(2.dp))
+                    Text(c.desc, color = muted, fontSize = 12.sp)
+                    Spacer(Modifier.height(6.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        c.tags.forEach { tag ->
+                            Box(Modifier.background(tabBar, RoundedCornerShape(999.dp)).padding(horizontal = 8.dp, vertical = 2.dp)) {
+                                Text(tag, color = muted, fontSize = 11.sp)
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text("扫码领取 →", color = accent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+            item {
+                Text("优惠金额与活动以各平台实际页面为准", color = muted, fontSize = 12.sp, modifier = Modifier.padding(vertical = 16.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsPage(
+    themeMode: Int, cats: List<SiteCategory>, text: Color, muted: Color, line: Color, accent: Color, card: Color,
+    onTheme: (Int) -> Unit, onCheckUpdate: () -> Unit, onClearFav: () -> Unit, onBack: () -> Unit,
+) {
+    val context = LocalContext.current
+    val total = cats.sumOf { it.sites.size }
+    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 12.dp)) {
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onBack) { Text("← 回导航", color = accent, fontWeight = FontWeight.Bold) }
+            Text("设置", color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        }
+        Spacer(Modifier.height(12.dp))
+        Text("主题", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Spacer(Modifier.height(8.dp))
+        for ((i, label) in listOf("浅色", "深色", "跟随系统").withIndex()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(12.dp))
+                    .border(1.dp, line, RoundedCornerShape(12.dp)).clickable { onTheme(i) }.padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(label, color = text, fontSize = 14.sp)
+                Spacer(Modifier.weight(1f))
+                if (themeMode == i) Text("✓", color = accent, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+        Spacer(Modifier.height(12.dp))
+        Button(onClick = onCheckUpdate, colors = ButtonDefaults.buttonColors(containerColor = accent), shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
+            Text("检查更新", color = Color.White, fontWeight = FontWeight.Bold)
+        }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = onClearFav, colors = ButtonDefaults.buttonColors(containerColor = card), shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
+            Text("清空收藏", color = text)
+        }
+        Spacer(Modifier.height(24.dp))
+        Text("关于", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Spacer(Modifier.height(8.dp))
+        Text("懒得找了 · 免费资源导航\nApp 版本 2.0.0（versionCode 5）\n网站版本 v1.1.51\n共 ${cats.size} 分类 / $total 个站点\n原生 Kotlin + Compose，无 WebView", color = muted, fontSize = 13.sp)
+        Spacer(Modifier.height(24.dp))
     }
 }

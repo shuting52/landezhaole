@@ -1,4 +1,4 @@
-name: Build glass test app (debug APK)
+name: Build glass test app (release APK, fixed signature)
 
 on:
   push:
@@ -25,12 +25,18 @@ jobs:
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" || true
-      - name: Build debug APK
+      - name: Build release APK (V1 + V2 + V3, fixed keystore from secrets)
         working-directory: glass-test
+        env:
+          KEYSTORE_BASE64: ${{ secrets.GLASS_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.GLASS_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.GLASS_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.GLASS_KEY_PASSWORD }}
         run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > /tmp/glass-test-release.keystore
           chmod +x gradlew
           set -o pipefail
-          ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee build.log
+          KEYSTORE_PATH=/tmp/glass-test-release.keystore ./gradlew :app:assembleRelease --stacktrace 2>&1 | tee build.log
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4
@@ -49,13 +55,13 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: landezhaole-glass-test-debug
-          path: glass-test/app/build/outputs/apk/debug/app-debug.apk
+          name: landezhaole-glass-test-release
+          path: glass-test/app/build/outputs/apk/release/app-release.apk
       - name: Publish APK to repo for raw download
         run: |
-          cp glass-test/app/build/outputs/apk/debug/app-debug.apk glass-test/app-debug.apk
+          cp glass-test/app/build/outputs/apk/release/app-release.apk glass-test/app-debug.apk
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -f glass-test/app-debug.apk
-          git diff --cached --quiet || git commit -m "chore: publish glass test debug APK [skip ci]"
+          git diff --cached --quiet || git commit -m "chore: publish glass test release APK [skip ci]"
           git push
