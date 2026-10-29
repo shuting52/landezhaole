@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -61,7 +62,7 @@ import com.kyant.backdrop.highlight.Highlight
 import com.kyant.shapes.Capsule
 import com.kyant.shapes.RoundedRectangle
 
-// 懒得找了 · 液态玻璃测试版 v1.2.0
+// 懒得找了 · 液态玻璃测试版 v1.3.0
 // 液态玻璃：Kyant0/AndroidLiquidGlass Backdrop 2.0.1，rememberLayerBackdrop +
 //   layerBackdrop（背景层）+ drawBackdrop（玻璃组件），vibrancy + blur + lens。
 // 数据：CF Pages 项目 landezhaole 的 data.json 原样内置，21 分类 / 2603 站点 / 174 NEW。
@@ -173,7 +174,9 @@ class MainActivity : ComponentActivity() {
         val clipboard = LocalClipboardManager.current
         val baseDensity = LocalDensity.current
         // 界面缩放：按比例缩放 dp 与 sp，50% 时一屏能看更多内容，玻璃模糊也同步缩放。
-        CompositionLocalProvider(
+        // 外层 Box 让底栏和详情弹窗叠在缩放内容上面，而不是并排摆放。
+        Box(Modifier.fillMaxSize()) {
+            CompositionLocalProvider(
             LocalDensity provides Density(baseDensity.density * scale, baseDensity.fontScale * scale)
         ) {
             Box(Modifier.fillMaxSize()) {
@@ -205,222 +208,212 @@ class MainActivity : ComponentActivity() {
                         onBack = { page = 0 },
                     )
                 } else {
-                    LazyColumn(
+                    // 顶部固定区：搜索、分类、子类、排序一排三个，全部固定在顶部，
+                    // 不随卡片列表滚动，滚到底也能看到，不会像之前那样滚走找不到。
+                    Column(
                         Modifier.fillMaxSize().padding(horizontal = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(14.dp),
                     ) {
-                        item { Spacer(Modifier.height(48.dp)) }
-                        item {
-                            GlassCard(backdrop, Modifier.fillMaxWidth()) {
-                                Txt("懒得找了 · 玻璃测试", size = 22, bold = true, color = text)
-                                Spacer(Modifier.height(4.dp))
-                                Txt("Backdrop 2.0.1 真液态玻璃 · 数据来自 CF 项目 landezhaole", color = muted)
-                                Spacer(Modifier.height(8.dp))
-                                Txt(
-                                    "${cats.size} 个分类 · $totalSites 个站点 · $totalNew 个 NEW · $totalHot 个 HOT · ${favorites.size} 个收藏 · v1.2.0",
-                                    color = muted,
+                        Spacer(Modifier.height(48.dp))
+                        GlassCard(backdrop, Modifier.fillMaxWidth()) {
+                            Txt("懒得找了 · 玻璃测试", size = 22, bold = true, color = text)
+                            Spacer(Modifier.height(4.dp))
+                            Txt("Backdrop 2.0.1 真液态玻璃 · 数据来自 CF 项目 landezhaole", color = muted)
+                            Spacer(Modifier.height(8.dp))
+                            Txt(
+                                "${cats.size} 个分类 · $totalSites 个站点 · $totalNew 个 NEW · $totalHot 个 HOT · ${favorites.size} 个收藏 · v1.3.0",
+                                color = muted,
+                            )
+                            Spacer(Modifier.height(12.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                GlassButton(backdrop, "界面 ${ (scale * 100).toInt() }%", accent, solid = true) { page = 2 }
+                                GlassButton(backdrop, if (isDark) "深色 ✓" else "浅色 ✓", accent) {
+                                    saveTheme(if (isDark) 0 else 1)
+                                }
+                            }
+                        }
+                        Box(
+                            Modifier.fillMaxWidth()
+                                .drawBackdrop(
+                                    backdrop = backdrop,
+                                    shape = { Capsule() },
+                                    effects = {
+                                        vibrancy()
+                                        blur(6f.dp.toPx())
+                                        lens(20f.dp.toPx(), 40f.dp.toPx())
+                                    },
+                                    highlight = { Highlight.Plain },
                                 )
-                                Spacer(Modifier.height(12.dp))
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    GlassButton(backdrop, "界面 ${ (scale * 100).toInt() }%", accent, solid = true) { page = 2 }
-                                    GlassButton(backdrop, if (isDark) "深色 ✓" else "浅色 ✓", accent) {
-                                        saveTheme(if (isDark) 0 else 1)
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            // 搜索框：玻璃胶囊，搜站点名 / 介绍 / 链接，搜索时跨全部分类
-                            Box(
-                                Modifier.fillMaxWidth()
-                                    .drawBackdrop(
-                                        backdrop = backdrop,
-                                        shape = { Capsule() },
-                                        effects = {
-                                            vibrancy()
-                                            blur(6f.dp.toPx())
-                                            lens(20f.dp.toPx(), 40f.dp.toPx())
-                                        },
-                                        highlight = { Highlight.Plain },
-                                    )
-                                    .padding(horizontal = 20.dp, vertical = 14.dp),
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(Modifier.weight(1f)) {
-                                        BasicTextField(
-                                            value = query,
-                                            onValueChange = { query = it },
-                                            modifier = Modifier.fillMaxWidth(),
-                                            textStyle = TextStyle(color = text, fontSize = 15.sp),
-                                            decorationBox = { inner ->
-                                                Box {
-                                                    inner()
-                                                    if (query.isEmpty()) {
-                                                        BasicText(
-                                                            "搜站点名 / 介绍 / 链接…",
-                                                            style = TextStyle(color = muted, fontSize = 15.sp),
-                                                        )
-                                                    }
+                                .padding(horizontal = 20.dp, vertical = 14.dp),
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(Modifier.weight(1f)) {
+                                    BasicTextField(
+                                        value = query,
+                                        onValueChange = { query = it },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textStyle = TextStyle(color = text, fontSize = 15.sp),
+                                        decorationBox = { inner ->
+                                            Box {
+                                                inner()
+                                                if (query.isEmpty()) {
+                                                    BasicText(
+                                                        "搜站点名 / 介绍 / 链接…",
+                                                        style = TextStyle(color = muted, fontSize = 15.sp),
+                                                    )
                                                 }
-                                            },
-                                        )
-                                    }
-                                    if (query.isNotEmpty()) {
-                                        Txt("✕", size = 16, bold = true, color = accent)
-                                        Spacer(Modifier.width(4.dp))
-                                        Box(Modifier.clickable { query = "" }) {
-                                            Txt("清空", size = 14, color = accent)
-                                        }
+                                            }
+                                        },
+                                    )
+                                }
+                                if (query.isNotEmpty()) {
+                                    Box(Modifier.clickable { query = "" }.padding(4.dp)) {
+                                        Txt("清空", size = 14, color = accent)
                                     }
                                 }
                             }
                         }
-                        item {
-                            // 分类横向玻璃胶囊
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                item {
-                                    GlassButton(backdrop, if (catIndex == -1) "全部 ✓" else "全部", accent, solid = catIndex == -1) {
-                                        catIndex = -1; subId = "all"; page = 0
-                                    }
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            item {
+                                GlassButton(backdrop, if (catIndex == -1) "全部 ✓" else "全部", accent, solid = catIndex == -1) {
+                                    catIndex = -1; subId = "all"; page = 0
                                 }
-                                items(cats.size) { i ->
-                                    val short = cats[i].name.substringBefore(" ·")
-                                    GlassButton(backdrop, if (catIndex == i) "$short ✓" else short, accent, solid = catIndex == i) {
-                                        catIndex = i; subId = "all"; page = 0
-                                    }
+                            }
+                            items(cats.size) { i ->
+                                val short = cats[i].name.substringBefore(" ·")
+                                GlassButton(backdrop, if (catIndex == i) "$short ✓" else short, accent, solid = catIndex == i) {
+                                    catIndex = i; subId = "all"; page = 0
                                 }
                             }
                         }
                         if (catIndex >= 0 && cats[catIndex].subs.isNotEmpty()) {
-                            item {
-                                // 子类筛选：数据里的 subs，全部 + 各子类
-                                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    items(cats[catIndex].subs.size) { j ->
-                                        val sub = cats[catIndex].subs[j]
-                                        GlassButton(backdrop, if (subId == sub.id) "${sub.name} ✓" else sub.name, accent, solid = subId == sub.id) {
-                                            subId = sub.id
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(cats[catIndex].subs.size) { j ->
+                                    val sub = cats[catIndex].subs[j]
+                                    GlassButton(backdrop, if (subId == sub.id) "${sub.name} ✓" else sub.name, accent, solid = subId == sub.id) {
+                                        subId = sub.id
+                                    }
+                                }
+                            }
+                            if (cats[catIndex].desc.isNotBlank()) Txt(cats[catIndex].desc, color = muted)
+                        }
+                        // 排序：一排三个，固定在顶部
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                            GlassButton(backdrop, if (badgeFilter.isEmpty()) "默认 ✓" else "默认", accent, solid = badgeFilter.isEmpty()) { badgeFilter = "" }
+                            GlassButton(backdrop, if (badgeFilter == "NEW") "只看 NEW ✓" else "只看 NEW", accent, solid = badgeFilter == "NEW") { badgeFilter = "NEW" }
+                            GlassButton(backdrop, if (badgeFilter == "HOT") "只看 HOT ✓" else "只看 HOT", accent, solid = badgeFilter == "HOT") { badgeFilter = "HOT" }
+                        }
+                        Txt(
+                            when {
+                                page == 1 -> "收藏 · ${shown.size} 条，点卡片看详情"
+                                query.isNotEmpty() -> "搜索“$query” · ${shown.size} 条（全部结果，不截断）"
+                                catIndex >= 0 -> "${cats[catIndex].name} · ${shown.size} 条"
+                                else -> "全部 · ${shown.size} 条（不截断）"
+                            },
+                            color = muted,
+                        )
+                        LazyColumn(
+                            Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(14.dp),
+                        ) {
+                            items(shown.size) { i ->
+                                val (catName, site) = shown[i]
+                                val isFav = favorites.contains(site.url)
+                                GlassCard(backdrop, Modifier.fillMaxWidth(), onClick = { detail = catName to site }) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Box(
+                                            Modifier.size(36.dp).clip(CircleShape)
+                                                .background(accent.copy(alpha = 0.18f)),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            Txt(site.title.take(1).ifBlank { "站" }, size = 16, bold = true, color = accent)
+                                        }
+                                        Spacer(Modifier.width(10.dp))
+                                        Column(Modifier.weight(1f)) {
+                                            Txt(site.title, size = 16, bold = true, color = text, maxLines = 1)
+                                            if (showDesc && site.desc.isNotBlank()) Txt(site.desc, color = muted, maxLines = 2)
+                                        }
+                                        if (showBadge && site.badge.isNotBlank()) {
+                                            Spacer(Modifier.width(8.dp))
+                                            Txt(site.badge, size = 12, bold = true, color = accent)
+                                        }
+                                        Spacer(Modifier.width(8.dp))
+                                        Box(Modifier.clickable { toggleFav(site.url) }.padding(4.dp)) {
+                                            Txt(if (isFav) "★" else "☆", size = 20, bold = true, color = accent)
                                         }
                                     }
+                                    Spacer(Modifier.height(4.dp))
+                                    Txt(site.url, size = 12, color = accent, maxLines = 1)
+                                    Txt(catName, size = 12, color = muted, maxLines = 1)
                                 }
                             }
-                            item {
-                                if (cats[catIndex].desc.isNotBlank()) Txt(cats[catIndex].desc, color = muted)
-                            }
+                            item { Spacer(Modifier.height(240.dp)) }
                         }
-                        item {
-                            // 角标筛选
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                GlassButton(backdrop, if (badgeFilter.isEmpty()) "角标：全部 ✓" else "角标：全部", accent, solid = badgeFilter.isEmpty()) { badgeFilter = "" }
-                                GlassButton(backdrop, if (badgeFilter == "NEW") "只看 NEW ✓" else "只看 NEW", accent, solid = badgeFilter == "NEW") { badgeFilter = "NEW" }
-                                GlassButton(backdrop, if (badgeFilter == "HOT") "只看 HOT ✓" else "只看 HOT", accent, solid = badgeFilter == "HOT") { badgeFilter = "HOT" }
-                                GlassButton(backdrop, if (sortByName) "按名称 ✓" else "默认顺序", accent, solid = sortByName) { saveSort(!sortByName) }
-                            }
-                        }
-                        item {
-                            Txt(
-                                when {
-                                    page == 1 -> "收藏 · ${shown.size} 条，点卡片看详情"
-                                    query.isNotEmpty() -> "搜索“$query” · ${shown.size} 条（全部结果，不截断）"
-                                    catIndex >= 0 -> "${cats[catIndex].name} · ${shown.size} 条"
-                                    else -> "全部 · ${shown.size} 条（不截断，滑到底就是全部）"
-                                },
-                                color = muted,
-                            )
-                        }
-                        items(shown.size) { i ->
-                            val (catName, site) = shown[i]
-                            val isFav = favorites.contains(site.url)
-                            GlassCard(backdrop, Modifier.fillMaxWidth(), onClick = { detail = catName to site }) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(
-                                        Modifier.size(36.dp).clip(CircleShape)
-                                            .background(accent.copy(alpha = 0.18f)),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Txt(site.title.take(1).ifBlank { "站" }, size = 16, bold = true, color = accent)
-                                    }
-                                    Spacer(Modifier.width(10.dp))
-                                    Column(Modifier.weight(1f)) {
-                                        Txt(site.title, size = 16, bold = true, color = text, maxLines = 1)
-                                        if (showDesc && site.desc.isNotBlank()) Txt(site.desc, color = muted, maxLines = 2)
-                                    }
-                                    if (showBadge && site.badge.isNotBlank()) {
-                                        Spacer(Modifier.width(8.dp))
-                                        Txt(site.badge, size = 12, bold = true, color = accent)
-                                    }
-                                    Spacer(Modifier.width(8.dp))
-                                    Box(Modifier.clickable { toggleFav(site.url) }.padding(4.dp)) {
-                                        Txt(if (isFav) "★" else "☆", size = 20, bold = true, color = accent)
-                                    }
-                                }
-                                Spacer(Modifier.height(4.dp))
-                                Txt(site.url, size = 12, color = accent, maxLines = 1)
-                                Txt(catName, size = 12, color = muted, maxLines = 1)
-                            }
-                        }
-                        item { Spacer(Modifier.height(120.dp)) }
                     }
                 }
+                // 底栏在缩放容器外面，见下面
+                }
+            }
+        }
 
-                // 底部栏：整宽玻璃底栏（效果样式在设置里切），四个入口
-                BottomBar(
-                    backdrop = backdrop, accent = accent, text = text, muted = muted,
-                    isDark = isDark, mode = bottomMode,
-                    style = bottomStyle, page = page,
-                    onHome = { page = 0; catIndex = -1; subId = "all" },
-                    onFav = { page = 1 },
-                    onNew = { page = 0; badgeFilter = if (badgeFilter == "NEW") "" else "NEW" },
-                    onSettings = { page = 2 },
-                    newActive = badgeFilter == "NEW" && page == 0,
-                )
+        // 底栏：一排三个（首页 / 收藏 / 设置），不跟随界面缩放，字号正常；
+        // 贴在系统导航栏上方，不会被系统三键导航栏盖住；玻璃上加一层主题底色，
+        // 在白色卡片上也能看清，不再像截图里那样淡到看不见。
+        BottomBar(
+            backdrop = backdrop, accent = accent, text = text, muted = muted,
+            isDark = isDark, mode = bottomMode,
+            style = bottomStyle, page = page,
+            onHome = { page = 0; catIndex = -1; subId = "all" },
+            onFav = { page = 1 },
+            onSettings = { page = 2 },
+        )
 
-                // 站点详情弹窗：打开 / 复制链接 / 分享 / 收藏
-                detail?.let { (catName, site) ->
-                    Box(
-                        Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.45f))
-                            .clickable { detail = null },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        GlassCard(backdrop, Modifier.fillMaxWidth().padding(horizontal = 24.dp), onClick = {}) {
-                            Txt(site.title, size = 20, bold = true, color = text)
-                            Spacer(Modifier.height(6.dp))
-                            if (site.desc.isNotBlank()) Txt(site.desc, color = muted)
-                            Spacer(Modifier.height(8.dp))
-                            Txt(site.url, size = 13, color = accent)
-                            Txt(catName, size = 12, color = muted)
-                            if (site.badge.isNotBlank()) Txt("角标：${site.badge}", size = 12, color = accent)
-                            Spacer(Modifier.height(14.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                GlassButton(backdrop, "打开", accent, solid = true) {
-                                    if (site.url.isNotBlank()) {
-                                        try { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(site.url))) } catch (_: Exception) {}
-                                    }
-                                    detail = null
-                                }
-                                GlassButton(backdrop, "复制链接", accent) {
-                                    clipboard.setText(AnnotatedString(site.url))
-                                    detail = null
-                                }
-                                GlassButton(backdrop, "分享", accent) {
-                                    val send = Intent(Intent.ACTION_SEND).apply {
-                                        type = "text/plain"
-                                        putExtra(Intent.EXTRA_TEXT, "${site.title} ${site.url}")
-                                    }
-                                    try { context.startActivity(Intent.createChooser(send, "分享站点")) } catch (_: Exception) {}
-                                    detail = null
-                                }
+        // 站点详情弹窗（不缩放，字号正常）
+        detail?.let { (catName, site) ->
+            Box(
+                Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.45f))
+                    .clickable { detail = null },
+                contentAlignment = Alignment.Center,
+            ) {
+                GlassCard(backdrop, Modifier.fillMaxWidth().padding(horizontal = 24.dp), onClick = {}) {
+                    Txt(site.title, size = 20, bold = true, color = text)
+                    Spacer(Modifier.height(6.dp))
+                    if (site.desc.isNotBlank()) Txt(site.desc, color = muted)
+                    Spacer(Modifier.height(8.dp))
+                    Txt(site.url, size = 13, color = accent)
+                    Txt(catName, size = 12, color = muted)
+                    if (site.badge.isNotBlank()) Txt("角标：${site.badge}", size = 12, color = accent)
+                    Spacer(Modifier.height(14.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        GlassButton(backdrop, "打开", accent, solid = true) {
+                            if (site.url.isNotBlank()) {
+                                try { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(site.url))) } catch (_: Exception) {}
                             }
-                            Spacer(Modifier.height(8.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                GlassButton(backdrop, if (favorites.contains(site.url)) "已收藏 ★" else "收藏 ☆", accent, solid = favorites.contains(site.url)) {
-                                    toggleFav(site.url)
-                                }
-                                GlassButton(backdrop, "关闭", accent) { detail = null }
-                            }
+                            detail = null
                         }
+                        GlassButton(backdrop, "复制链接", accent) {
+                            clipboard.setText(AnnotatedString(site.url))
+                            detail = null
+                        }
+                        GlassButton(backdrop, "分享", accent) {
+                            val send = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "${site.title} ${site.url}")
+                            }
+                            try { context.startActivity(Intent.createChooser(send, "分享站点")) } catch (_: Exception) {}
+                            detail = null
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        GlassButton(backdrop, if (favorites.contains(site.url)) "已收藏 ★" else "收藏 ☆", accent, solid = favorites.contains(site.url)) {
+                            toggleFav(site.url)
+                        }
+                        GlassButton(backdrop, "关闭", accent) { detail = null }
                     }
                 }
             }
+        }
         }
     }
 
@@ -533,13 +526,13 @@ class MainActivity : ComponentActivity() {
                 GlassCard(backdrop, Modifier.fillMaxWidth()) {
                     Txt("关于", size = 16, bold = true, color = text)
                     Spacer(Modifier.height(4.dp))
-                    Txt("懒得找了 · 玻璃测试 v1.2.0（versionCode 3）", color = muted)
+                    Txt("懒得找了 · 玻璃测试 v1.3.0（versionCode 4）", color = muted)
                     Txt("包名 com.landezhaole.glasstest · 可与主 App 共存", color = muted)
                     Txt("Backdrop 2.0.1 · 数据 $totalCats 分类 / $totalSites 站点 / $totalNew NEW", color = muted)
                     Txt("原生 Kotlin + Compose，无 WebView", color = muted)
                 }
             }
-            item { Spacer(Modifier.height(120.dp)) }
+            item { Spacer(Modifier.height(240.dp)) }
         }
     }
 
@@ -564,14 +557,17 @@ class MainActivity : ComponentActivity() {
         backdrop: LayerBackdrop, accent: Color, text: Color, muted: Color,
         isDark: Boolean, mode: Int,
         style: Int, page: Int,
-        onHome: () -> Unit, onFav: () -> Unit, onNew: () -> Unit, onSettings: () -> Unit,
-        newActive: Boolean,
+        onHome: () -> Unit, onFav: () -> Unit, onSettings: () -> Unit,
     ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        // 不在缩放容器里：dp/sp 按正常尺寸，50% 缩放也不会把底栏字缩到看不见。
+        // navigationBarsPadding 把底栏顶到系统导航栏上方，不被三键导航栏盖住。
+        Box(
+            Modifier.fillMaxSize().navigationBarsPadding().padding(bottom = 16.dp),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            val barBg = if (isDark) Libraries.darkBg else Libraries.lightBg
             val glassModifier: Modifier = when (style) {
-                2 -> Modifier.background(
-                    (if (isDark) Libraries.darkBg else Libraries.lightBg).copy(alpha = 0.95f)
-                )
+                2 -> Modifier.background(barBg.copy(alpha = 0.97f))
                 else -> Modifier.drawBackdrop(
                     backdrop = backdrop,
                     shape = { if (mode == 0) Capsule() else RoundedRectangle(0.dp) },
@@ -581,41 +577,39 @@ class MainActivity : ComponentActivity() {
                         if (style == 0) lens(20f.dp.toPx(), 40f.dp.toPx())
                     },
                     highlight = { Highlight.Plain },
+                    onDrawSurface = { drawRect(barBg.copy(alpha = 0.62f)) },
                 )
             }
-            val outer = if (mode == 0) {
-                Modifier.fillMaxSize().padding(bottom = 24.dp)
+            val barModifier = if (mode == 0) {
+                glassModifier.padding(horizontal = 12.dp, vertical = 10.dp)
             } else {
-                Modifier.fillMaxSize()
+                glassModifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp)
             }
-            Box(outer, contentAlignment = Alignment.BottomCenter) {
-                val barModifier = if (mode == 0) {
-                    glassModifier.padding(horizontal = 12.dp, vertical = 10.dp)
-                } else {
-                    glassModifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp)
-                }
-                Box(barModifier) {
-                    Row(
-                        if (mode == 0) Modifier else Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                    ) {
-                        BottomItem("首页", page == 0, accent, muted) { onHome() }
-                        BottomItem(if (newActive) "NEW ✓" else "NEW", newActive, accent, muted) { onNew() }
-                        BottomItem("收藏", page == 1, accent, muted) { onFav() }
-                        BottomItem("设置", page == 2, accent, muted) { onSettings() }
-                    }
+            Box(barModifier) {
+                Row(
+                    if (mode == 0) Modifier else Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    BottomItem("首页", page == 0, accent, text) { onHome() }
+                    BottomItem("收藏", page == 1, accent, text) { onFav() }
+                    BottomItem("设置", page == 2, accent, text) { onSettings() }
                 }
             }
         }
     }
 
     @Composable
-    private fun BottomItem(label: String, active: Boolean, accent: Color, muted: Color, onClick: () -> Unit) {
+    private fun BottomItem(label: String, active: Boolean, accent: Color, text: Color, onClick: () -> Unit) {
         Box(
-            Modifier.clickable { onClick() }.padding(horizontal = 16.dp, vertical = 8.dp),
+            Modifier
+                .clip(RoundedRectangle(20.dp))
+                .background(if (active) accent.copy(alpha = 0.18f) else Color.Transparent)
+                .clickable { onClick() }
+                .padding(horizontal = 20.dp, vertical = 12.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Txt(label, size = 15, bold = active, color = if (active) accent else muted)
+            // 未选中也用正文色，不用 muted 灰，在白卡片上才看得清
+            Txt(label, size = 16, bold = active, color = if (active) accent else text)
         }
     }
 
