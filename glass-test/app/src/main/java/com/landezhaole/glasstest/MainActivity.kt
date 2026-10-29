@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -560,17 +559,28 @@ class MainActivity : ComponentActivity() {
         onHome: () -> Unit, onFav: () -> Unit, onSettings: () -> Unit,
     ) {
         // 不在缩放容器里：dp/sp 按正常尺寸，50% 缩放也不会把底栏字缩到看不见。
-        // navigationBarsPadding 把底栏顶到系统导航栏上方，不被三键导航栏盖住。
+        // 底部留 80dp，把底栏顶到系统导航栏上方，不被三键导航栏盖住。
         Box(
-            Modifier.fillMaxSize().navigationBarsPadding().padding(bottom = 16.dp),
+            Modifier.fillMaxSize().padding(bottom = 80.dp),
             contentAlignment = Alignment.BottomCenter,
         ) {
             val barBg = if (isDark) Libraries.darkBg else Libraries.lightBg
-            val glassModifier: Modifier = when (style) {
-                2 -> Modifier.background(barBg.copy(alpha = 0.97f))
+            val glassModifier: Modifier = when {
+                style == 2 -> Modifier.background(barBg.copy(alpha = 0.97f))
+                mode == 0 -> Modifier.drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { Capsule() },
+                    effects = {
+                        vibrancy()
+                        blur(if (style == 0) 6f.dp.toPx() else 8f.dp.toPx())
+                        if (style == 0) lens(20f.dp.toPx(), 40f.dp.toPx())
+                    },
+                    highlight = { Highlight.Plain },
+                    onDrawSurface = { drawRect(barBg.copy(alpha = 0.62f)) },
+                )
                 else -> Modifier.drawBackdrop(
                     backdrop = backdrop,
-                    shape = { if (mode == 0) Capsule() else RoundedRectangle(0.dp) },
+                    shape = { RoundedRectangle(0.dp) },
                     effects = {
                         vibrancy()
                         blur(if (style == 0) 6f.dp.toPx() else 8f.dp.toPx())
