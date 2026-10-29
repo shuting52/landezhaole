@@ -1,0 +1,43 @@
+name: Build glass test app (debug APK)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "glass-test/**"
+      - ".github/workflows/build-glass-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Gradle 9.3.2
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "9.3.2"
+      - name: Build debug APK
+        working-directory: glass-test
+        run: gradle :app:assembleDebug --stacktrace
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: landezhaole-glass-test-debug
+          path: glass-test/app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish APK to repo for raw download
+        run: |
+          cp glass-test/app/build/outputs/apk/debug/app-debug.apk glass-test/app-debug.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f glass-test/app-debug.apk
+          git diff --cached --quiet || git commit -m "chore: publish glass test debug APK [skip ci]"
+          git push
