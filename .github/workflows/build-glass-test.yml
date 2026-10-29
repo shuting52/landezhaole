@@ -21,13 +21,9 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - name: Set up Gradle 9.3.2
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: "9.3.2"
       - name: Build debug APK
         working-directory: glass-test
-        run: gradle :app:assembleDebug --stacktrace
+        run: chmod +x gradlew && ./gradlew :app:assembleDebug --stacktrace
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
