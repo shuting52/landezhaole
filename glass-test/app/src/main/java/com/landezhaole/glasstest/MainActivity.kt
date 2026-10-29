@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -60,7 +61,7 @@ import com.kyant.backdrop.highlight.Highlight
 import com.kyant.shapes.Capsule
 import com.kyant.shapes.RoundedRectangle
 
-// 懒得找了 · 液态玻璃测试版 v1.1.0
+// 懒得找了 · 液态玻璃测试版 v1.2.0
 // 液态玻璃：Kyant0/AndroidLiquidGlass Backdrop 2.0.1，rememberLayerBackdrop +
 //   layerBackdrop（背景层）+ drawBackdrop（玻璃组件），vibrancy + blur + lens。
 // 数据：CF Pages 项目 landezhaole 的 data.json 原样内置，21 分类 / 2603 站点 / 174 NEW。
@@ -100,6 +101,7 @@ class MainActivity : ComponentActivity() {
         var themeMode by remember { mutableStateOf(prefs.getInt("theme_mode", 0)) } // 0浅 1深 2跟随系统
         var scale by remember { mutableStateOf(prefs.getFloat("scale", 0.5f)) } // 界面缩放，默认 50%
         var bottomStyle by remember { mutableStateOf(prefs.getInt("bottom_style", 0)) } // 0液态玻璃 1磨砂 2纯色
+        var bottomMode by remember { mutableStateOf(prefs.getInt("bottom_mode", 0)) } // 0胶囊 Dock 1整宽底栏
         var showDesc by remember { mutableStateOf(prefs.getBoolean("show_desc", true)) }
         var showBadge by remember { mutableStateOf(prefs.getBoolean("show_badge", true)) }
         var sortByName by remember { mutableStateOf(prefs.getBoolean("sort_name", false)) }
@@ -110,6 +112,7 @@ class MainActivity : ComponentActivity() {
         fun saveTheme(v: Int) { themeMode = v; prefs.edit().putInt("theme_mode", v).apply() }
         fun saveScale(v: Float) { scale = v; prefs.edit().putFloat("scale", v).apply() }
         fun saveBottom(v: Int) { bottomStyle = v; prefs.edit().putInt("bottom_style", v).apply() }
+        fun saveBottomMode(v: Int) { bottomMode = v; prefs.edit().putInt("bottom_mode", v).apply() }
         fun saveShowDesc(v: Boolean) { showDesc = v; prefs.edit().putBoolean("show_desc", v).apply() }
         fun saveShowBadge(v: Boolean) { showBadge = v; prefs.edit().putBoolean("show_badge", v).apply() }
         fun saveSort(v: Boolean) { sortByName = v; prefs.edit().putBoolean("sort_name", v).apply() }
@@ -177,10 +180,14 @@ class MainActivity : ComponentActivity() {
                 // 背景层：必须带 layerBackdrop，玻璃才能采样它
                 Box(Modifier.fillMaxSize().layerBackdrop(backdrop)) {
                     Box(Modifier.fillMaxSize().background(bg))
-                    Blob(Color(0xFF0073E5), 0.05f, 0.02f, 320.dp)
-                    Blob(Color(0xFF55CFFF), 0.62f, 0.18f, 280.dp)
-                    Blob(Color(0xFFF59E0B), 0.18f, 0.55f, 300.dp)
-                    Blob(Color(0xFF7C4DFF), 0.60f, 0.72f, 260.dp)
+                    // 背景必须铺满整屏且色彩分明，玻璃折射才看得出来；位置按屏幕比例算，
+                    // 界面缩放 50% 时也不会跑到左上角去。
+                    Blob(Color(0xFF0073E5), 0.0f, 0.0f, 360.dp)
+                    Blob(Color(0xFF55CFFF), 0.68f, 0.04f, 320.dp)
+                    Blob(Color(0xFFF59E0B), 0.08f, 0.32f, 340.dp)
+                    Blob(Color(0xFF7C4DFF), 0.62f, 0.48f, 320.dp)
+                    Blob(Color(0xFF22C55E), 0.0f, 0.68f, 300.dp)
+                    Blob(Color(0xFFEC4899), 0.65f, 0.82f, 340.dp)
                 }
 
                 if (page == 2) {
@@ -189,6 +196,7 @@ class MainActivity : ComponentActivity() {
                         themeMode = themeMode, onTheme = ::saveTheme,
                         scale = scale, onScale = ::saveScale,
                         bottomStyle = bottomStyle, onBottom = ::saveBottom,
+                        bottomMode = bottomMode, onBottomMode = ::saveBottomMode,
                         showDesc = showDesc, onShowDesc = ::saveShowDesc,
                         showBadge = showBadge, onShowBadge = ::saveShowBadge,
                         sortByName = sortByName, onSort = ::saveSort,
@@ -209,7 +217,7 @@ class MainActivity : ComponentActivity() {
                                 Txt("Backdrop 2.0.1 真液态玻璃 · 数据来自 CF 项目 landezhaole", color = muted)
                                 Spacer(Modifier.height(8.dp))
                                 Txt(
-                                    "${cats.size} 个分类 · $totalSites 个站点 · $totalNew 个 NEW · $totalHot 个 HOT · ${favorites.size} 个收藏 · v1.1.0",
+                                    "${cats.size} 个分类 · $totalSites 个站点 · $totalNew 个 NEW · $totalHot 个 HOT · ${favorites.size} 个收藏 · v1.2.0",
                                     color = muted,
                                 )
                                 Spacer(Modifier.height(12.dp))
@@ -230,8 +238,8 @@ class MainActivity : ComponentActivity() {
                                         shape = { Capsule() },
                                         effects = {
                                             vibrancy()
-                                            blur(4f.dp.toPx())
-                                            lens(12f.dp.toPx(), 24f.dp.toPx())
+                                            blur(6f.dp.toPx())
+                                            lens(20f.dp.toPx(), 40f.dp.toPx())
                                         },
                                         highlight = { Highlight.Plain },
                                     )
@@ -357,7 +365,7 @@ class MainActivity : ComponentActivity() {
                 // 底部栏：整宽玻璃底栏（效果样式在设置里切），四个入口
                 BottomBar(
                     backdrop = backdrop, accent = accent, text = text, muted = muted,
-                    isDark = isDark,
+                    isDark = isDark, mode = bottomMode,
                     style = bottomStyle, page = page,
                     onHome = { page = 0; catIndex = -1; subId = "all" },
                     onFav = { page = 1 },
@@ -422,6 +430,7 @@ class MainActivity : ComponentActivity() {
         themeMode: Int, onTheme: (Int) -> Unit,
         scale: Float, onScale: (Float) -> Unit,
         bottomStyle: Int, onBottom: (Int) -> Unit,
+        bottomMode: Int, onBottomMode: (Int) -> Unit,
         showDesc: Boolean, onShowDesc: (Boolean) -> Unit,
         showBadge: Boolean, onShowBadge: (Boolean) -> Unit,
         sortByName: Boolean, onSort: (Boolean) -> Unit,
@@ -486,6 +495,18 @@ class MainActivity : ComponentActivity() {
             }
             item {
                 GlassCard(backdrop, Modifier.fillMaxWidth()) {
+                    Txt("底栏样式", size = 16, bold = true, color = text)
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        GlassButton(backdrop, if (bottomMode == 0) "胶囊 Dock ✓" else "胶囊 Dock", accent, solid = bottomMode == 0) { onBottomMode(0) }
+                        GlassButton(backdrop, if (bottomMode == 1) "整宽底栏 ✓" else "整宽底栏", accent, solid = bottomMode == 1) { onBottomMode(1) }
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Txt("胶囊 Dock = 悬浮在底部的圆角胶囊，折射最明显；整宽底栏 = 贴底一整条", color = muted)
+                }
+            }
+            item {
+                GlassCard(backdrop, Modifier.fillMaxWidth()) {
                     Txt("显示与排序", size = 16, bold = true, color = text)
                     Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -512,7 +533,7 @@ class MainActivity : ComponentActivity() {
                 GlassCard(backdrop, Modifier.fillMaxWidth()) {
                     Txt("关于", size = 16, bold = true, color = text)
                     Spacer(Modifier.height(4.dp))
-                    Txt("懒得找了 · 玻璃测试 v1.1.0（versionCode 2）", color = muted)
+                    Txt("懒得找了 · 玻璃测试 v1.2.0（versionCode 3）", color = muted)
                     Txt("包名 com.landezhaole.glasstest · 可与主 App 共存", color = muted)
                     Txt("Backdrop 2.0.1 · 数据 $totalCats 分类 / $totalSites 站点 / $totalNew NEW", color = muted)
                     Txt("原生 Kotlin + Compose，无 WebView", color = muted)
@@ -541,33 +562,48 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun BottomBar(
         backdrop: LayerBackdrop, accent: Color, text: Color, muted: Color,
-        isDark: Boolean,
+        isDark: Boolean, mode: Int,
         style: Int, page: Int,
         onHome: () -> Unit, onFav: () -> Unit, onNew: () -> Unit, onSettings: () -> Unit,
         newActive: Boolean,
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            val barModifier = when (style) {
-                2 -> Modifier.fillMaxWidth().background(
+            val glassModifier: Modifier = when (style) {
+                2 -> Modifier.background(
                     (if (isDark) Libraries.darkBg else Libraries.lightBg).copy(alpha = 0.95f)
                 )
-                else -> Modifier.fillMaxWidth().drawBackdrop(
+                else -> Modifier.drawBackdrop(
                     backdrop = backdrop,
-                    shape = { RoundedRectangle(0.dp) },
+                    shape = { if (mode == 0) Capsule() else RoundedRectangle(0.dp) },
                     effects = {
                         vibrancy()
-                        blur(if (style == 0) 4f.dp.toPx() else 8f.dp.toPx())
-                        if (style == 0) lens(12f.dp.toPx(), 24f.dp.toPx())
+                        blur(if (style == 0) 6f.dp.toPx() else 8f.dp.toPx())
+                        if (style == 0) lens(20f.dp.toPx(), 40f.dp.toPx())
                     },
                     highlight = { Highlight.Plain },
                 )
             }
-            Box(barModifier.padding(horizontal = 8.dp, vertical = 12.dp)) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    BottomItem("首页", page == 0, accent, muted) { onHome() }
-                    BottomItem(if (newActive) "NEW ✓" else "NEW", newActive, accent, muted) { onNew() }
-                    BottomItem("收藏", page == 1, accent, muted) { onFav() }
-                    BottomItem("设置", page == 2, accent, muted) { onSettings() }
+            val outer = if (mode == 0) {
+                Modifier.fillMaxSize().padding(bottom = 24.dp)
+            } else {
+                Modifier.fillMaxSize()
+            }
+            Box(outer, contentAlignment = Alignment.BottomCenter) {
+                val barModifier = if (mode == 0) {
+                    glassModifier.padding(horizontal = 12.dp, vertical = 10.dp)
+                } else {
+                    glassModifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp)
+                }
+                Box(barModifier) {
+                    Row(
+                        if (mode == 0) Modifier else Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        BottomItem("首页", page == 0, accent, muted) { onHome() }
+                        BottomItem(if (newActive) "NEW ✓" else "NEW", newActive, accent, muted) { onNew() }
+                        BottomItem("收藏", page == 1, accent, muted) { onFav() }
+                        BottomItem("设置", page == 2, accent, muted) { onSettings() }
+                    }
                 }
             }
         }
@@ -585,10 +621,11 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun Blob(color: Color, fx: Float, fy: Float, sizeDp: androidx.compose.ui.unit.Dp) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
+        // 按屏幕宽高比例定位：缩放 50% 时 dp 单位变了，固定 360/640 会把色块挤到左上角。
+        BoxWithConstraints(Modifier.fillMaxSize()) {
             Box(
                 Modifier
-                    .offset(x = (fx * 360).dp, y = (fy * 640).dp)
+                    .offset(x = maxWidth * fx - sizeDp * 0.5f, y = maxHeight * fy - sizeDp * 0.5f)
                     .size(sizeDp)
                     .background(Brush.radialGradient(listOf(color, Color.Transparent)), CircleShape)
             )
@@ -623,8 +660,8 @@ class MainActivity : ComponentActivity() {
                     shape = { RoundedRectangle(24.dp) },
                     effects = {
                         vibrancy()
-                        blur(4f.dp.toPx())
-                        lens(12f.dp.toPx(), 24f.dp.toPx())
+                        blur(6f.dp.toPx())
+                        lens(24f.dp.toPx(), 48f.dp.toPx())
                     },
                     highlight = { Highlight.Plain },
                 )
@@ -645,8 +682,8 @@ class MainActivity : ComponentActivity() {
                     shape = { Capsule() },
                     effects = {
                         vibrancy()
-                        blur(2f.dp.toPx())
-                        lens(12f.dp.toPx(), 24f.dp.toPx())
+                        blur(3f.dp.toPx())
+                        lens(16f.dp.toPx(), 32f.dp.toPx())
                     },
                     highlight = { Highlight.Plain },
                     onDrawSurface = {
