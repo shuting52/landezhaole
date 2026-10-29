@@ -37,6 +37,15 @@ jobs:
         with:
           name: glass-test-build-log
           path: glass-test/build.log
+      - name: Publish build error for diagnosis
+        if: always()
+        run: |
+          grep -E "error:|e: |FAILED|What went wrong" glass-test/build.log | head -100 > glass-test/build-error.txt || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f glass-test/build-error.txt
+          git diff --cached --quiet || git commit -m "chore: publish glass test build error [skip ci]"
+          git push || true
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
