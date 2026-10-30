@@ -1,1 +1,6 @@
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+e: file:///home/runner/work/landezhaole/landezhaole/glass-test/app/src/main/java/com/landezhaole/glasstest/MainActivity.kt:518:35 Unresolved reference 'drawColor'.
+e: file:///home/runner/work/landezhaole/landezhaole/glass-test/app/src/main/java/com/landezhaole/glasstest/MainActivity.kt:559:35 Unresolved reference 'drawColor'.
+> Task :app:compileReleaseKotlin FAILED
+* What went wrong:
+BUILD FAILED in 2m 35s
