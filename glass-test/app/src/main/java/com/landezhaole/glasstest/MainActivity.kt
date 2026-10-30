@@ -67,6 +67,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawRect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -515,7 +516,7 @@ private fun SiteCard(
                 backdrop,
                 shape = { RoundedRectangle(14.dp) },
                 effects = { vibrancy(); blur(6.dp.toPx()); lens(24.dp.toPx(), 48.dp.toPx()) },
-                onDrawSurface = { drawColor(card.copy(alpha = 0.62f)) },
+                onDrawSurface = { drawRect(card.copy(alpha = 0.62f)) },
             )
             .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(14.dp))
             .combinedClickable(onClick = onOpen, onLongClick = onDetail)
@@ -556,7 +557,7 @@ private fun GlassListCard(
                 backdrop,
                 shape = { RoundedRectangle(18.dp) },
                 effects = { vibrancy(); blur(6.dp.toPx()); lens(24.dp.toPx(), 48.dp.toPx()) },
-                onDrawSurface = { drawColor(card.copy(alpha = 0.62f)) },
+                onDrawSurface = { drawRect(card.copy(alpha = 0.62f)) },
             )
             .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(18.dp))
             .combinedClickable(onClick = onOpen, onLongClick = onDetail)
