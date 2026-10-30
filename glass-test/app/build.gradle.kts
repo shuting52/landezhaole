@@ -13,7 +13,7 @@ android {
         minSdk = 23
         targetSdk = 37
         versionCode = 6
-        versionName = "2.1.0"
+        versionName = "2.0.1"
     }
 
     // 固定签名：CI 里用 GitHub Secrets 的 keystore 编 release 包，V1 + V2 + V3 全开。
@@ -53,4 +53,6 @@ dependencies {
     implementation(compose.animation)
     implementation(platform("androidx.compose:compose-bom:2025.10.00"))
     implementation("androidx.compose.material3:material3")
+    implementation("io.github.kyant0:backdrop-android:2.0.1")
+    implementation("io.github.kyant0:shapes:1.2.1")
 }

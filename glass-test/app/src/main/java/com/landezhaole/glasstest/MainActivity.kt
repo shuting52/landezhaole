@@ -12,6 +12,16 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.draw.blur
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
+import com.kyant.shapes.RoundedRectangle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -60,6 +70,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
@@ -303,9 +314,13 @@ class MainActivity : ComponentActivity() {
               LocalDensity provides Density(baseDensity.density * scale, baseDensity.fontScale * scale)
           ) {
             Box(modifier = Modifier.weight(1f)) {
+              val backdrop = rememberLayerBackdrop()
+              Box(modifier = Modifier.fillMaxSize().layerBackdrop(backdrop)) {
+                  BlobBackground()
+              }
             when (page) {
                 is Page.Home -> HomePage(
-                    cats, favorites, text, muted, line, tabBar, accent, card, bg,
+                    backdrop, cats, favorites, text, muted, line, tabBar, accent, card, bg,
                     onCategory = { go(Page.Category(it)) },
                     onPrompts = { go(Page.Prompts) },
                     onRecipes = { go(Page.Recipes) },
@@ -321,10 +336,11 @@ class MainActivity : ComponentActivity() {
                 is Page.Category -> {
                     val cat = cats.firstOrNull { it.id == page.id }
                     if (cat != null) CategoryPage(
-                        cat, text, muted, line, tabBar, accent, card,
+                        backdrop, cat, favorites, text, muted, line, tabBar, accent, card,
                         onBack = { back() },
                         onSite = { openUrl(context, it.url) },
                         onSiteDetail = { detailSite = it },
+                        onToggleFav = { toggleFav(it) },
                     ) else back()
                 }
                 is Page.Prompts -> PromptsPage(
@@ -339,10 +355,11 @@ class MainActivity : ComponentActivity() {
                 is Page.Favorites -> {
                     val favSites = cats.flatMap { it.sites }.filter { favorites.contains(it.url) }
                     FavoritesPage(
-                        favSites, text, muted, line, accent, card,
+                        backdrop, favSites, favorites, text, muted, line, accent, card,
                         onBack = { back() },
                         onSite = { openUrl(context, it.url) },
                         onSiteDetail = { detailSite = it },
+                        onToggleFav = { toggleFav(it) },
                     )
                 }
                 is Page.Settings -> SettingsPage(
@@ -461,17 +478,46 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+private fun BlobBackground() {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val w = maxWidth
+        val h = maxHeight
+        val blobs = listOf(
+            Triple(0.02f, 0.00f, Color(0xFF3B82F6)),
+            Triple(0.55f, 0.06f, Color(0xFF06B6D4)),
+            Triple(0.05f, 0.30f, Color(0xFFF97316)),
+            Triple(0.58f, 0.42f, Color(0xFFA855F7)),
+            Triple(0.02f, 0.60f, Color(0xFF22C55E)),
+            Triple(0.55f, 0.76f, Color(0xFFEC4899)),
+        )
+        for ((fx, fy, c) in blobs) {
+            Box(
+                modifier = Modifier
+                    .size(w * 0.55f, h * 0.22f)
+                    .offset(x = w * fx, y = h * fy)
+                    .blur(48.dp)
+                    .background(c.copy(alpha = 0.45f), CircleShape),
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SiteCard(
-    site: Site, text: Color, muted: Color, line: Color, card: Color,
+    backdrop: Backdrop, site: Site, text: Color, muted: Color, line: Color, card: Color,
     onOpen: () -> Unit, onDetail: () -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
-            .border(1.dp, line, RoundedCornerShape(14.dp))
-            .clip(RoundedCornerShape(14.dp))
-            .background(card)
+            .drawBackdrop(
+                backdrop,
+                shape = { RoundedRectangle(14.dp) },
+                effects = { vibrancy(); blur(6.dp.toPx()); lens(24.dp.toPx(), 48.dp.toPx()) },
+                onDrawSurface = { drawColor(card.copy(alpha = 0.62f)) },
+            )
+            .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(14.dp))
             .combinedClickable(onClick = onOpen, onLongClick = onDetail)
             .padding(12.dp),
     ) {
@@ -496,9 +542,55 @@ private fun SiteCard(
     }
 }
 
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun GlassListCard(
+    backdrop: Backdrop, site: Site, catName: String, subName: String,
+    isFav: Boolean, text: Color, muted: Color, accent: Color, card: Color,
+    onOpen: () -> Unit, onDetail: () -> Unit, onToggleFav: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+            .drawBackdrop(
+                backdrop,
+                shape = { RoundedRectangle(18.dp) },
+                effects = { vibrancy(); blur(6.dp.toPx()); lens(24.dp.toPx(), 48.dp.toPx()) },
+                onDrawSurface = { drawColor(card.copy(alpha = 0.62f)) },
+            )
+            .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(18.dp))
+            .combinedClickable(onClick = onOpen, onLongClick = onDetail)
+            .padding(14.dp),
+    ) {
+        Row(verticalAlignment = Alignment.Top) {
+            SiteIcon(site, size = 48)
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(site.title, color = text, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Spacer(Modifier.height(2.dp))
+                Text(site.desc, color = muted, fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Spacer(Modifier.height(4.dp))
+                Text(site.url, color = accent, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Spacer(Modifier.height(2.dp))
+                Text("$catName · $subName", color = accent, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            Spacer(Modifier.width(8.dp))
+            Column(horizontalAlignment = Alignment.End) {
+                val badge = site.badge.ifEmpty { "精选" }
+                Text(badge, color = accent, fontSize = 11.sp)
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    if (isFav) "★" else "☆", color = accent, fontSize = 16.sp,
+                    modifier = Modifier.clickable { onToggleFav() }.padding(4.dp),
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun SectionGrid(
-    sites: List<Site>, text: Color, muted: Color, line: Color, card: Color,
+    backdrop: Backdrop, sites: List<Site>, text: Color, muted: Color, line: Color, card: Color,
     limit: Int, onOpen: (Site) -> Unit, onDetail: (Site) -> Unit, onMore: (() -> Unit)?,
 ) {
     val shown = if (onMore != null && sites.size > limit) sites.take(limit) else sites
@@ -508,7 +600,7 @@ private fun SectionGrid(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 for (site in row) {
                     Box(modifier = Modifier.weight(1f)) {
-                        SiteCard(site, text, muted, line, card, { onOpen(site) }, { onDetail(site) })
+                        SiteCard(backdrop, site, text, muted, line, card, { onOpen(site) }, { onDetail(site) })
                     }
                 }
                 if (row.size == 1) Spacer(Modifier.weight(1f))
@@ -552,7 +644,7 @@ private fun PillRow(
 
 @Composable
 private fun HomePage(
-    cats: List<SiteCategory>, favorites: Set<String>,
+    backdrop: Backdrop, cats: List<SiteCategory>, favorites: Set<String>,
     text: Color, muted: Color, line: Color, tabBar: Color, accent: Color, card: Color, bg: Color,
     onCategory: (String) -> Unit, onPrompts: () -> Unit, onRecipes: () -> Unit, onSq: () -> Unit,
     onSettings: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit, onTheme: () -> Unit,
@@ -683,7 +775,7 @@ private fun HomePage(
                         if (searchResults.isEmpty()) {
                             Text("没找到相关资源，换个关键词试试", color = muted, fontSize = 13.sp)
                         } else {
-                            SectionGrid(searchResults, text, muted, line, card, Int.MAX_VALUE, onSite, onSiteDetail, null)
+                            SectionGrid(backdrop, searchResults, text, muted, line, card, Int.MAX_VALUE, onSite, onSiteDetail, null)
                         }
                     }
                     Spacer(Modifier.height(12.dp))
@@ -703,7 +795,7 @@ private fun HomePage(
                             Text("${favSites.size} 个站点", color = muted, fontSize = 12.sp)
                         }
                         Spacer(Modifier.height(12.dp))
-                        SectionGrid(favSites, text, muted, line, card, Int.MAX_VALUE, onSite, onSiteDetail, null)
+                        SectionGrid(backdrop, favSites, text, muted, line, card, Int.MAX_VALUE, onSite, onSiteDetail, null)
                     }
                     Spacer(Modifier.height(12.dp))
                 }
@@ -744,7 +836,7 @@ private fun HomePage(
                         PillRow(cat.subs.map { it.name }, subIdx, { subIdx = it }, tabBar, card, text, muted)
                         Spacer(Modifier.height(12.dp))
                     }
-                    SectionGrid(filtered, text, muted, line, card, 7, onSite, onSiteDetail) {
+                    SectionGrid(backdrop, filtered, text, muted, line, card, 7, onSite, onSiteDetail) {
                         onCategory(cat.id)
                     }
                 }
@@ -846,8 +938,9 @@ private fun HomePage(
 
 @Composable
 private fun CategoryPage(
-    cat: SiteCategory, text: Color, muted: Color, line: Color, tabBar: Color, accent: Color, card: Color,
-    onBack: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit,
+    backdrop: Backdrop, cat: SiteCategory, favorites: Set<String>,
+    text: Color, muted: Color, line: Color, tabBar: Color, accent: Color, card: Color,
+    onBack: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit, onToggleFav: (String) -> Unit,
 ) {
     var subIdx by remember { mutableStateOf(0) }
     val sub = cat.subs.getOrNull(subIdx)
@@ -865,16 +958,14 @@ private fun CategoryPage(
         if (cat.subs.isNotEmpty()) PillRow(cat.subs.map { it.name }, subIdx, { subIdx = it }, tabBar, card, text, muted)
         Spacer(Modifier.height(12.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(filtered.chunked(2).size) { ri ->
-                val row = filtered.chunked(2)[ri]
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    for (site in row) {
-                        Box(modifier = Modifier.weight(1f)) {
-                            SiteCard(site, text, muted, line, card, { onSite(site) }, { onSiteDetail(site) })
-                        }
-                    }
-                    if (row.size == 1) Spacer(Modifier.weight(1f))
-                }
+            items(filtered.size) { i ->
+                val site = filtered[i]
+                val subName = cat.subs.firstOrNull { it.id == site.sub }?.name ?: ""
+                GlassListCard(
+                    backdrop, site, cat.name, subName, favorites.contains(site.url),
+                    text, muted, accent, card,
+                    { onSite(site) }, { onSiteDetail(site) }, { onToggleFav(site.url) },
+                )
             }
             item { Spacer(Modifier.height(24.dp)) }
         }
@@ -1146,8 +1237,9 @@ private fun SqPage(
 
 @Composable
 private fun FavoritesPage(
-    sites: List<Site>, text: Color, muted: Color, line: Color, accent: Color, card: Color,
-    onBack: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit,
+    backdrop: Backdrop, sites: List<Site>, favorites: Set<String>,
+    text: Color, muted: Color, line: Color, accent: Color, card: Color,
+    onBack: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit, onToggleFav: (String) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
         Spacer(Modifier.height(8.dp))
@@ -1162,16 +1254,13 @@ private fun FavoritesPage(
             Text("还没有收藏，长按站点卡片可以收藏。", color = muted, fontSize = 13.sp, modifier = Modifier.padding(12.dp))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(sites.chunked(2).size) { ri ->
-                    val row = sites.chunked(2)[ri]
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        for (site in row) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                SiteCard(site, text, muted, line, card, { onSite(site) }, { onSiteDetail(site) })
-                            }
-                        }
-                        if (row.size == 1) Spacer(Modifier.weight(1f))
-                    }
+                items(sites.size) { i ->
+                    val site = sites[i]
+                    GlassListCard(
+                        backdrop, site, "", "", favorites.contains(site.url),
+                        text, muted, accent, card,
+                        { onSite(site) }, { onSiteDetail(site) }, { onToggleFav(site.url) },
+                    )
                 }
                 item { Spacer(Modifier.height(24.dp)) }
             }
@@ -1234,7 +1323,7 @@ private fun SettingsPage(
         Spacer(Modifier.height(24.dp))
         Text("关于", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
         Spacer(Modifier.height(8.dp))
-        Text("懒得找了 · 免费资源导航\nApp 版本 2.1.0（versionCode 6）\n网站版本 v1.1.51\n共 ${cats.size} 分类 / $total 个站点\n原生 Kotlin + Compose，无 WebView", color = muted, fontSize = 13.sp)
+        Text("懒得找了 · 免费资源导航\nApp 版本 2.0.1（versionCode 6）\n网站版本 v1.1.51\n共 ${cats.size} 分类 / $total 个站点\n原生 Kotlin + Compose，无 WebView", color = muted, fontSize = 13.sp)
         Spacer(Modifier.height(24.dp))
     }
 }
