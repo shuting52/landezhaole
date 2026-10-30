@@ -45,6 +45,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -58,7 +59,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -229,6 +233,7 @@ private sealed class Page {
     data object Recipes : Page()
     data object Sq : Page()
     data object Settings : Page()
+    data object Favorites : Page()
     data class Category(val id: String) : Page()
 }
 
@@ -249,6 +254,7 @@ class MainActivity : ComponentActivity() {
         val sq = remember { loadSq(context) }
         val systemDark = isSystemInDarkTheme()
         var themeMode by remember { mutableStateOf(prefs.getInt("theme_mode", 0)) }
+        var scale by remember { mutableStateOf(prefs.getFloat("scale", 0.75f)) }
         val dark = when (themeMode) { 1 -> true; 2 -> systemDark; else -> false }
         val bg = if (dark) Lib.darkBg else Lib.lightBg
         val card = if (dark) Lib.darkCard else Lib.lightCard
@@ -291,7 +297,12 @@ class MainActivity : ComponentActivity() {
             checkUpdate(false)
         }
 
-        Box(modifier = Modifier.fillMaxSize().background(bg)) {
+        Column(modifier = Modifier.fillMaxSize().background(bg)) {
+          val baseDensity = LocalDensity.current
+          CompositionLocalProvider(
+              LocalDensity provides Density(baseDensity.density * scale, baseDensity.fontScale * scale)
+          ) {
+            Box(modifier = Modifier.weight(1f)) {
             when (page) {
                 is Page.Home -> HomePage(
                     cats, favorites, text, muted, line, tabBar, accent, card, bg,
@@ -325,9 +336,19 @@ class MainActivity : ComponentActivity() {
                 is Page.Sq -> SqPage(
                     sq, text, muted, line, tabBar, accent, card, onBack = { back() },
                 )
+                is Page.Favorites -> {
+                    val favSites = cats.flatMap { it.sites }.filter { favorites.contains(it.url) }
+                    FavoritesPage(
+                        favSites, text, muted, line, accent, card,
+                        onBack = { back() },
+                        onSite = { openUrl(context, it.url) },
+                        onSiteDetail = { detailSite = it },
+                    )
+                }
                 is Page.Settings -> SettingsPage(
-                    themeMode, cats, text, muted, line, accent, card,
+                    themeMode, scale, cats, text, muted, line, accent, card,
                     onTheme = { v -> themeMode = v; prefs.edit().putInt("theme_mode", v).apply() },
+                    onScale = { v -> scale = v; prefs.edit().putFloat("scale", v).apply() },
                     onCheckUpdate = { checkUpdate(true) },
                     onClearFav = {
                         favorites = emptySet()
@@ -412,6 +433,30 @@ class MainActivity : ComponentActivity() {
                     containerColor = card,
                 )
             }
+        }
+          }
+          // 底栏：一排三个，不跟随界面缩放，字号正常，顶到系统导航栏上方
+          Row(
+              modifier = Modifier.fillMaxWidth().background(card)
+                  .border(1.dp, line, RoundedCornerShape(0.dp))
+                  .navigationBarsPadding().padding(vertical = 4.dp),
+              horizontalArrangement = Arrangement.SpaceEvenly,
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+              val bottomItems = listOf(
+                  Triple("首页", page is Page.Home) { stack = listOf(Page.Home) },
+                  Triple("收藏", page is Page.Favorites) { if (page !is Page.Favorites) go(Page.Favorites) },
+                  Triple("设置", page is Page.Settings) { if (page !is Page.Settings) go(Page.Settings) },
+              )
+              for ((label, selected, act) in bottomItems) {
+                  Column(
+                      horizontalAlignment = Alignment.CenterHorizontally,
+                      modifier = Modifier.weight(1f).clickable { act() }.padding(vertical = 10.dp),
+                  ) {
+                      Text(label, color = if (selected) accent else muted, fontSize = 16.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
+                  }
+              }
+          }
         }
     }
 }
@@ -1100,9 +1145,44 @@ private fun SqPage(
 }
 
 @Composable
+private fun FavoritesPage(
+    sites: List<Site>, text: Color, muted: Color, line: Color, accent: Color, card: Color,
+    onBack: () -> Unit, onSite: (Site) -> Unit, onSiteDetail: (Site) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onBack) { Text("← 回导航", color = accent, fontWeight = FontWeight.Bold) }
+            Text("我的收藏", color = text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.width(8.dp))
+            Text("${sites.size} 个站点", color = muted, fontSize = 12.sp)
+        }
+        Spacer(Modifier.height(12.dp))
+        if (sites.isEmpty()) {
+            Text("还没有收藏，长按站点卡片可以收藏。", color = muted, fontSize = 13.sp, modifier = Modifier.padding(12.dp))
+        } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(sites.chunked(2).size) { ri ->
+                    val row = sites.chunked(2)[ri]
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        for (site in row) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                SiteCard(site, text, muted, line, card, { onSite(site) }, { onSiteDetail(site) })
+                            }
+                        }
+                        if (row.size == 1) Spacer(Modifier.weight(1f))
+                    }
+                }
+                item { Spacer(Modifier.height(24.dp)) }
+            }
+        }
+    }
+}
+
+@Composable
 private fun SettingsPage(
-    themeMode: Int, cats: List<SiteCategory>, text: Color, muted: Color, line: Color, accent: Color, card: Color,
-    onTheme: (Int) -> Unit, onCheckUpdate: () -> Unit, onClearFav: () -> Unit, onBack: () -> Unit,
+    themeMode: Int, scale: Float, cats: List<SiteCategory>, text: Color, muted: Color, line: Color, accent: Color, card: Color,
+    onTheme: (Int) -> Unit, onScale: (Float) -> Unit, onCheckUpdate: () -> Unit, onClearFav: () -> Unit, onBack: () -> Unit,
 ) {
     val context = LocalContext.current
     val total = cats.sumOf { it.sites.size }
@@ -1128,6 +1208,22 @@ private fun SettingsPage(
             Spacer(Modifier.height(8.dp))
         }
         Spacer(Modifier.height(12.dp))
+        Text("界面缩放", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Spacer(Modifier.height(8.dp))
+        for ((v, label) in listOf(0.5f to "50%", 0.75f to "75%", 1.0f to "100%", 1.25f to "125%")) {
+            Row(
+                modifier = Modifier.fillMaxWidth().background(card, RoundedCornerShape(12.dp))
+                    .border(1.dp, line, RoundedCornerShape(12.dp)).clickable { onScale(v) }.padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(label, color = text, fontSize = 14.sp)
+                Spacer(Modifier.weight(1f))
+                if (scale == v) Text("✓", color = accent, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+        Text("底栏不跟随缩放，字号始终正常。", color = muted, fontSize = 12.sp)
+        Spacer(Modifier.height(12.dp))
         Button(onClick = onCheckUpdate, colors = ButtonDefaults.buttonColors(containerColor = accent), shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
             Text("检查更新", color = Color.White, fontWeight = FontWeight.Bold)
         }
@@ -1138,7 +1234,7 @@ private fun SettingsPage(
         Spacer(Modifier.height(24.dp))
         Text("关于", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
         Spacer(Modifier.height(8.dp))
-        Text("懒得找了 · 免费资源导航\nApp 版本 2.0.0（versionCode 5）\n网站版本 v1.1.51\n共 ${cats.size} 分类 / $total 个站点\n原生 Kotlin + Compose，无 WebView", color = muted, fontSize = 13.sp)
+        Text("懒得找了 · 免费资源导航\nApp 版本 2.1.0（versionCode 6）\n网站版本 v1.1.51\n共 ${cats.size} 分类 / $total 个站点\n原生 Kotlin + Compose，无 WebView", color = muted, fontSize = 13.sp)
         Spacer(Modifier.height(24.dp))
     }
 }
