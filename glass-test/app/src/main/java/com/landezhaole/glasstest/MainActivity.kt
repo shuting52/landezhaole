@@ -4,7 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.Settings
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -238,6 +244,76 @@ private fun installedCode(context: Context): Int = try {
     PackageInfoCompat.getLongVersionCode(info).toInt()
 } catch (_: Exception) { 0 }
 
+
+/** 软件内直接下载更新包，不跳浏览器：DownloadManager 下载到 Download 目录，
+ *  下载完成广播里自动调系统安装器；安装未知应用权限没开时先跳系统设置让用户开。 */
+private fun startApkDownload(context: Context, apkUrl: String, fileName: String) {
+    val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    if (prefs.getLong("pending_download_id", -1L) != -1L) {
+        Toast.makeText(context, "正在下载中，下载完会自动弹出安装", Toast.LENGTH_SHORT).show()
+        return
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (!context.packageManager.canRequestPackageInstalls()) {
+            Toast.makeText(context, "请先允许本应用安装未知应用，返回后再点更新", Toast.LENGTH_LONG).show()
+            try {
+                context.startActivity(
+                    Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + context.packageName))
+                )
+            } catch (_: Exception) { }
+            return
+        }
+    }
+    try {
+        val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val req = DownloadManager.Request(Uri.parse(apkUrl))
+            .setTitle("懒得找了更新包")
+            .setDescription("正在下载新版本，下载完自动安装")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            .setAllowedOverMetered(true)
+            .setAllowedOverRoaming(true)
+        val id = dm.enqueue(req)
+        prefs.edit().putLong("pending_download_id", id).apply()
+        Toast.makeText(context, "开始下载，不用跳转浏览器，下载完自动弹出安装", Toast.LENGTH_SHORT).show()
+    } catch (e: Exception) {
+        Toast.makeText(context, "下载启动失败，请重试", Toast.LENGTH_SHORT).show()
+    }
+}
+
+private fun installDownloadedApk(context: Context, downloadId: Long) {
+    val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    prefs.edit().putLong("pending_download_id", -1L).apply()
+    try {
+        val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val cursor = dm.query(DownloadManager.Query().setFilterById(downloadId))
+        var ok = false
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+                ok = status == DownloadManager.STATUS_SUCCESSFUL
+            }
+            cursor.close()
+        }
+        if (!ok) {
+            Toast.makeText(context, "下载失败，请重新点更新", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val uri = dm.getUriForDownloadedFile(downloadId) ?: run {
+            Toast.makeText(context, "找不到下载好的安装包，请重新下载", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Toast.makeText(context, "调起安装失败，请在 Download 文件夹里手动安装", Toast.LENGTH_LONG).show()
+    }
+}
+
 private sealed class Page {
     data object Home : Page()
     data object Prompts : Page()
@@ -249,10 +325,32 @@ private sealed class Page {
 }
 
 class MainActivity : ComponentActivity() {
+    private val downloadReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action != DownloadManager.ACTION_DOWNLOAD_COMPLETE) return
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
+            val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            if (id != -1L && id == prefs.getLong("pending_download_id", -1L)) {
+                installDownloadedApk(context, id)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(downloadReceiver, filter, Context.RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(downloadReceiver, filter)
+        }
         setContent { AppRoot() }
+    }
+
+    override fun onDestroy() {
+        try { unregisterReceiver(downloadReceiver) } catch (_: Exception) { }
+        super.onDestroy()
     }
 
     @Composable
@@ -431,7 +529,7 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     confirmButton = {
-                        TextButton(onClick = { openUrl(context, APK_URL); updateInfo = null }) {
+                        TextButton(onClick = { startApkDownload(context, APK_URL, "landezhaole-update.apk"); updateInfo = null }) {
                             Text("立即更新", color = accent, fontWeight = FontWeight.Bold)
                         }
                     },
@@ -676,7 +774,7 @@ private fun HomePage(
                     Spacer(Modifier.width(8.dp))
                     Text(dateText, color = muted, fontSize = 12.sp)
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = { openUrl(context, APK_URL) }) { Text("下载 Android App", color = accent, fontSize = 12.sp) }
+                    TextButton(onClick = { startApkDownload(context, APK_URL, "landezhaole-update.apk") }) { Text("下载 Android App", color = accent, fontSize = 12.sp) }
                     TextButton(onClick = onTheme) { Text("主题", color = text, fontSize = 12.sp) }
                 }
                 Spacer(Modifier.height(8.dp))
@@ -1323,7 +1421,7 @@ private fun SettingsPage(
         Spacer(Modifier.height(24.dp))
         Text("关于", color = text, fontWeight = FontWeight.Bold, fontSize = 14.sp)
         Spacer(Modifier.height(8.dp))
-        Text("懒得找了 · 免费资源导航\nApp 版本 2.0.1（versionCode 6）\n网站版本 v1.1.51\n共 ${cats.size} 分类 / $total 个站点\n原生 Kotlin + Compose，无 WebView", color = muted, fontSize = 13.sp)
+        Text("懒得找了 · 免费资源导航\nApp 版本 2.0.2（versionCode 7）\n网站版本 v1.1.51\n共 ${cats.size} 分类 / $total 个站点\n原生 Kotlin + Compose，无 WebView", color = muted, fontSize = 13.sp)
         Spacer(Modifier.height(24.dp))
     }
 }

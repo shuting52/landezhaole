@@ -12,8 +12,8 @@ android {
         applicationId = "com.landezhaole.glasstest"
         minSdk = 23
         targetSdk = 37
-        versionCode = 6
-        versionName = "2.0.1"
+        versionCode = 7
+        versionName = "2.0.2"
     }
 
     // 固定签名：CI 里用 GitHub Secrets 的 keystore 编 release 包，V1 + V2 + V3 全开。
