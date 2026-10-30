@@ -1,1 +1,1 @@
-{"apkUrl":"https://raw.githubusercontent.com/shuting52/landezhaole/main/glass-test/app-debug.apk","changes":{"优化":"界面默认 75%，底栏不跟随缩放、字号正常、顶到系统导航栏上方","删除":"扁平卡片样式","增加":"液态玻璃卡片 + 彩色光斑折射背景（截图同款玻璃），分类页改单列玻璃列表（带链接、分类、角标、收藏星标），底栏一排三个（首页 / 收藏 / 设置）"},"versionCode":6,"versionName":"2.0.1"}
+{"apkUrl":"https://raw.githubusercontent.com/shuting52/landezhaole/main/glass-test/app-debug.apk","changes":{"优化":"立即更新和下载按钮改成本地直接下载，不再跳转浏览器","删除":"无","增加":"DownloadManager 直接下载更新包，下载完成自动调系统安装器；安装未知应用权限没开时先跳系统设置"},"versionCode":7,"versionName":"2.0.2"}
