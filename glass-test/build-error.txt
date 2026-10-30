@@ -1,5 +1,1 @@
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
-e: file:///home/runner/work/landezhaole/landezhaole/glass-test/app/src/main/java/com/landezhaole/glasstest/MainActivity.kt:70:47 Unresolved reference 'drawRect'.
-> Task :app:compileReleaseKotlin FAILED
-* What went wrong:
-BUILD FAILED in 2m 21s
